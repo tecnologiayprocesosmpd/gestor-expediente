@@ -1,13 +1,196 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useEffect } from 'react';
+import { UserProvider, useUser } from '@/contexts/UserContext';
+import { ProfileSelector } from '@/components/ProfileSelector';
+import { Layout } from '@/components/Layout';
+import { Dashboard } from '@/components/Dashboard';
+import { ExpedientList } from '@/components/ExpedientList';
+import { ExpedientEditor } from '@/components/ExpedientEditor';
+import { ExpedientSummary, Expedient } from '@/types/expedient';
+import { useToast } from '@/hooks/use-toast';
+
+// Mock data for demonstration
+const mockExpedients: ExpedientSummary[] = [
+  {
+    id: '1',
+    number: 'EXP-2024-001',
+    title: 'Solicitud de Amparo - Caso García',
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-01-20'),
+    createdBy: 'Dr. María González',
+    department: 'Mesa de Entrada',
+    status: 'active',
+    priority: 'high'
+  },
+  {
+    id: '2', 
+    number: 'EXP-2024-002',
+    title: 'Defensa Penal - Proceso Rodríguez',
+    createdAt: new Date('2024-01-18'),
+    updatedAt: new Date('2024-01-18'),
+    createdBy: 'Dr. Carlos López',
+    department: 'Defensoría Penal',
+    status: 'draft',
+    priority: 'medium'
+  },
+  {
+    id: '3',
+    number: 'EXP-2024-003', 
+    title: 'Consulta Legal - Derechos Laborales',
+    createdAt: new Date('2024-01-22'),
+    updatedAt: new Date('2024-01-25'),
+    createdBy: 'Dra. Ana Martínez',
+    department: 'Secretaría General',
+    status: 'active',
+    priority: 'low'
+  },
+  {
+    id: '4',
+    number: 'EXP-2024-004',
+    title: 'Recurso de Inconstitucionalidad - Ley Provincial',
+    createdAt: new Date('2024-01-10'),
+    updatedAt: new Date('2024-01-28'),
+    createdBy: 'Dr. Roberto Silva',
+    department: 'Mesa de Entrada',
+    status: 'closed',
+    priority: 'high'
+  },
+  {
+    id: '5',
+    number: 'EXP-2024-005',
+    title: 'Asesoramiento Civil - Divorcio',
+    createdAt: new Date('2024-01-25'),
+    updatedAt: new Date('2024-01-25'),
+    createdBy: 'Dra. Laura Pérez',
+    department: 'Defensoría Civil',
+    status: 'draft',
+    priority: 'low'
+  }
+];
+
+function AppContent() {
+  const { user } = useUser();
+  const { toast } = useToast();
+  const [currentView, setCurrentView] = useState<'dashboard' | 'expedientes' | 'editor'>('dashboard');
+  const [expedients, setExpedients] = useState<ExpedientSummary[]>(mockExpedients);
+  const [currentExpedientId, setCurrentExpedientId] = useState<string | null>(null);
+
+  if (!user) {
+    return <ProfileSelector />;
+  }
+
+  const handleCreateExpedient = () => {
+    setCurrentExpedientId(null);
+    setCurrentView('editor');
+  };
+
+  const handleViewExpedient = (id: string) => {
+    setCurrentExpedientId(id);
+    setCurrentView('editor');
+    toast({
+      title: "Expediente abierto",
+      description: "Modo solo lectura activado",
+    });
+  };
+
+  const handleEditExpedient = (id: string) => {
+    setCurrentExpedientId(id);
+    setCurrentView('editor');
+    toast({
+      title: "Editor activado",
+      description: "Puede editar y guardar cambios",
+    });
+  };
+
+  const handleSaveExpedient = (data: any) => {
+    if (currentExpedientId) {
+      // Update existing expedient
+      setExpedients(prev => prev.map(exp => 
+        exp.id === currentExpedientId 
+          ? { ...exp, ...data, updatedAt: new Date() }
+          : exp
+      ));
+      toast({
+        title: "Expediente actualizado",
+        description: "Los cambios han sido guardados correctamente",
+      });
+    } else {
+      // Create new expedient
+      const newExpedient: ExpedientSummary = {
+        id: String(Date.now()),
+        number: data.number || `EXP-2024-${String(expedients.length + 1).padStart(3, '0')}`,
+        title: data.title || 'Sin título',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: user.name,
+        department: user.department || 'Sin departamento',
+        status: data.status || 'draft',
+        priority: 'medium'
+      };
+      
+      setExpedients(prev => [newExpedient, ...prev]);
+      setCurrentExpedientId(newExpedient.id);
+      
+      toast({
+        title: "Expediente creado",
+        description: `Nuevo expediente ${newExpedient.number} creado exitosamente`,
+      });
+    }
+  };
+
+  const handleBackFromEditor = () => {
+    setCurrentExpedientId(null);
+    setCurrentView('expedientes');
+  };
+
+  const renderCurrentView = () => {
+    switch (currentView) {
+      case 'dashboard':
+        return (
+          <Dashboard
+            expedients={expedients}
+            onCreateExpedient={user.role === 'mesa' ? handleCreateExpedient : undefined}
+            onViewExpedient={handleViewExpedient}
+            onEditExpedient={user.role === 'mesa' ? handleEditExpedient : undefined}
+          />
+        );
+      case 'expedientes':
+        return (
+          <ExpedientList
+            expedients={expedients}
+            onViewExpedient={handleViewExpedient}
+            onEditExpedient={user.role === 'mesa' ? handleEditExpedient : undefined}
+            onCreateExpedient={user.role === 'mesa' ? handleCreateExpedient : undefined}
+          />
+        );
+      case 'editor':
+        return (
+          <ExpedientEditor
+            expedientId={currentExpedientId || undefined}
+            onBack={handleBackFromEditor}
+            onSave={handleSaveExpedient}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <Layout
+      currentView={currentView}
+      onNavigate={setCurrentView}
+      onCreateExpedient={user.role === 'mesa' ? handleCreateExpedient : undefined}
+    >
+      {renderCurrentView()}
+    </Layout>
+  );
+}
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <UserProvider>
+      <AppContent />
+    </UserProvider>
   );
 };
 
