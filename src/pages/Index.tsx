@@ -5,6 +5,8 @@ import { Layout } from '@/components/Layout';
 import { Dashboard } from '@/components/Dashboard';
 import { ExpedientList } from '@/components/ExpedientList';
 import { ExpedientEditor } from '@/components/ExpedientEditor';
+import { LegajoManager } from '@/components/LegajoManager';
+import { ReportesManager } from '@/components/ReportesManager';
 import { ExpedientSummary, Expedient } from '@/types/expedient';
 import { useToast } from '@/hooks/use-toast';
 
@@ -70,7 +72,7 @@ const mockExpedients: ExpedientSummary[] = [
 function AppContent() {
   const { user } = useUser();
   const { toast } = useToast();
-  const [currentView, setCurrentView] = useState<'dashboard' | 'expedientes' | 'editor'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'expedientes' | 'editor' | 'legajos' | 'reportes'>('dashboard');
   const [expedients, setExpedients] = useState<ExpedientSummary[]>(mockExpedients);
   const [currentExpedientId, setCurrentExpedientId] = useState<string | null>(null);
 
@@ -168,6 +170,20 @@ function AppContent() {
             expedientId={currentExpedientId || undefined}
             onBack={handleBackFromEditor}
             onSave={handleSaveExpedient}
+          />
+        );
+      case 'legajos':
+        return (
+          <LegajoManager
+            onViewLegajo={(id) => console.log('Ver legajo:', id)}
+            onEditLegajo={(id) => console.log('Editar legajo:', id)}
+            onCreateLegajo={() => console.log('Crear legajo')}
+          />
+        );
+      case 'reportes':
+        return (
+          <ReportesManager
+            onGenerateReport={(params) => console.log('Generar reporte:', params)}
           />
         );
       default:

@@ -89,17 +89,21 @@ export function ExpedientList({
     }
   };
 
-  const getStatusBadge = (status: 'draft' | 'active' | 'closed') => {
+  const getStatusBadge = (status: 'draft' | 'active' | 'closed' | 'archived' | 'derivado') => {
     const variants = {
       draft: 'secondary',
       active: 'default',
-      closed: 'outline'
+      closed: 'outline',
+      archived: 'outline',
+      derivado: 'secondary'
     } as const;
     
     const labels = {
       draft: 'Borrador',
       active: 'Activo',
-      closed: 'Cerrado'
+      closed: 'Cerrado',
+      archived: 'Archivado',
+      derivado: 'Derivado'
     };
 
     return (
@@ -109,17 +113,19 @@ export function ExpedientList({
     );
   };
 
-  const getPriorityBadge = (priority: 'low' | 'medium' | 'high') => {
+  const getPriorityBadge = (priority: 'low' | 'medium' | 'high' | 'urgent') => {
     const colors = {
       low: 'bg-secondary text-secondary-foreground',
-      medium: 'bg-accent text-accent-foreground',
-      high: 'bg-destructive text-destructive-foreground'
+      medium: 'bg-accent text-accent-foreground', 
+      high: 'bg-destructive text-destructive-foreground',
+      urgent: 'bg-red-600 text-white border-red-700'
     };
     
     const labels = {
       low: 'Baja',
       medium: 'Media',
-      high: 'Alta'
+      high: 'Alta',
+      urgent: 'Urgente'
     };
 
     return (

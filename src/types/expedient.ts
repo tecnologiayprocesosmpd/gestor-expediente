@@ -7,9 +7,14 @@ export interface Expedient {
   updatedAt: Date;
   createdBy: string;
   department: string;
-  status: 'draft' | 'active' | 'closed';
-  priority: 'low' | 'medium' | 'high';
+  status: 'draft' | 'active' | 'closed' | 'archived' | 'derivado';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
   tags: string[];
+  actuaciones?: string[]; // IDs de actuaciones asociadas
+  derivaciones?: string[]; // IDs de derivaciones
+  archived?: boolean;
+  archivedAt?: Date;
+  archivedBy?: string;
 }
 
 export interface ExpedientSummary {
@@ -20,6 +25,8 @@ export interface ExpedientSummary {
   updatedAt: Date;
   createdBy: string;
   department: string;
-  status: 'draft' | 'active' | 'closed';
-  priority: 'low' | 'medium' | 'high';
+  status: 'draft' | 'active' | 'closed' | 'archived' | 'derivado';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  actuacionesCount?: number;
+  derivacionesCount?: number;
 }

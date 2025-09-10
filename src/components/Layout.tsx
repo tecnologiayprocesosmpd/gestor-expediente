@@ -8,14 +8,15 @@ import {
   LogOut, 
   Home, 
   Plus,
-  Search
+  Search,
+  BarChart3
 } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
 
 interface LayoutProps {
   children: ReactNode;
-  currentView?: 'dashboard' | 'expedientes' | 'editor';
-  onNavigate?: (view: 'dashboard' | 'expedientes' | 'editor') => void;
+  currentView?: 'dashboard' | 'expedientes' | 'editor' | 'legajos' | 'reportes';
+  onNavigate?: (view: 'dashboard' | 'expedientes' | 'editor' | 'legajos' | 'reportes') => void;
   onCreateExpedient?: () => void;
 }
 
@@ -109,6 +110,24 @@ export function Layout({ children, currentView = 'dashboard', onNavigate, onCrea
               >
                 <Search className="w-4 h-4" />
                 <span>Expedientes</span>
+              </Button>
+              <Button
+                variant={currentView === 'legajos' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => onNavigate?.('legajos')}
+                className="flex items-center space-x-2"
+              >
+                <Users className="w-4 h-4" />
+                <span>Legajos</span>
+              </Button>
+              <Button
+                variant={currentView === 'reportes' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => onNavigate?.('reportes')}
+                className="flex items-center space-x-2"
+              >
+                <BarChart3 className="w-4 h-4" />
+                <span>Reportes</span>
               </Button>
             </div>
 
