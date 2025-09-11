@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Bold,
   Italic,
@@ -34,7 +35,7 @@ interface ExpedientEditorProps {
 export function ExpedientEditor({ expedientId, onBack, onSave }: ExpedientEditorProps) {
   const [title, setTitle] = useState('');
   const [expedientNumber, setExpedientNumber] = useState('');
-  const [status, setStatus] = useState<'draft' | 'active' | 'closed'>('draft');
+  const [status, setStatus] = useState<'draft' | 'active' | 'closed' | 'archived' | 'derivado'>('draft');
 
   const editor = useEditor({
     extensions: [
@@ -120,8 +121,69 @@ export function ExpedientEditor({ expedientId, onBack, onSave }: ExpedientEditor
     }
   };
 
+  const getStatusColors = (status: string) => {
+    const colors = {
+      draft: {
+        bg: 'bg-[hsl(var(--status-draft))]',
+        border: 'border-[hsl(var(--status-draft))]',
+        text: 'text-[hsl(var(--status-draft-foreground))]'
+      },
+      active: {
+        bg: 'bg-[hsl(var(--status-active))]',
+        border: 'border-[hsl(var(--status-active))]',
+        text: 'text-[hsl(var(--status-active-foreground))]'
+      },
+      closed: {
+        bg: 'bg-[hsl(var(--status-closed))]',
+        border: 'border-[hsl(var(--status-closed))]',
+        text: 'text-[hsl(var(--status-closed-foreground))]'
+      },
+      archived: {
+        bg: 'bg-[hsl(var(--status-archived))]',
+        border: 'border-[hsl(var(--status-archived))]',
+        text: 'text-[hsl(var(--status-archived-foreground))]'
+      },
+      derivado: {
+        bg: 'bg-[hsl(var(--status-derivado))]',
+        border: 'border-[hsl(var(--status-derivado))]',
+        text: 'text-[hsl(var(--status-derivado-foreground))]'
+      }
+    };
+    
+    return colors[status as keyof typeof colors] || colors.draft;
+  };
+
+  const getStatusLabel = (status: string) => {
+    const labels = {
+      draft: 'Borrador',
+      active: 'Activo',
+      closed: 'Cerrado',
+      archived: 'Archivado',
+      derivado: 'Derivado'
+    };
+    
+    return labels[status as keyof typeof labels] || 'Borrador';
+  };
+
+  const statusColors = getStatusColors(status);
+
   return (
     <div className="space-y-6">
+      {/* Status Banner */}
+      <Alert className={`${statusColors.border} border-2 ${statusColors.bg}/10`}>
+        <AlertDescription className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className={`w-4 h-4 rounded-full ${statusColors.bg}`}></div>
+            <span className="text-lg font-semibold">
+              Estado del Expediente: <span className={statusColors.text}>{getStatusLabel(status)}</span>
+            </span>
+          </div>
+          <Badge className={`${statusColors.bg} ${statusColors.text} px-3 py-1`}>
+            {getStatusLabel(status)}
+          </Badge>
+        </AlertDescription>
+      </Alert>
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
@@ -138,16 +200,10 @@ export function ExpedientEditor({ expedientId, onBack, onSave }: ExpedientEditor
             </p>
           </div>
         </div>
-        
-        <div className="flex items-center space-x-2">
-          <Badge variant={status === 'draft' ? 'secondary' : 'default'}>
-            {status === 'draft' ? 'Borrador' : status === 'active' ? 'Activo' : 'Cerrado'}
-          </Badge>
-        </div>
       </div>
 
       {/* Document Info */}
-      <Card>
+      <Card className={`${statusColors.border} border-l-4`}>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <FileText className="w-5 h-5" />
@@ -155,7 +211,7 @@ export function ExpedientEditor({ expedientId, onBack, onSave }: ExpedientEditor
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="expedient-number">Número de Expediente</Label>
               <Input
@@ -173,6 +229,21 @@ export function ExpedientEditor({ expedientId, onBack, onSave }: ExpedientEditor
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Descripción breve del expediente"
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="status">Estado del Expediente</Label>
+              <select
+                id="status"
+                value={status}
+                onChange={(e) => setStatus(e.target.value as any)}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <option value="draft">Borrador</option>
+                <option value="active">Activo</option>
+                <option value="closed">Cerrado</option>
+                <option value="archived">Archivado</option>
+                <option value="derivado">Derivado</option>
+              </select>
             </div>
           </div>
         </CardContent>

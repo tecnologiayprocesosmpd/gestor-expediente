@@ -90,13 +90,13 @@ export function ExpedientList({
   };
 
   const getStatusBadge = (status: 'draft' | 'active' | 'closed' | 'archived' | 'derivado') => {
-    const variants = {
-      draft: 'secondary',
-      active: 'default',
-      closed: 'outline',
-      archived: 'outline',
-      derivado: 'secondary'
-    } as const;
+    const colors = {
+      draft: 'bg-[hsl(var(--status-draft))] text-[hsl(var(--status-draft-foreground))] border-[hsl(var(--status-draft))]',
+      active: 'bg-[hsl(var(--status-active))] text-[hsl(var(--status-active-foreground))] border-[hsl(var(--status-active))]',
+      closed: 'bg-[hsl(var(--status-closed))] text-[hsl(var(--status-closed-foreground))] border-[hsl(var(--status-closed))]',
+      archived: 'bg-[hsl(var(--status-archived))] text-[hsl(var(--status-archived-foreground))] border-[hsl(var(--status-archived))]',
+      derivado: 'bg-[hsl(var(--status-derivado))] text-[hsl(var(--status-derivado-foreground))] border-[hsl(var(--status-derivado))]'
+    };
     
     const labels = {
       draft: 'Borrador',
@@ -107,7 +107,7 @@ export function ExpedientList({
     };
 
     return (
-      <Badge variant={variants[status]}>
+      <Badge className={colors[status]}>
         {labels[status]}
       </Badge>
     );
@@ -221,7 +221,7 @@ export function ExpedientList({
         </div>
       </div>
 
-      {/* Expedients Grid */}
+      {/* Expedients Table */}
       {sortedExpedients.length === 0 ? (
         <Card>
           <CardContent className="text-center py-12">
@@ -242,68 +242,89 @@ export function ExpedientList({
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {sortedExpedients.map((expedient) => (
-            <Card key={expedient.id} className="hover:shadow-medium transition-shadow">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <Badge variant="outline" className="text-xs">
-                      {expedient.number}
-                    </Badge>
-                    <CardTitle className="text-lg line-clamp-2">
-                      {expedient.title}
-                    </CardTitle>
-                  </div>
-                  <div className="flex flex-col items-end space-y-1">
-                    {getStatusBadge(expedient.status)}
-                    {getPriorityBadge(expedient.priority)}
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="space-y-3 mb-4">
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <User className="w-4 h-4 mr-2" />
-                    <span>{expedient.createdBy}</span>
-                  </div>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Calendar className="w-4 h-4 mr-2" />
-                    <span>Creado: {expedient.createdAt.toLocaleDateString('es-ES')}</span>
-                  </div>
-                  {expedient.updatedAt.toDateString() !== expedient.createdAt.toDateString() && (
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Calendar className="w-4 h-4 mr-2" />
-                      <span>Actualizado: {expedient.updatedAt.toLocaleDateString('es-ES')}</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onViewExpedient?.(expedient.id)}
-                    className="flex-1"
-                  >
-                    <Eye className="w-4 h-4 mr-1" />
-                    Ver
-                  </Button>
-                  {canEdit && (
-                    <Button
-                      size="sm"
-                      onClick={() => onEditExpedient?.(expedient.id)}
-                      className="flex-1"
+        <Card>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="border-b">
+                  <tr className="bg-muted/30">
+                    <th className="text-left p-4 font-medium">Número</th>
+                    <th className="text-left p-4 font-medium">Título</th>
+                    <th className="text-left p-4 font-medium">Estado</th>
+                    <th className="text-left p-4 font-medium">Prioridad</th>
+                    <th className="text-left p-4 font-medium">Creado por</th>
+                    <th className="text-left p-4 font-medium">Fecha</th>
+                    <th className="text-right p-4 font-medium">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedExpedients.map((expedient) => (
+                    <tr 
+                      key={expedient.id} 
+                      className="border-b hover:bg-muted/20 transition-colors"
                     >
-                      <Edit className="w-4 h-4 mr-1" />
-                      Editar
-                    </Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                      <td className="p-4">
+                        <Badge variant="outline" className="text-xs font-mono">
+                          {expedient.number}
+                        </Badge>
+                      </td>
+                      <td className="p-4">
+                        <div className="font-medium text-foreground line-clamp-1">
+                          {expedient.title}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {expedient.department}
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        {getStatusBadge(expedient.status)}
+                      </td>
+                      <td className="p-4">
+                        {getPriorityBadge(expedient.priority)}
+                      </td>
+                      <td className="p-4">
+                        <div className="flex items-center text-sm">
+                          <User className="w-4 h-4 mr-2 text-muted-foreground" />
+                          <span>{expedient.createdBy}</span>
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <div className="text-sm">
+                          <div>{expedient.createdAt.toLocaleDateString('es-ES')}</div>
+                          {expedient.updatedAt.toDateString() !== expedient.createdAt.toDateString() && (
+                            <div className="text-xs text-muted-foreground">
+                              Act: {expedient.updatedAt.toLocaleDateString('es-ES')}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <div className="flex items-center justify-end space-x-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => onViewExpedient?.(expedient.id)}
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                          {canEdit && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => onEditExpedient?.(expedient.id)}
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
