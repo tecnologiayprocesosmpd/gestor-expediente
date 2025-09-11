@@ -56,6 +56,7 @@ const mockActuaciones: Actuacion[] = [
 export function ExpedientView({ expedientId, onBack }: ExpedientViewProps) {
   const [showEditor, setShowEditor] = useState(false);
   const [actuaciones, setActuaciones] = useState<Actuacion[]>(mockActuaciones);
+  const [selectedActuacion, setSelectedActuacion] = useState<Actuacion | null>(null);
   
   // Mock data del expediente
   const expedient = {
@@ -119,7 +120,10 @@ export function ExpedientView({ expedientId, onBack }: ExpedientViewProps) {
   };
 
   const handleViewActuacion = (actuacionId: string) => {
-    console.log('Ver actuación:', actuacionId);
+    const actuacion = actuaciones.find(act => act.id === actuacionId);
+    if (actuacion) {
+      setSelectedActuacion(actuacion);
+    }
   };
 
   const handleEditActuacion = (actuacionId: string) => {
@@ -166,6 +170,85 @@ export function ExpedientView({ expedientId, onBack }: ExpedientViewProps) {
         onBack={() => setShowEditor(false)}
         onSave={handleSaveActuacion}
       />
+    );
+  }
+
+  if (selectedActuacion) {
+    return (
+      <div className="min-h-screen p-6 space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <Button variant="outline" onClick={() => setSelectedActuacion(null)}>
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Volver
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">
+                {selectedActuacion.title}
+              </h1>
+              <p className="text-lg text-muted-foreground">
+                Actuación #{selectedActuacion.number} - {selectedActuacion.createdBy}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center space-x-3">
+            <Badge variant={selectedActuacion.status === 'firmado' ? 'default' : 'secondary'} className="px-4 py-2">
+              {selectedActuacion.status === 'firmado' ? 'Firmado' : 
+               selectedActuacion.status === 'para-firmar' ? 'Para Firmar' : 'Borrador'}
+            </Badge>
+          </div>
+        </div>
+
+        {/* Actuacion Content */}
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <FileText className="w-6 h-6" />
+              <span>Contenido de la Actuación</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-muted/30 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <Calendar className="w-5 h-5 text-muted-foreground" />
+                  <div>
+                    <p className="font-medium text-sm">Fecha de Creación</p>
+                    <p className="text-sm text-muted-foreground">
+                      {selectedActuacion.createdAt.toLocaleDateString('es-ES')}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <User className="w-5 h-5 text-muted-foreground" />
+                  <div>
+                    <p className="font-medium text-sm">Creado por</p>
+                    <p className="text-sm text-muted-foreground">
+                      {selectedActuacion.createdBy}
+                    </p>
+                  </div>
+                </div>
+                {selectedActuacion.signedAt && (
+                  <div className="flex items-center space-x-3">
+                    <Clock className="w-5 h-5 text-muted-foreground" />
+                    <div>
+                      <p className="font-medium text-sm">Fecha de Firma</p>
+                      <p className="text-sm text-muted-foreground">
+                        {selectedActuacion.signedAt.toLocaleDateString('es-ES')}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              <div className="prose prose-lg max-w-none p-6 border rounded-lg bg-white">
+                <div dangerouslySetInnerHTML={{ __html: selectedActuacion.content }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
