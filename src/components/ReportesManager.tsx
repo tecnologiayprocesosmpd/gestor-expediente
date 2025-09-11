@@ -93,7 +93,7 @@ export function ReportesManager({ onGenerateReport }: ReportesManagerProps) {
       tipo,
       fechaInicio: fechaInicio ? new Date(fechaInicio) : undefined,
       fechaFin: fechaFin ? new Date(fechaFin) : undefined,
-      departamento: departamentoSeleccionado || undefined
+      departamento: departamentoSeleccionado === 'todos' ? undefined : departamentoSeleccionado || undefined
     };
     onGenerateReport?.(params);
   };
@@ -260,7 +260,7 @@ export function ReportesManager({ onGenerateReport }: ReportesManagerProps) {
                       <SelectValue placeholder="Todos los departamentos" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Todos</SelectItem>
+                      <SelectItem value="todos">Todos</SelectItem>
                       <SelectItem value="mesa-entrada">Mesa de Entrada</SelectItem>
                       <SelectItem value="defensoria-penal">Defensoría Penal</SelectItem>
                       <SelectItem value="defensoria-civil">Defensoría Civil</SelectItem>
