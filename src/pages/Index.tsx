@@ -76,6 +76,15 @@ function AppContent() {
   const [currentView, setCurrentView] = useState<'dashboard' | 'expedientes' | 'view' | 'editor' | 'legajos' | 'reportes'>('dashboard');
   const [expedients, setExpedients] = useState<ExpedientSummary[]>(mockExpedients);
   const [currentExpedientId, setCurrentExpedientId] = useState<string | null>(null);
+  
+  // State for managing actuaciones per expedient
+  const [expedientActuaciones, setExpedientActuaciones] = useState<Record<string, any[]>>({});
+  
+  // Get current expedient data
+  const getCurrentExpedient = () => {
+    if (!currentExpedientId) return null;
+    return expedients.find(exp => exp.id === currentExpedientId);
+  };
 
   if (!user) {
     return <ProfileSelector />;
@@ -101,7 +110,14 @@ function AppContent() {
       // Update existing expedient
       setExpedients(prev => prev.map(exp => 
         exp.id === currentExpedientId 
-          ? { ...exp, ...data, updatedAt: new Date() }
+          ? { 
+              ...exp, 
+              title: data.title || exp.title,
+              number: data.number || exp.number,
+              status: data.status || exp.status,
+              assignedOffice: data.assignedOffice,
+              updatedAt: new Date() 
+            }
           : exp
       ));
       toast({
@@ -130,6 +146,32 @@ function AppContent() {
         description: `Nuevo expediente ${newExpedient.number} creado exitosamente`,
       });
     }
+  };
+
+  const handleSaveActuacion = (data: any) => {
+    if (!currentExpedientId) return;
+    
+    const newActuacion = {
+      id: String(Date.now()),
+      expedientId: currentExpedientId,
+      number: (expedientActuaciones[currentExpedientId]?.length || 0) + 1,
+      title: data.title || 'Nueva Actuación',
+      content: data.content || '<p>Contenido de la actuación...</p>',
+      status: 'borrador' as const,
+      createdBy: user?.name || 'Usuario',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    setExpedientActuaciones(prev => ({
+      ...prev,
+      [currentExpedientId]: [newActuacion, ...(prev[currentExpedientId] || [])]
+    }));
+    
+    toast({
+      title: "Actuación agregada",
+      description: "La nueva actuación ha sido guardada correctamente",
+    });
   };
 
   const handleBackFromEditor = () => {
@@ -161,15 +203,27 @@ function AppContent() {
         return (
           <ExpedientView
             expedientId={currentExpedientId || undefined}
+            expedient={getCurrentExpedient()}
+            actuaciones={expedientActuaciones[currentExpedientId || ''] || []}
             onBack={handleBackFromEditor}
+            onSaveActuacion={handleSaveActuacion}
+            onUpdateActuaciones={(updatedActuaciones) => {
+              if (currentExpedientId) {
+                setExpedientActuaciones(prev => ({
+                  ...prev,
+                  [currentExpedientId]: updatedActuaciones
+                }));
+              }
+            }}
           />
         );
       case 'editor':
         return (
           <ExpedientEditor
             expedientId={currentExpedientId || undefined}
+            expedient={getCurrentExpedient()}
             onBack={handleBackFromEditor}
-            onSave={handleSaveExpedient}
+            onSave={user?.role === 'oficina' ? handleSaveActuacion : handleSaveExpedient}
           />
         );
       case 'legajos':

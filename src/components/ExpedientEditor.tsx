@@ -2,7 +2,7 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUser } from "@/contexts/UserContext";
 
 import { Button } from "@/components/ui/button";
@@ -29,15 +29,16 @@ import {
 
 interface ExpedientEditorProps {
   expedientId?: string;
+  expedient?: any;
   onBack?: () => void;
   onSave?: (data: any) => void;
 }
 
-export function ExpedientEditor({ expedientId, onBack, onSave }: ExpedientEditorProps) {
-  const [title, setTitle] = useState('');
-  const [expedientNumber, setExpedientNumber] = useState('');
-  const [status, setStatus] = useState<'draft' | 'active' | 'closed' | 'archived' | 'derivado'>('draft');
-  const [assignedOffice, setAssignedOffice] = useState('');
+export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack, onSave }: ExpedientEditorProps) {
+  const [title, setTitle] = useState(propExpedient?.title || '');
+  const [expedientNumber, setExpedientNumber] = useState(propExpedient?.number || '');
+  const [status, setStatus] = useState<'draft' | 'active' | 'closed' | 'archived' | 'derivado'>(propExpedient?.status || 'draft');
+  const [assignedOffice, setAssignedOffice] = useState(propExpedient?.assignedOffice || '');
 
   const { user } = useUser();
   const canEditBasicInfo = user?.role === 'mesa';
@@ -51,13 +52,28 @@ export function ExpedientEditor({ expedientId, onBack, onSave }: ExpedientEditor
       }),
       Underline,
     ],
-    content: '<p>Comience a redactar el contenido del expediente aquí...</p>',
+    content: propExpedient?.content || '<p>Comience a redactar el contenido del expediente aquí...</p>',
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[400px] p-4',
       },
     },
   });
+
+  // Update state when expedient prop changes
+  useEffect(() => {
+    if (propExpedient) {
+      setTitle(propExpedient.title || '');
+      setExpedientNumber(propExpedient.number || '');
+      setStatus(propExpedient.status || 'draft');
+      setAssignedOffice(propExpedient.assignedOffice || '');
+      
+      // Update editor content
+      if (editor && propExpedient.content) {
+        editor.commands.setContent(propExpedient.content);
+      }
+    }
+  }, [propExpedient, editor]);
 
   if (!editor) {
     return null;
@@ -85,6 +101,7 @@ export function ExpedientEditor({ expedientId, onBack, onSave }: ExpedientEditor
         number: expedientNumber,
         content,
         status,
+        assignedOffice,
         updatedAt: new Date(),
       };
       

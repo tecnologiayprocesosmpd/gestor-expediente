@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUser } from "@/contexts/UserContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,54 +22,40 @@ import type { Actuacion } from "@/types/actuacion";
 
 interface ExpedientViewProps {
   expedientId?: string;
+  expedient?: any;
+  actuaciones?: any[];
   onBack?: () => void;
+  onSaveActuacion?: (data: any) => void;
+  onUpdateActuaciones?: (actuaciones: any[]) => void;
 }
 
-// Mock data para las actuaciones
-const mockActuaciones: Actuacion[] = [
-  {
-    id: '1',
-    expedientId: 'exp-001',
-    number: 1,
-    title: 'Inicio de Actuación',
-    content: '<p>Se inicia la presente actuación con la documentación correspondiente...</p>',
-    status: 'firmado',
-    createdBy: 'Juan Pérez - Mesa de Entrada',
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-01-16'),
-    signedBy: 'Dr. Carlos López',
-    signedAt: new Date('2024-01-16')
-  },
-  {
-    id: '2',
-    expedientId: 'exp-001',
-    number: 2,
-    title: 'Revisión de Documentación',
-    content: '<p>Se procede a la revisión de la documentación presentada por el interesado...</p>',
-    status: 'para-firmar',
-    createdBy: 'Ana García - Oficina',
-    createdAt: new Date('2024-01-20'),
-    updatedAt: new Date('2024-01-20')
-  }
-];
-
-export function ExpedientView({ expedientId, onBack }: ExpedientViewProps) {
+export function ExpedientView({ 
+  expedientId, 
+  expedient: propExpedient, 
+  actuaciones: propActuaciones = [], 
+  onBack, 
+  onSaveActuacion,
+  onUpdateActuaciones 
+}: ExpedientViewProps) {
   const [showEditor, setShowEditor] = useState(false);
-  const [actuaciones, setActuaciones] = useState<Actuacion[]>(mockActuaciones);
+  const [actuaciones, setActuaciones] = useState<Actuacion[]>(propActuaciones);
   const [selectedActuacion, setSelectedActuacion] = useState<Actuacion | null>(null);
   
-  // Mock data del expediente
-  const expedient = {
-    id: expedientId || 'exp-001',
-    number: 'EXP-2024-001',
-    title: 'Solicitud de Defensa Pública',
-    status: 'active' as const,
-    assignedOffice: 'Defensoría Civil Nº 1',
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-01-20')
+  // Use passed expedient data or fallback to default
+  const expedient = propExpedient || {
+    id: expedientId || 'unknown',
+    number: 'Sin número',
+    title: 'Sin título',
+    status: 'draft' as const,
+    assignedOffice: 'Sin asignar',
+    createdAt: new Date(),
+    updatedAt: new Date()
   };
 
-  const { user } = useUser();
+  // Sync actuaciones when they change in props
+  useEffect(() => {
+    setActuaciones(propActuaciones);
+  }, [propActuaciones]);
   
   const getStatusColors = (status: string) => {
     const colors = {
@@ -132,29 +118,17 @@ export function ExpedientView({ expedientId, onBack }: ExpedientViewProps) {
   };
 
   const handleStatusChange = (actuacionId: string, newStatus: Actuacion['status']) => {
-    setActuaciones(prev => 
-      prev.map(act => 
-        act.id === actuacionId 
-          ? { ...act, status: newStatus, signedAt: newStatus === 'firmado' ? new Date() : undefined }
-          : act
-      )
+    const updatedActuaciones = actuaciones.map(act => 
+      act.id === actuacionId 
+        ? { ...act, status: newStatus, signedAt: newStatus === 'firmado' ? new Date() : undefined }
+        : act
     );
+    setActuaciones(updatedActuaciones);
+    onUpdateActuaciones?.(updatedActuaciones);
   };
 
   const handleSaveActuacion = (actuacionData: any) => {
-    const newActuacion = {
-      id: String(Date.now()),
-      expedientId: expedient.id,
-      number: actuaciones.length + 1,
-      title: actuacionData.title || 'Nueva Actuación',
-      content: actuacionData.content || '<p>Contenido de la actuación...</p>',
-      status: 'borrador' as const,
-      createdBy: user?.name || 'Usuario',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-
-    setActuaciones(prev => [newActuacion, ...prev]);
+    onSaveActuacion?.(actuacionData);
     setShowEditor(false);
   };
 
