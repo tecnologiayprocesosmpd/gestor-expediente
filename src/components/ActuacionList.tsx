@@ -33,6 +33,7 @@ export function ActuacionList({
 }: ActuacionListProps) {
   const { user } = useUser();
   const canEdit = user?.role === 'mesa';
+  const canCreate = user?.role === 'mesa' || user?.role === 'oficina';
 
   const getStatusBadge = (status: Actuacion['status']) => {
     const config = {
@@ -87,7 +88,7 @@ export function ActuacionList({
             <span>Actuaciones</span>
             <Badge variant="secondary">{actuaciones.length}</Badge>
           </div>
-          {canEdit && (
+          {canCreate && (
             <Button onClick={onCreateActuacion} size="sm">
               <Plus className="w-4 h-4 mr-1" />
               Nueva Actuación
@@ -100,7 +101,7 @@ export function ActuacionList({
           <div className="text-center py-8 text-muted-foreground">
             <FileText className="w-12 h-12 mx-auto mb-4 opacity-30" />
             <p>No hay actuaciones en este expediente</p>
-            {canEdit && (
+            {canCreate && (
               <Button 
                 onClick={onCreateActuacion}
                 className="mt-4"
