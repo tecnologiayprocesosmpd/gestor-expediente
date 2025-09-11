@@ -57,16 +57,16 @@ All colors MUST be HSL.
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-fast: all 0.15s ease-in-out;
     
-    /* Estados de expedientes - colores distinguibles */
-    --status-draft: 220 13% 69%; /* Gris azulado para borrador */
+    /* Estados de expedientes - colores vivos pero formales */
+    --status-draft: 35 91% 51%; /* Ámbar vibrante para borrador */
     --status-draft-foreground: 0 0% 100%;
-    --status-en-tramite: 207 60% 61%; /* Azul para en tramite */
+    --status-en-tramite: 217 91% 60%; /* Azul intenso para en tramite */
     --status-en-tramite-foreground: 0 0% 100%;
-    --status-archivado: 240 6% 50%; /* Gris para archivado */
+    --status-archivado: 215 25% 46%; /* Azul grisáceo profundo para archivado */
     --status-archivado-foreground: 0 0% 100%;
-    --status-derivado: 271 81% 56%; /* Púrpura para derivado */
+    --status-derivado: 262 83% 58%; /* Púrpura vibrante para derivado */
     --status-derivado-foreground: 0 0% 100%;
-    --status-desistido: 0 84.2% 60.2%; /* Rojo para desistido */
+    --status-desistido: 0 72% 51%; /* Rojo profesional para desistido */
     --status-desistido-foreground: 0 0% 100%;
 
     --sidebar-background: 0 0% 98%;
