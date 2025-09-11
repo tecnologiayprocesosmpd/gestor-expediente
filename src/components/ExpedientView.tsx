@@ -153,26 +153,21 @@ export function ExpedientView({ expedientId, onBack }: ExpedientViewProps) {
   }
 
   return (
-    <div className={`min-h-screen ${statusColors.bg}/5 ${statusColors.border} border-4 rounded-2xl relative overflow-hidden`}>
-      {/* Status Banner Wrapper - Envuelve toda la página */}
-      <div className="absolute top-0 left-0 right-0 z-10">
-        <div className={`${statusColors.bg} h-20 flex items-center justify-center relative`}>
-          <div className="flex items-center space-x-6">
-            <div className={`w-8 h-8 rounded-full bg-white/90 shadow-lg flex items-center justify-center`}>
-              <div className={`w-4 h-4 rounded-full ${statusColors.bg}`}></div>
-            </div>
-            <span className="text-2xl font-bold text-white drop-shadow-lg">
-              EXPEDIENTE {getStatusLabel(expedient.status).toUpperCase()}
-            </span>
-            <Badge className="bg-white/20 text-white border-white/30 px-6 py-3 text-lg font-semibold shadow-lg backdrop-blur-sm">
+    <div className="min-h-screen relative">
+      {/* Status Indicator - Esquina Superior Derecha */}
+      <div className="absolute top-4 right-4 z-10">
+        <div className={`${statusColors.bg} rounded-full px-4 py-2 shadow-lg backdrop-blur-sm border-2 border-white/20`}>
+          <div className="flex items-center space-x-2">
+            <div className={`w-3 h-3 rounded-full bg-white/90 shadow-sm animate-pulse`}></div>
+            <span className="text-sm font-semibold text-white">
               {getStatusLabel(expedient.status)}
-            </Badge>
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Main Content with Top Padding */}
-      <div className="pt-24 p-8 space-y-6">
+      {/* Main Content */}
+      <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -189,7 +184,7 @@ export function ExpedientView({ expedientId, onBack }: ExpedientViewProps) {
               </p>
             </div>
           </div>
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3 pr-20">
             <Button variant="outline" className="shadow-sm">
               <Download className="w-4 h-4 mr-2" />
               Exportar PDF
