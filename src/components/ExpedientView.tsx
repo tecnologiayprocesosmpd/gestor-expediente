@@ -158,6 +158,171 @@ export function ExpedientView({ expedientId, onBack }: ExpedientViewProps) {
     setShowEditor(false);
   };
 
+  const handleExportPDF = () => {
+    // Importar jsPDF dinámicamente
+    import('jspdf').then(({ jsPDF }) => {
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: [216, 330] // Formato oficio (8.5" x 13")
+      });
+
+      // Configuración de estilos
+      const pageWidth = 216;
+      const pageHeight = 330;
+      const margin = 20;
+      const contentWidth = pageWidth - (margin * 2);
+
+      // Función auxiliar para añadir texto con salto de línea
+      const addMultiLineText = (text: string, x: number, y: number, maxWidth: number, fontSize: number = 10) => {
+        doc.setFontSize(fontSize);
+        const lines = doc.splitTextToSize(text, maxWidth);
+        doc.text(lines, x, y);
+        return y + (lines.length * fontSize * 0.35); // Retorna la nueva posición Y
+      };
+
+      // === CARÁTULA ===
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('MINISTERIO PUPILAR Y DE LA DEFENSA', pageWidth / 2, 30, { align: 'center' });
+      doc.text('San Miguel de Tucumán', pageWidth / 2, 40, { align: 'center' });
+      
+      // Línea separadora
+      doc.setLineWidth(0.5);
+      doc.line(margin, 50, pageWidth - margin, 50);
+
+      // Información del expediente
+      let yPosition = 70;
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text('EXPEDIENTE', margin, yPosition);
+      yPosition += 15;
+
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Número: ${expedient.number}`, margin, yPosition);
+      yPosition += 10;
+      
+      yPosition = addMultiLineText(`Título: ${expedient.title}`, margin, yPosition, contentWidth, 12);
+      yPosition += 5;
+      
+      doc.text(`Estado: ${getStatusLabel(expedient.status)}`, margin, yPosition);
+      yPosition += 10;
+      
+      doc.text(`Oficina Asignada: ${expedient.assignedOffice}`, margin, yPosition);
+      yPosition += 10;
+      
+      doc.text(`Fecha de Creación: ${expedient.createdAt.toLocaleDateString('es-ES')}`, margin, yPosition);
+      yPosition += 10;
+      
+      doc.text(`Última Modificación: ${expedient.updatedAt.toLocaleDateString('es-ES')}`, margin, yPosition);
+      yPosition += 20;
+
+      // Resumen de actuaciones
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text('RESUMEN DE ACTUACIONES', margin, yPosition);
+      yPosition += 15;
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Total de Actuaciones: ${actuaciones.length}`, margin, yPosition);
+      yPosition += 10;
+
+      actuaciones.forEach((act, index) => {
+        if (yPosition > pageHeight - 40) {
+          doc.addPage();
+          yPosition = margin;
+        }
+        
+        const status = act.status === 'firmado' ? 'Firmado' : 
+                      act.status === 'para-firmar' ? 'Para Firmar' : 'Borrador';
+        doc.text(`${index + 1}. ${act.title} - ${status}`, margin, yPosition);
+        yPosition += 7;
+      });
+
+      // === ACTUACIONES (cada una en página nueva) ===
+      actuaciones.forEach((actuacion, index) => {
+        doc.addPage();
+        
+        // Encabezado de actuación
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`ACTUACIÓN #${actuacion.number}`, pageWidth / 2, 30, { align: 'center' });
+        
+        // Línea separadora
+        doc.setLineWidth(0.5);
+        doc.line(margin, 40, pageWidth - margin, 40);
+
+        let actYPos = 55;
+        
+        // Información de la actuación
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        actYPos = addMultiLineText(`Título: ${actuacion.title}`, margin, actYPos, contentWidth, 12);
+        actYPos += 5;
+
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Creado por: ${actuacion.createdBy}`, margin, actYPos);
+        actYPos += 7;
+        
+        doc.text(`Fecha de Creación: ${actuacion.createdAt.toLocaleDateString('es-ES')}`, margin, actYPos);
+        actYPos += 7;
+        
+        const status = actuacion.status === 'firmado' ? 'Firmado' : 
+                      actuacion.status === 'para-firmar' ? 'Para Firmar' : 'Borrador';
+        doc.text(`Estado: ${status}`, margin, actYPos);
+        actYPos += 7;
+
+        if (actuacion.signedAt) {
+          doc.text(`Fecha de Firma: ${actuacion.signedAt.toLocaleDateString('es-ES')}`, margin, actYPos);
+          actYPos += 7;
+        }
+        
+        if (actuacion.signedBy) {
+          doc.text(`Firmado por: ${actuacion.signedBy}`, margin, actYPos);
+          actYPos += 7;
+        }
+
+        actYPos += 10;
+
+        // Línea separadora para contenido
+        doc.setLineWidth(0.3);
+        doc.line(margin, actYPos, pageWidth - margin, actYPos);
+        actYPos += 10;
+
+        // Contenido de la actuación (extraer texto del HTML)
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'normal');
+        
+        // Crear elemento temporal para extraer texto del HTML
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = actuacion.content;
+        const textContent = tempDiv.textContent || tempDiv.innerText || '';
+        
+        // Añadir contenido con manejo de páginas
+        const lines = doc.splitTextToSize(textContent, contentWidth);
+        
+        lines.forEach((line: string) => {
+          if (actYPos > pageHeight - 30) {
+            doc.addPage();
+            actYPos = margin;
+          }
+          doc.text(line, margin, actYPos);
+          actYPos += 6;
+        });
+      });
+
+      // Guardar el PDF
+      const fileName = `Expediente_${expedient.number}_${new Date().toLocaleDateString('es-ES').replace(/\//g, '-')}.pdf`;
+      doc.save(fileName);
+    }).catch((error) => {
+      console.error('Error al generar PDF:', error);
+      alert('Error al generar el PDF. Por favor intente nuevamente.');
+    });
+  };
+
   const statusColors = getStatusColors(expedient.status);
   const latestActuacion = actuaciones.sort((a, b) => 
     new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -294,7 +459,7 @@ export function ExpedientView({ expedientId, onBack }: ExpedientViewProps) {
             </div>
           </div>
           <div className="flex items-center space-x-3 pr-20">
-            <Button variant="outline" className="shadow-sm">
+            <Button variant="outline" className="shadow-sm" onClick={handleExportPDF}>
               <Download className="w-4 h-4 mr-2" />
               Exportar PDF
             </Button>
