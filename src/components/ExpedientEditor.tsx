@@ -2,6 +2,9 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
+import Image from '@tiptap/extension-image';
+import FontFamily from '@tiptap/extension-font-family';
+import { TextStyle } from '@tiptap/extension-text-style';
 import { useState, useEffect } from 'react';
 import { useUser } from "@/contexts/UserContext";
 
@@ -27,6 +30,13 @@ import {
   FileText
 } from "lucide-react";
 
+// Import new editor components
+import { LineHeightSelector } from "@/components/ui/line-height-selector";
+import { FontSelector } from "@/components/ui/font-selector";
+import { ImageInsert } from "@/components/ui/image-insert";
+import { IndentControls } from "@/components/ui/indent-controls";
+import { MarginControls } from "@/components/ui/margin-controls";
+
 interface ExpedientEditorProps {
   expedientId?: string;
   expedient?: any;
@@ -37,8 +47,9 @@ interface ExpedientEditorProps {
 export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack, onSave }: ExpedientEditorProps) {
   const [title, setTitle] = useState(propExpedient?.title || '');
   const [expedientNumber, setExpedientNumber] = useState(propExpedient?.number || '');
-  const [status, setStatus] = useState<'draft' | 'active' | 'closed' | 'archived' | 'derivado'>(propExpedient?.status || 'draft');
+  const [status, setStatus] = useState<'draft' | 'en_tramite' | 'archivado' | 'derivado' | 'desistido'>(propExpedient?.status || 'draft');
   const [assignedOffice, setAssignedOffice] = useState(propExpedient?.assignedOffice || '');
+  const [margins, setMargins] = useState({ top: 20, right: 20, bottom: 20, left: 20 });
 
   const { user } = useUser();
   const canEditBasicInfo = user?.role === 'mesa';
@@ -51,11 +62,23 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
         types: ['heading', 'paragraph'],
       }),
       Underline,
+      Image.configure({
+        inline: true,
+        allowBase64: true,
+        HTMLAttributes: {
+          class: 'max-w-full h-auto rounded-lg shadow-sm',
+        },
+      }),
+      FontFamily.configure({
+        types: ['textStyle'],
+      }),
+      TextStyle,
     ],
     content: propExpedient?.content || '<p>Comience a redactar el contenido del expediente aquí...</p>',
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[400px] p-4',
+        style: `padding: ${margins.top}px ${margins.right}px ${margins.bottom}px ${margins.left}px;`,
       },
     },
   });
@@ -167,25 +190,25 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
         border: 'border-[hsl(var(--status-draft))]',
         text: 'text-[hsl(var(--status-draft-foreground))]'
       },
-      active: {
-        bg: 'bg-[hsl(var(--status-active))]',
-        border: 'border-[hsl(var(--status-active))]',
-        text: 'text-[hsl(var(--status-active-foreground))]'
+      en_tramite: {
+        bg: 'bg-[hsl(var(--status-en-tramite))]',
+        border: 'border-[hsl(var(--status-en-tramite))]',
+        text: 'text-[hsl(var(--status-en-tramite-foreground))]'
       },
-      closed: {
-        bg: 'bg-[hsl(var(--status-closed))]',
-        border: 'border-[hsl(var(--status-closed))]',
-        text: 'text-[hsl(var(--status-closed-foreground))]'
-      },
-      archived: {
-        bg: 'bg-[hsl(var(--status-archived))]',
-        border: 'border-[hsl(var(--status-archived))]',
-        text: 'text-[hsl(var(--status-archived-foreground))]'
+      archivado: {
+        bg: 'bg-[hsl(var(--status-archivado))]',
+        border: 'border-[hsl(var(--status-archivado))]',
+        text: 'text-[hsl(var(--status-archivado-foreground))]'
       },
       derivado: {
         bg: 'bg-[hsl(var(--status-derivado))]',
         border: 'border-[hsl(var(--status-derivado))]',
         text: 'text-[hsl(var(--status-derivado-foreground))]'
+      },
+      desistido: {
+        bg: 'bg-[hsl(var(--status-desistido))]',
+        border: 'border-[hsl(var(--status-desistido))]',
+        text: 'text-[hsl(var(--status-desistido-foreground))]'
       }
     };
     
@@ -195,10 +218,10 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
   const getStatusLabel = (status: string) => {
     const labels = {
       draft: 'Borrador',
-      active: 'Activo',
-      closed: 'Cerrado',
-      archived: 'Archivado',
-      derivado: 'Derivado'
+      en_tramite: 'En Trámite',
+      archivado: 'Archivado',
+      derivado: 'Derivado',
+      desistido: 'Desistido'
     };
     
     return labels[status as keyof typeof labels] || 'Borrador';
@@ -345,77 +368,113 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
         <CardContent>
           <div className="border rounded-lg overflow-hidden">
             {/* Toolbar */}
-            <div className="border-b bg-muted/30 p-3 flex flex-wrap items-center gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => editor.chain().focus().toggleBold().run()}
-                className={editor.isActive('bold') ? 'bg-primary text-primary-foreground' : ''}
-              >
-                <Bold className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => editor.chain().focus().toggleItalic().run()}
-                className={editor.isActive('italic') ? 'bg-primary text-primary-foreground' : ''}
-              >
-                <Italic className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => editor.chain().focus().toggleUnderline().run()}
-                className={editor.isActive('underline') ? 'bg-primary text-primary-foreground' : ''}
-              >
-                <UnderlineIcon className="w-4 h-4" />
-              </Button>
+            <div className="border-b bg-muted/30 p-3 space-y-2">
+              {/* Primera fila - Formato básico */}
+              <div className="flex flex-wrap items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => editor.chain().focus().toggleBold().run()}
+                  className={editor.isActive('bold') ? 'bg-primary text-primary-foreground' : ''}
+                >
+                  <Bold className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => editor.chain().focus().toggleItalic().run()}
+                  className={editor.isActive('italic') ? 'bg-primary text-primary-foreground' : ''}
+                >
+                  <Italic className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => editor.chain().focus().toggleUnderline().run()}
+                  className={editor.isActive('underline') ? 'bg-primary text-primary-foreground' : ''}
+                >
+                  <UnderlineIcon className="w-4 h-4" />
+                </Button>
 
-              <Separator orientation="vertical" className="h-6 mx-2" />
+                <Separator orientation="vertical" className="h-6 mx-2" />
 
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => editor.chain().focus().setTextAlign('left').run()}
-                className={editor.isActive({ textAlign: 'left' }) ? 'bg-primary text-primary-foreground' : ''}
-              >
-                <AlignLeft className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => editor.chain().focus().setTextAlign('center').run()}
-                className={editor.isActive({ textAlign: 'center' }) ? 'bg-primary text-primary-foreground' : ''}
-              >
-                <AlignCenter className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => editor.chain().focus().setTextAlign('right').run()}
-                className={editor.isActive({ textAlign: 'right' }) ? 'bg-primary text-primary-foreground' : ''}
-              >
-                <AlignRight className="w-4 h-4" />
-              </Button>
+                {/* Tipografía y fuentes */}
+                <FontSelector editor={editor} />
+                <LineHeightSelector editor={editor} />
 
-              <Separator orientation="vertical" className="h-6 mx-2" />
+                <Separator orientation="vertical" className="h-6 mx-2" />
 
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => editor.chain().focus().toggleBulletList().run()}
-                className={editor.isActive('bulletList') ? 'bg-primary text-primary-foreground' : ''}
-              >
-                <List className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => editor.chain().focus().toggleOrderedList().run()}
-                className={editor.isActive('orderedList') ? 'bg-primary text-primary-foreground' : ''}
-              >
-                <ListOrdered className="w-4 h-4" />
-              </Button>
+                {/* Alineación */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => editor.chain().focus().setTextAlign('left').run()}
+                  className={editor.isActive({ textAlign: 'left' }) ? 'bg-primary text-primary-foreground' : ''}
+                >
+                  <AlignLeft className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => editor.chain().focus().setTextAlign('center').run()}
+                  className={editor.isActive({ textAlign: 'center' }) ? 'bg-primary text-primary-foreground' : ''}
+                >
+                  <AlignCenter className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => editor.chain().focus().setTextAlign('right').run()}
+                  className={editor.isActive({ textAlign: 'right' }) ? 'bg-primary text-primary-foreground' : ''}
+                >
+                  <AlignRight className="w-4 h-4" />
+                </Button>
+              </div>
+
+              {/* Segunda fila - Listas, sangría e imágenes */}
+              <div className="flex flex-wrap items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => editor.chain().focus().toggleBulletList().run()}
+                  className={editor.isActive('bulletList') ? 'bg-primary text-primary-foreground' : ''}
+                >
+                  <List className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                  className={editor.isActive('orderedList') ? 'bg-primary text-primary-foreground' : ''}
+                >
+                  <ListOrdered className="w-4 h-4" />
+                </Button>
+
+                <Separator orientation="vertical" className="h-6 mx-2" />
+
+                {/* Sangría */}
+                <IndentControls editor={editor} />
+
+                <Separator orientation="vertical" className="h-6 mx-2" />
+
+                {/* Insertar imagen */}
+                <ImageInsert editor={editor} />
+
+                <Separator orientation="vertical" className="h-6 mx-2" />
+
+                {/* Configuración de márgenes */}
+                <MarginControls 
+                  currentMargins={margins}
+                  onMarginsChange={(newMargins) => {
+                    setMargins(newMargins);
+                    // Actualizar los atributos del editor
+                    if (editor && editor.view && editor.view.dom) {
+                      const editorElement = editor.view.dom as HTMLElement;
+                      editorElement.style.padding = `${newMargins.top}px ${newMargins.right}px ${newMargins.bottom}px ${newMargins.left}px`;
+                    }
+                  }}
+                />
+              </div>
             </div>
 
             {/* Editor */}
