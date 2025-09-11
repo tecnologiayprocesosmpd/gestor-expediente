@@ -34,34 +34,34 @@ export function Dashboard({
   
   // Para oficinas, solo mostrar expedientes asignados (mock - aquí filtrarías por oficina asignada)
   const filteredExpedients = user.role === 'oficina' 
-    ? expedients.filter(e => e.status === 'derivado' || e.status === 'active') // Mock: asumimos que estos están asignados
+    ? expedients.filter(e => e.status === 'derivado' || e.status === 'en_tramite') // Mock: asumimos que estos están asignados
     : expedients;
     
   const recentExpedients = filteredExpedients.slice(0, 5);
   
   const stats = {
     total: filteredExpedients.length,
-    active: filteredExpedients.filter(e => e.status === 'active').length,
+    active: filteredExpedients.filter(e => e.status === 'en_tramite').length,
     draft: filteredExpedients.filter(e => e.status === 'draft').length,
     derivados: filteredExpedients.filter(e => e.status === 'derivado').length,
     high: filteredExpedients.filter(e => e.priority === 'high').length,
   };
 
-  const getStatusBadge = (status: 'draft' | 'active' | 'paused' | 'closed' | 'archived' | 'derivado') => {
+  const getStatusBadge = (status: 'draft' | 'en_tramite' | 'archivado' | 'derivado' | 'desistido') => {
     const colors = {
       draft: 'bg-[hsl(var(--status-draft))] text-[hsl(var(--status-draft-foreground))] border-[hsl(var(--status-draft))]',
-      active: 'bg-[hsl(var(--status-active))] text-[hsl(var(--status-active-foreground))] border-[hsl(var(--status-active))]',
-      closed: 'bg-[hsl(var(--status-closed))] text-[hsl(var(--status-closed-foreground))] border-[hsl(var(--status-closed))]',
-      archived: 'bg-[hsl(var(--status-archived))] text-[hsl(var(--status-archived-foreground))] border-[hsl(var(--status-archived))]',
-      derivado: 'bg-[hsl(var(--status-derivado))] text-[hsl(var(--status-derivado-foreground))] border-[hsl(var(--status-derivado))]'
+      en_tramite: 'bg-[hsl(var(--status-en-tramite))] text-[hsl(var(--status-en-tramite-foreground))] border-[hsl(var(--status-en-tramite))]',
+      archivado: 'bg-[hsl(var(--status-archivado))] text-[hsl(var(--status-archivado-foreground))] border-[hsl(var(--status-archivado))]',
+      derivado: 'bg-[hsl(var(--status-derivado))] text-[hsl(var(--status-derivado-foreground))] border-[hsl(var(--status-derivado))]',
+      desistido: 'bg-[hsl(var(--status-desistido))] text-[hsl(var(--status-desistido-foreground))] border-[hsl(var(--status-desistido))]'
     };
     
     const labels = {
       draft: 'Borrador',
-      active: 'Activo',
-      closed: 'Cerrado',
-      archived: 'Archivado',
-      derivado: 'Derivado'
+      en_tramite: 'En Trámite',
+      archivado: 'Archivado',
+      derivado: 'Derivado',
+      desistido: 'Desistido'
     };
 
     return (

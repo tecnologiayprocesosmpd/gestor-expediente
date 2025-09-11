@@ -7,7 +7,7 @@ export interface Expedient {
   updatedAt: Date;
   createdBy: string;
   department: string; // Secretaría responsable
-  status: 'draft' | 'active' | 'paused' | 'closed' | 'archived' | 'derivado';
+  status: 'draft' | 'en_tramite' | 'archivado' | 'derivado' | 'desistido';
   priority: 'low' | 'medium' | 'high' | 'urgent';
   tags: string[];
   
@@ -53,7 +53,7 @@ export interface ExpedientSummary {
   updatedAt: Date;
   createdBy: string;
   department: string;
-  status: 'draft' | 'active' | 'paused' | 'closed' | 'archived' | 'derivado';
+  status: 'draft' | 'en_tramite' | 'archivado' | 'derivado' | 'desistido';
   priority: 'low' | 'medium' | 'high' | 'urgent';
   tipoTramite: string;
   solicitante: string;
