@@ -41,7 +41,7 @@ export function ProfileSelector() {
       <div className="w-full max-w-6xl">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-foreground mb-4">
-            SAE MPD - Sistema de Administración de Expedientes
+            MPD - Sistema de Administración de Expedientes
           </h1>
           <p className="text-xl text-muted-foreground mb-2">
             Ministerio Pupilar y de la Defensa - San Miguel de Tucumán
