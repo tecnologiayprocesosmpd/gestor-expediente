@@ -62,6 +62,8 @@ All colors MUST be HSL.
     --status-draft-foreground: 0 0% 100%;
     --status-active: 142 76% 36%; /* Verde para activo */
     --status-active-foreground: 0 0% 100%;
+    --status-paused: 45 93% 47%; /* Amarillo para pausado */
+    --status-paused-foreground: 0 0% 100%;
     --status-closed: 240 6% 50%; /* Gris para cerrado */
     --status-closed-foreground: 0 0% 100%;
     --status-archived: 240 6% 30%; /* Gris oscuro para archivado */

@@ -89,10 +89,11 @@ export function ExpedientList({
     }
   };
 
-  const getStatusBadge = (status: 'draft' | 'active' | 'closed' | 'archived' | 'derivado') => {
+  const getStatusBadge = (status: 'draft' | 'active' | 'paused' | 'closed' | 'archived' | 'derivado') => {
     const colors = {
       draft: 'bg-[hsl(var(--status-draft))] text-[hsl(var(--status-draft-foreground))] border-[hsl(var(--status-draft))]',
       active: 'bg-[hsl(var(--status-active))] text-[hsl(var(--status-active-foreground))] border-[hsl(var(--status-active))]',
+      paused: 'bg-[hsl(var(--status-paused))] text-[hsl(var(--status-paused-foreground))] border-[hsl(var(--status-paused))]',
       closed: 'bg-[hsl(var(--status-closed))] text-[hsl(var(--status-closed-foreground))] border-[hsl(var(--status-closed))]',
       archived: 'bg-[hsl(var(--status-archived))] text-[hsl(var(--status-archived-foreground))] border-[hsl(var(--status-archived))]',
       derivado: 'bg-[hsl(var(--status-derivado))] text-[hsl(var(--status-derivado-foreground))] border-[hsl(var(--status-derivado))]'
@@ -101,6 +102,7 @@ export function ExpedientList({
     const labels = {
       draft: 'Borrador',
       active: 'Activo',
+      paused: 'Pausado',
       closed: 'Cerrado',
       archived: 'Archivado',
       derivado: 'Derivado'
@@ -185,7 +187,7 @@ export function ExpedientList({
             {/* Status Filters */}
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground whitespace-nowrap">Estado:</span>
-              {['all', 'active', 'draft', 'closed'].map((status) => (
+              {['all', 'active', 'draft', 'paused', 'closed'].map((status) => (
                 <Button
                   key={status}
                   variant={selectedStatus === status ? 'default' : 'outline'}

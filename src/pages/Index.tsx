@@ -22,7 +22,11 @@ const mockExpedients: ExpedientSummary[] = [
     createdBy: 'Dr. María González',
     department: 'Mesa de Entrada',
     status: 'active',
-    priority: 'high'
+    priority: 'high',
+    tipoTramite: 'Amparo',
+    solicitante: 'García, Juan Carlos',
+    confidencial: false,
+    urgente: true
   },
   {
     id: '2', 
@@ -33,7 +37,11 @@ const mockExpedients: ExpedientSummary[] = [
     createdBy: 'Dr. Carlos López',
     department: 'Defensoría Penal',
     status: 'draft',
-    priority: 'medium'
+    priority: 'medium',
+    tipoTramite: 'Defensa Penal',
+    solicitante: 'Tribunal Penal Nº 3',
+    confidencial: true,
+    urgente: false
   },
   {
     id: '3',
@@ -44,7 +52,11 @@ const mockExpedients: ExpedientSummary[] = [
     createdBy: 'Dra. Ana Martínez',
     department: 'Secretaría General',
     status: 'active',
-    priority: 'low'
+    priority: 'low',
+    tipoTramite: 'Consulta Legal',
+    solicitante: 'Sindicato de Trabajadores',
+    confidencial: false,
+    urgente: false
   },
   {
     id: '4',
@@ -55,7 +67,11 @@ const mockExpedients: ExpedientSummary[] = [
     createdBy: 'Dr. Roberto Silva',
     department: 'Mesa de Entrada',
     status: 'closed',
-    priority: 'high'
+    priority: 'high',
+    tipoTramite: 'Recurso Inconstitucionalidad',
+    solicitante: 'Defensor General',
+    confidencial: false,
+    urgente: false
   },
   {
     id: '5',
@@ -66,7 +82,11 @@ const mockExpedients: ExpedientSummary[] = [
     createdBy: 'Dra. Laura Pérez',
     department: 'Defensoría Civil',
     status: 'draft',
-    priority: 'low'
+    priority: 'low',
+    tipoTramite: 'Asesoramiento Civil',
+    solicitante: 'Pérez, María Elena',
+    confidencial: true,
+    urgente: false
   }
 ];
 
@@ -135,7 +155,11 @@ function AppContent() {
         createdBy: user.name,
         department: user.department || 'Sin departamento',
         status: data.status || 'draft',
-        priority: 'medium'
+        priority: 'medium',
+        tipoTramite: data.tipoTramite || 'General',
+        solicitante: data.solicitante || 'No especificado',
+        confidencial: data.confidencial || false,
+        urgente: data.urgente || false
       };
       
       setExpedients(prev => [newExpedient, ...prev]);

@@ -47,7 +47,7 @@ export function Dashboard({
     high: filteredExpedients.filter(e => e.priority === 'high').length,
   };
 
-  const getStatusBadge = (status: 'draft' | 'active' | 'closed' | 'archived' | 'derivado') => {
+  const getStatusBadge = (status: 'draft' | 'active' | 'paused' | 'closed' | 'archived' | 'derivado') => {
     const colors = {
       draft: 'bg-[hsl(var(--status-draft))] text-[hsl(var(--status-draft-foreground))] border-[hsl(var(--status-draft))]',
       active: 'bg-[hsl(var(--status-active))] text-[hsl(var(--status-active-foreground))] border-[hsl(var(--status-active))]',
