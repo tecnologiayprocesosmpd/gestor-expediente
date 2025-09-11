@@ -154,9 +154,17 @@ export function ExpedientView({ expedientId, onBack }: ExpedientViewProps) {
 
   return (
     <div className="min-h-screen relative">
-      {/* Status Indicator - Esquina Superior Derecha con líneas decorativas */}
-      <div className="absolute top-4 right-4 z-10">        
-        {/* Indicador principal */}
+      {/* Contorno integrado del expediente con indicador de estado */}
+      <div className={`absolute inset-0 border-2 ${statusColors.border} rounded-xl pointer-events-none z-0`}>
+        {/* Esquinas decorativas */}
+        <div className={`absolute -top-1 -left-1 w-8 h-8 border-t-4 border-l-4 ${statusColors.border} rounded-tl-xl`}></div>
+        <div className={`absolute -top-1 -right-1 w-8 h-8 border-t-4 border-r-4 ${statusColors.border} rounded-tr-xl`}></div>
+        <div className={`absolute -bottom-1 -left-1 w-8 h-8 border-b-4 border-l-4 ${statusColors.border} rounded-bl-xl`}></div>
+        <div className={`absolute -bottom-1 -right-1 w-8 h-8 border-b-4 border-r-4 ${statusColors.border} rounded-br-xl`}></div>
+      </div>
+
+      {/* Status Indicator integrado en el contorno */}
+      <div className="absolute top-4 right-4 z-10">
         <div className={`${statusColors.bg} rounded-full px-4 py-2 shadow-lg backdrop-blur-sm border-2 border-white/20 relative`}>
           <div className="flex items-center space-x-2">
             <div className={`w-3 h-3 rounded-full bg-white/90 shadow-sm animate-pulse`}></div>
@@ -165,20 +173,10 @@ export function ExpedientView({ expedientId, onBack }: ExpedientViewProps) {
             </span>
           </div>
         </div>
-        
-        {/* Líneas decorativas extendidas */}
-        <div className="absolute top-1/2 -translate-y-1/2 pointer-events-none">
-          {/* Línea horizontal hacia la izquierda */}
-          <div className={`absolute right-full top-0 w-32 h-1 ${statusColors.bg} shadow-md animate-fade-in`}></div>
-          {/* Línea vertical hacia abajo desde el final de la horizontal */}
-          <div className={`absolute right-32 top-0 w-1 h-40 ${statusColors.bg} shadow-md animate-fade-in`}></div>
-          {/* Línea horizontal corta hacia la izquierda desde abajo */}
-          <div className={`absolute right-full top-40 w-16 h-1 ${statusColors.bg} shadow-md animate-fade-in`}></div>
-        </div>
       </div>
 
-      {/* Main Content */}
-      <div className="p-6 space-y-6">
+      {/* Main Content con padding para el contorno */}
+      <div className="p-8 pt-16 pb-8 space-y-6 relative z-1">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -205,10 +203,6 @@ export function ExpedientView({ expedientId, onBack }: ExpedientViewProps) {
 
         {/* Expedient Info */}
         <Card className={`${statusColors.border} border-l-4 shadow-lg relative`}>
-          {/* Líneas decorativas conectoras más visibles */}
-          <div className={`absolute -top-1 -right-1 w-6 h-6 border-t-2 border-r-2 ${statusColors.border} rounded-tr-lg`}></div>
-          <div className={`absolute top-4 -right-1 w-1 h-8 ${statusColors.bg} opacity-50`}></div>
-          
           <CardHeader>
             <CardTitle className="flex items-center space-x-2 text-xl">
               <FileText className="w-6 h-6" />
