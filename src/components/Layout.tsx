@@ -53,7 +53,7 @@ export function Layout({ children, currentView = 'dashboard', onNavigate, onCrea
                 </div>
                 <div>
                   <h1 className="text-xl font-bold text-foreground">
-                    SAE MPD - Sistema de Expedientes
+                    MPD - Sistema de Expedientes
                   </h1>
                   <div className="flex items-center space-x-2">
                     <Badge variant="secondary" className="text-xs">
