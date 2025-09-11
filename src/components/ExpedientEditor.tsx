@@ -4,7 +4,6 @@ import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import Image from '@tiptap/extension-image';
 import FontFamily from '@tiptap/extension-font-family';
-import { TextStyle } from '@tiptap/extension-text-style';
 import { useState, useEffect } from 'react';
 import { useUser } from "@/contexts/UserContext";
 
@@ -72,7 +71,6 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
       FontFamily.configure({
         types: ['textStyle'],
       }),
-      TextStyle,
     ],
     content: propExpedient?.content || '<p>Comience a redactar el contenido del expediente aquí...</p>',
     editorProps: {
