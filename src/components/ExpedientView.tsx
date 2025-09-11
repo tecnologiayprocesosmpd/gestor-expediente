@@ -154,15 +154,30 @@ export function ExpedientView({ expedientId, onBack }: ExpedientViewProps) {
 
   return (
     <div className="min-h-screen relative">
-      {/* Status Indicator - Esquina Superior Derecha */}
+      {/* Status Indicator - Esquina Superior Derecha con líneas decorativas */}
       <div className="absolute top-4 right-4 z-10">
-        <div className={`${statusColors.bg} rounded-full px-4 py-2 shadow-lg backdrop-blur-sm border-2 border-white/20`}>
+        {/* Líneas decorativas que se extienden desde el indicador */}
+        <div className="absolute inset-0 pointer-events-none">
+          {/* Línea horizontal hacia la izquierda */}
+          <div className={`absolute top-1/2 -translate-y-1/2 right-full w-20 h-0.5 ${statusColors.bg} animate-fade-in`}></div>
+          {/* Línea vertical hacia abajo */}
+          <div className={`absolute left-1/2 -translate-x-1/2 top-full h-20 w-0.5 ${statusColors.bg} animate-fade-in`}></div>
+          {/* Línea diagonal */}
+          <div className={`absolute top-full right-full w-14 h-0.5 ${statusColors.bg} rotate-45 origin-right animate-fade-in`}></div>
+        </div>
+        
+        {/* Indicador principal */}
+        <div className={`${statusColors.bg} rounded-full px-4 py-2 shadow-lg backdrop-blur-sm border-2 border-white/20 relative`}>
           <div className="flex items-center space-x-2">
             <div className={`w-3 h-3 rounded-full bg-white/90 shadow-sm animate-pulse`}></div>
             <span className="text-sm font-semibold text-white">
               {getStatusLabel(expedient.status)}
             </span>
           </div>
+          
+          {/* Círculos decorativos alrededor del indicador */}
+          <div className={`absolute -top-2 -left-2 w-2 h-2 rounded-full ${statusColors.bg} opacity-60 animate-pulse`}></div>
+          <div className={`absolute -bottom-2 -right-2 w-2 h-2 rounded-full ${statusColors.bg} opacity-60 animate-pulse`}></div>
         </div>
       </div>
 
@@ -193,7 +208,11 @@ export function ExpedientView({ expedientId, onBack }: ExpedientViewProps) {
         </div>
 
         {/* Expedient Info */}
-        <Card className={`${statusColors.border} border-l-4 shadow-lg`}>
+        <Card className={`${statusColors.border} border-l-4 shadow-lg relative overflow-hidden`}>
+          {/* Línea decorativa que conecta con el indicador superior */}
+          <div className={`absolute top-0 right-0 w-0.5 h-8 ${statusColors.bg} opacity-30`}></div>
+          <div className={`absolute top-0 right-0 w-8 h-0.5 ${statusColors.bg} opacity-30`}></div>
+          
           <CardHeader>
             <CardTitle className="flex items-center space-x-2 text-xl">
               <FileText className="w-6 h-6" />
