@@ -8,36 +8,16 @@ const profiles = [
   {
     id: 'mesa-entrada' as UserProfile,
     title: 'Mesa de Entrada',
-    description: 'Gestión integral de expedientes, creación, derivación y asignación a oficinas dependientes',
     role: 'mesa' as const,
     icon: FileText,
-    capabilities: [
-      'Crear y editar expedientes completos',
-      'Asignar expedientes a oficinas',
-      'Gestionar carátulas y datos principales',
-      'Derivar expedientes entre oficinas',
-      'Exportar documentos a PDF',
-      'Control total del sistema'
-    ],
-    bgClass: 'bg-gradient-primary',
-    badgeText: 'Control Total'
+    bgClass: 'bg-gradient-primary'
   },
   {
     id: 'oficina' as UserProfile,
     title: 'Oficina',
-    description: 'Visualización de expedientes asignados y agregado de actuaciones complementarias',
     role: 'oficina' as const,
     icon: Building2,
-    capabilities: [
-      'Visualizar expedientes asignados',
-      'Agregar nuevas actuaciones',
-      'Consultar historial de expedientes',
-      'Exportar actuaciones a PDF',
-      'Sin acceso a datos principales',
-      'Sin permisos de creación de expedientes'
-    ],
-    bgClass: 'bg-gradient-secondary',
-    badgeText: 'Solo Actuaciones'
+    bgClass: 'bg-gradient-secondary'
   }
 ];
 
@@ -87,25 +67,8 @@ export function ProfileSelector() {
                   <CardTitle className="text-xl text-foreground">
                     {profile.title}
                   </CardTitle>
-                  <Badge variant="secondary" className="w-fit mx-auto">
-                    {profile.badgeText}
-                  </Badge>
                 </CardHeader>
                 <CardContent className="text-center">
-                  <p className="text-muted-foreground mb-6 leading-relaxed">
-                    {profile.description}
-                  </p>
-                  
-                  <div className="space-y-3 mb-6">
-                    <h4 className="text-sm font-semibold text-foreground">Permisos y capacidades:</h4>
-                    {profile.capabilities.map((capability, index) => (
-                      <div key={index} className="flex items-start text-sm text-muted-foreground">
-                        <div className="w-1.5 h-1.5 bg-primary rounded-full mr-3 mt-2 flex-shrink-0" />
-                        <span className="text-left">{capability}</span>
-                      </div>
-                    ))}
-                  </div>
-
                   <Button 
                     className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
                     variant="outline"
@@ -119,21 +82,6 @@ export function ProfileSelector() {
           })}
         </div>
         
-        <div className="text-center mt-12">
-          <div className="bg-muted/30 rounded-lg p-6 max-w-3xl mx-auto">
-            <h3 className="text-lg font-semibold text-foreground mb-3">
-              Información del Sistema
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-muted-foreground">
-              <div>
-                <strong className="text-foreground">Mesa de Entrada:</strong> Creación, gestión y asignación completa de expedientes a oficinas.
-              </div>
-              <div>
-                <strong className="text-foreground">Oficina:</strong> Visualización de expedientes asignados y agregado de actuaciones.
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

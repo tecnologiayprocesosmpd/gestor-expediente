@@ -15,8 +15,8 @@ import { useUser } from "@/contexts/UserContext";
 
 interface LayoutProps {
   children: ReactNode;
-  currentView?: 'dashboard' | 'expedientes' | 'editor' | 'legajos' | 'reportes';
-  onNavigate?: (view: 'dashboard' | 'expedientes' | 'editor' | 'legajos' | 'reportes') => void;
+  currentView?: 'dashboard' | 'expedientes' | 'view' | 'editor' | 'legajos' | 'reportes';
+  onNavigate?: (view: 'dashboard' | 'expedientes' | 'view' | 'editor' | 'legajos' | 'reportes') => void;
   onCreateExpedient?: () => void;
 }
 

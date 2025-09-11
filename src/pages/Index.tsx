@@ -4,6 +4,7 @@ import { ProfileSelector } from '@/components/ProfileSelector';
 import { Layout } from '@/components/Layout';
 import { Dashboard } from '@/components/Dashboard';
 import { ExpedientList } from '@/components/ExpedientList';
+import { ExpedientView } from '@/components/ExpedientView';
 import { ExpedientEditor } from '@/components/ExpedientEditor';
 import { LegajoManager } from '@/components/LegajoManager';
 import { ReportesManager } from '@/components/ReportesManager';
@@ -72,7 +73,7 @@ const mockExpedients: ExpedientSummary[] = [
 function AppContent() {
   const { user } = useUser();
   const { toast } = useToast();
-  const [currentView, setCurrentView] = useState<'dashboard' | 'expedientes' | 'editor' | 'legajos' | 'reportes'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'expedientes' | 'view' | 'editor' | 'legajos' | 'reportes'>('dashboard');
   const [expedients, setExpedients] = useState<ExpedientSummary[]>(mockExpedients);
   const [currentExpedientId, setCurrentExpedientId] = useState<string | null>(null);
 
@@ -87,20 +88,12 @@ function AppContent() {
 
   const handleViewExpedient = (id: string) => {
     setCurrentExpedientId(id);
-    setCurrentView('editor');
-    toast({
-      title: "Expediente abierto",
-      description: "Modo solo lectura activado",
-    });
+    setCurrentView('view');
   };
 
   const handleEditExpedient = (id: string) => {
     setCurrentExpedientId(id);
     setCurrentView('editor');
-    toast({
-      title: "Editor activado",
-      description: "Puede editar y guardar cambios",
-    });
   };
 
   const handleSaveExpedient = (data: any) => {
@@ -141,7 +134,7 @@ function AppContent() {
 
   const handleBackFromEditor = () => {
     setCurrentExpedientId(null);
-    setCurrentView('expedientes');
+    setCurrentView('dashboard');
   };
 
   const renderCurrentView = () => {
@@ -162,6 +155,13 @@ function AppContent() {
             onViewExpedient={handleViewExpedient}
             onEditExpedient={user.role === 'mesa' ? handleEditExpedient : undefined}
             onCreateExpedient={user.role === 'mesa' ? handleCreateExpedient : undefined}
+          />
+        );
+      case 'view':
+        return (
+          <ExpedientView
+            expedientId={currentExpedientId || undefined}
+            onBack={handleBackFromEditor}
           />
         );
       case 'editor':

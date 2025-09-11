@@ -1,0 +1,285 @@
+import { useState } from 'react';
+import { useUser } from "@/contexts/UserContext";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Separator } from "@/components/ui/separator";
+import {
+  ArrowLeft,
+  FileText,
+  Plus,
+  Eye,
+  Edit,
+  Download,
+  Calendar,
+  User,
+  Clock
+} from "lucide-react";
+import { ActuacionList } from "./ActuacionList";
+import { ExpedientEditor } from "./ExpedientEditor";
+import type { Actuacion } from "@/types/actuacion";
+
+interface ExpedientViewProps {
+  expedientId?: string;
+  onBack?: () => void;
+}
+
+// Mock data para las actuaciones
+const mockActuaciones: Actuacion[] = [
+  {
+    id: '1',
+    expedientId: 'exp-001',
+    number: 1,
+    title: 'Inicio de Actuación',
+    content: '<p>Se inicia la presente actuación con la documentación correspondiente...</p>',
+    status: 'firmado',
+    createdBy: 'Juan Pérez - Mesa de Entrada',
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-01-16'),
+    signedBy: 'Dr. Carlos López',
+    signedAt: new Date('2024-01-16')
+  },
+  {
+    id: '2',
+    expedientId: 'exp-001',
+    number: 2,
+    title: 'Revisión de Documentación',
+    content: '<p>Se procede a la revisión de la documentación presentada por el interesado...</p>',
+    status: 'para-firmar',
+    createdBy: 'Ana García - Oficina',
+    createdAt: new Date('2024-01-20'),
+    updatedAt: new Date('2024-01-20')
+  }
+];
+
+export function ExpedientView({ expedientId, onBack }: ExpedientViewProps) {
+  const [showEditor, setShowEditor] = useState(false);
+  const [actuaciones, setActuaciones] = useState<Actuacion[]>(mockActuaciones);
+  
+  // Mock data del expediente
+  const expedient = {
+    id: expedientId || 'exp-001',
+    number: 'EXP-2024-001',
+    title: 'Solicitud de Defensa Pública',
+    status: 'active' as const,
+    assignedOffice: 'Defensoría Civil Nº 1',
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-01-20')
+  };
+
+  const { user } = useUser();
+  
+  const getStatusColors = (status: string) => {
+    const colors = {
+      draft: {
+        bg: 'bg-[hsl(var(--status-draft))]',
+        border: 'border-[hsl(var(--status-draft))]',
+        text: 'text-[hsl(var(--status-draft-foreground))]'
+      },
+      active: {
+        bg: 'bg-[hsl(var(--status-active))]',
+        border: 'border-[hsl(var(--status-active))]',
+        text: 'text-[hsl(var(--status-active-foreground))]'
+      },
+      closed: {
+        bg: 'bg-[hsl(var(--status-closed))]',
+        border: 'border-[hsl(var(--status-closed))]',
+        text: 'text-[hsl(var(--status-closed-foreground))]'
+      },
+      archived: {
+        bg: 'bg-[hsl(var(--status-archived))]',
+        border: 'border-[hsl(var(--status-archived))]',
+        text: 'text-[hsl(var(--status-archived-foreground))]'
+      },
+      derivado: {
+        bg: 'bg-[hsl(var(--status-derivado))]',
+        border: 'border-[hsl(var(--status-derivado))]',
+        text: 'text-[hsl(var(--status-derivado-foreground))]'
+      }
+    };
+    
+    return colors[status as keyof typeof colors] || colors.draft;
+  };
+
+  const getStatusLabel = (status: string) => {
+    const labels = {
+      draft: 'Borrador',
+      active: 'Activo',
+      closed: 'Cerrado',
+      archived: 'Archivado',
+      derivado: 'Derivado'
+    };
+    
+    return labels[status as keyof typeof labels] || 'Borrador';
+  };
+
+  const handleAddActuacion = () => {
+    setShowEditor(true);
+  };
+
+  const handleViewActuacion = (actuacionId: string) => {
+    console.log('Ver actuación:', actuacionId);
+  };
+
+  const handleEditActuacion = (actuacionId: string) => {
+    console.log('Editar actuación:', actuacionId);
+    setShowEditor(true);
+  };
+
+  const handleStatusChange = (actuacionId: string, newStatus: Actuacion['status']) => {
+    setActuaciones(prev => 
+      prev.map(act => 
+        act.id === actuacionId 
+          ? { ...act, status: newStatus, signedAt: newStatus === 'firmado' ? new Date() : undefined }
+          : act
+      )
+    );
+  };
+
+  const statusColors = getStatusColors(expedient.status);
+  const latestActuacion = actuaciones.sort((a, b) => 
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  )[0];
+
+  if (showEditor) {
+    return (
+      <ExpedientEditor 
+        expedientId={expedientId}
+        onBack={() => setShowEditor(false)}
+        onSave={() => setShowEditor(false)}
+      />
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Status Banner */}
+      <Alert className={`${statusColors.border} border-2 ${statusColors.bg}/10`}>
+        <AlertDescription className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className={`w-4 h-4 rounded-full ${statusColors.bg}`}></div>
+            <span className="text-lg font-semibold">
+              Estado del Expediente: <span className={statusColors.text}>{getStatusLabel(expedient.status)}</span>
+            </span>
+          </div>
+          <div className="flex items-center space-x-3">
+            <Badge className={`${statusColors.bg} ${statusColors.text} px-3 py-1`}>
+              {getStatusLabel(expedient.status)}
+            </Badge>
+          </div>
+        </AlertDescription>
+      </Alert>
+
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Button variant="outline" onClick={onBack}>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Volver
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">
+              {expedient.title}
+            </h1>
+            <p className="text-muted-foreground">
+              Expediente: {expedient.number}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center space-x-3">
+          <Button variant="outline">
+            <Download className="w-4 h-4 mr-2" />
+            Exportar PDF
+          </Button>
+        </div>
+      </div>
+
+      {/* Expedient Info */}
+      <Card className={`${statusColors.border} border-l-4`}>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <FileText className="w-5 h-5" />
+            <span>Información del Expediente</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="flex items-center space-x-3">
+              <Calendar className="w-4 h-4 text-muted-foreground" />
+              <div>
+                <p className="text-sm font-medium">Fecha de Creación</p>
+                <p className="text-sm text-muted-foreground">
+                  {expedient.createdAt.toLocaleDateString('es-ES')}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <Clock className="w-4 h-4 text-muted-foreground" />
+              <div>
+                <p className="text-sm font-medium">Última Modificación</p>
+                <p className="text-sm text-muted-foreground">
+                  {expedient.updatedAt.toLocaleDateString('es-ES')}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <User className="w-4 h-4 text-muted-foreground" />
+              <div>
+                <p className="text-sm font-medium">Oficina Asignada</p>
+                <p className="text-sm text-muted-foreground">
+                  {expedient.assignedOffice}
+                </p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Latest Actuacion */}
+      {latestActuacion && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Última Actuación</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-medium">{latestActuacion.title}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    ACT-{latestActuacion.number.toString().padStart(3, '0')} - {latestActuacion.createdBy}
+                  </p>
+                </div>
+                <Badge variant={latestActuacion.status === 'firmado' ? 'default' : 'secondary'}>
+                  {latestActuacion.status === 'firmado' ? 'Firmado' : 
+                   latestActuacion.status === 'para-firmar' ? 'Para Firmar' : 'Borrador'}
+                </Badge>
+              </div>
+              <div 
+                className="prose prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: latestActuacion.content }}
+              />
+              <p className="text-xs text-muted-foreground">
+                Creado: {latestActuacion.createdAt.toLocaleString('es-ES')}
+                {latestActuacion.signedAt && (
+                  <span> • Firmado: {latestActuacion.signedAt.toLocaleString('es-ES')}</span>
+                )}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Actuaciones List */}
+      <ActuacionList
+        expedientId={expedient.id}
+        actuaciones={actuaciones}
+        onViewActuacion={handleViewActuacion}
+        onEditActuacion={handleEditActuacion}
+        onCreateActuacion={handleAddActuacion}
+        onChangeStatus={handleStatusChange}
+      />
+    </div>
+  );
+}
