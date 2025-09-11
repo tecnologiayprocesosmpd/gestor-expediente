@@ -28,8 +28,9 @@ export function FontSelector({ editor }: FontSelectorProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" title="Fuente">
-          <Type className="w-4 h-4" />
+        <Button variant="ghost" size="sm" title="Fuente" className="h-8 px-3 hover:bg-muted text-sm">
+          <Type className="w-4 h-4 mr-1" />
+          <span className="hidden sm:inline">Fuente</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

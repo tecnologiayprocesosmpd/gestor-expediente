@@ -34,8 +34,9 @@ export function LineHeightSelector({ editor }: LineHeightSelectorProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" title="Interlineado">
-          <AlignJustify className="w-4 h-4" />
+        <Button variant="ghost" size="sm" title="Interlineado" className="h-8 px-3 hover:bg-muted text-sm">
+          <AlignJustify className="w-4 h-4 mr-1" />
+          <span className="hidden sm:inline">Espaciado</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

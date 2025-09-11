@@ -43,7 +43,7 @@ export function ImageInsert({ editor }: ImageInsertProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" title="Insertar imagen">
+        <Button variant="ghost" size="sm" title="Insertar imagen" className="h-8 w-8 p-0 hover:bg-muted">
           <Image className="w-4 h-4" />
         </Button>
       </DialogTrigger>

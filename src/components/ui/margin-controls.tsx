@@ -27,7 +27,7 @@ export function MarginControls({ onMarginsChange, currentMargins }: MarginContro
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="sm" title="Configurar márgenes">
+        <Button variant="ghost" size="sm" title="Configurar márgenes" className="h-8 w-8 p-0 hover:bg-muted">
           <Settings className="w-4 h-4" />
         </Button>
       </PopoverTrigger>

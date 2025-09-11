@@ -366,112 +366,134 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
         <CardContent>
           <div className="border rounded-lg overflow-hidden">
             {/* Toolbar */}
-            <div className="border-b bg-muted/30 p-3 space-y-2">
-              {/* Primera fila - Formato básico */}
-              <div className="flex flex-wrap items-center gap-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => editor.chain().focus().toggleBold().run()}
-                  className={editor.isActive('bold') ? 'bg-primary text-primary-foreground' : ''}
-                >
-                  <Bold className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => editor.chain().focus().toggleItalic().run()}
-                  className={editor.isActive('italic') ? 'bg-primary text-primary-foreground' : ''}
-                >
-                  <Italic className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => editor.chain().focus().toggleUnderline().run()}
-                  className={editor.isActive('underline') ? 'bg-primary text-primary-foreground' : ''}
-                >
-                  <UnderlineIcon className="w-4 h-4" />
-                </Button>
+            <div className="border-b bg-background/50 backdrop-blur-sm px-4 py-2">
+              <div className="flex items-center gap-1 overflow-x-auto">
+                {/* Grupo: Fuente y Tipografía */}
+                <div className="flex items-center gap-1 pr-2">
+                  <FontSelector editor={editor} />
+                  <LineHeightSelector editor={editor} />
+                </div>
 
-                <Separator orientation="vertical" className="h-6 mx-2" />
+                <Separator orientation="vertical" className="h-5 mx-1" />
 
-                {/* Tipografía y fuentes */}
-                <FontSelector editor={editor} />
-                <LineHeightSelector editor={editor} />
+                {/* Grupo: Formato de texto */}
+                <div className="flex items-center gap-0.5">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().toggleBold().run()}
+                    className={`h-8 w-8 p-0 hover:bg-muted ${editor.isActive('bold') ? 'bg-accent text-accent-foreground' : ''}`}
+                    title="Negrita"
+                  >
+                    <Bold className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().toggleItalic().run()}
+                    className={`h-8 w-8 p-0 hover:bg-muted ${editor.isActive('italic') ? 'bg-accent text-accent-foreground' : ''}`}
+                    title="Cursiva"
+                  >
+                    <Italic className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().toggleUnderline().run()}
+                    className={`h-8 w-8 p-0 hover:bg-muted ${editor.isActive('underline') ? 'bg-accent text-accent-foreground' : ''}`}
+                    title="Subrayado"
+                  >
+                    <UnderlineIcon className="w-4 h-4" />
+                  </Button>
+                </div>
 
-                <Separator orientation="vertical" className="h-6 mx-2" />
+                <Separator orientation="vertical" className="h-5 mx-1" />
 
-                {/* Alineación */}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => editor.chain().focus().setTextAlign('left').run()}
-                  className={editor.isActive({ textAlign: 'left' }) ? 'bg-primary text-primary-foreground' : ''}
-                >
-                  <AlignLeft className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => editor.chain().focus().setTextAlign('center').run()}
-                  className={editor.isActive({ textAlign: 'center' }) ? 'bg-primary text-primary-foreground' : ''}
-                >
-                  <AlignCenter className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => editor.chain().focus().setTextAlign('right').run()}
-                  className={editor.isActive({ textAlign: 'right' }) ? 'bg-primary text-primary-foreground' : ''}
-                >
-                  <AlignRight className="w-4 h-4" />
-                </Button>
-              </div>
+                {/* Grupo: Alineación */}
+                <div className="flex items-center gap-0.5">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().setTextAlign('left').run()}
+                    className={`h-8 w-8 p-0 hover:bg-muted ${editor.isActive({ textAlign: 'left' }) ? 'bg-accent text-accent-foreground' : ''}`}
+                    title="Alinear a la izquierda"
+                  >
+                    <AlignLeft className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().setTextAlign('center').run()}
+                    className={`h-8 w-8 p-0 hover:bg-muted ${editor.isActive({ textAlign: 'center' }) ? 'bg-accent text-accent-foreground' : ''}`}
+                    title="Centrar"
+                  >
+                    <AlignCenter className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().setTextAlign('right').run()}
+                    className={`h-8 w-8 p-0 hover:bg-muted ${editor.isActive({ textAlign: 'right' }) ? 'bg-accent text-accent-foreground' : ''}`}
+                    title="Alinear a la derecha"
+                  >
+                    <AlignRight className="w-4 h-4" />
+                  </Button>
+                </div>
 
-              {/* Segunda fila - Listas, sangría e imágenes */}
-              <div className="flex flex-wrap items-center gap-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => editor.chain().focus().toggleBulletList().run()}
-                  className={editor.isActive('bulletList') ? 'bg-primary text-primary-foreground' : ''}
-                >
-                  <List className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => editor.chain().focus().toggleOrderedList().run()}
-                  className={editor.isActive('orderedList') ? 'bg-primary text-primary-foreground' : ''}
-                >
-                  <ListOrdered className="w-4 h-4" />
-                </Button>
+                <Separator orientation="vertical" className="h-5 mx-1" />
 
-                <Separator orientation="vertical" className="h-6 mx-2" />
+                {/* Grupo: Listas */}
+                <div className="flex items-center gap-0.5">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().toggleBulletList().run()}
+                    className={`h-8 w-8 p-0 hover:bg-muted ${editor.isActive('bulletList') ? 'bg-accent text-accent-foreground' : ''}`}
+                    title="Lista con viñetas"
+                  >
+                    <List className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                    className={`h-8 w-8 p-0 hover:bg-muted ${editor.isActive('orderedList') ? 'bg-accent text-accent-foreground' : ''}`}
+                    title="Lista numerada"
+                  >
+                    <ListOrdered className="w-4 h-4" />
+                  </Button>
+                </div>
 
-                {/* Sangría */}
-                <IndentControls editor={editor} />
+                <Separator orientation="vertical" className="h-5 mx-1" />
 
-                <Separator orientation="vertical" className="h-6 mx-2" />
+                {/* Grupo: Sangría */}
+                <div className="flex items-center gap-0.5">
+                  <IndentControls editor={editor} />
+                </div>
 
-                {/* Insertar imagen */}
-                <ImageInsert editor={editor} />
+                <Separator orientation="vertical" className="h-5 mx-1" />
 
-                <Separator orientation="vertical" className="h-6 mx-2" />
+                {/* Grupo: Insertar */}
+                <div className="flex items-center gap-0.5">
+                  <ImageInsert editor={editor} />
+                </div>
 
-                {/* Configuración de márgenes */}
-                <MarginControls 
-                  currentMargins={margins}
-                  onMarginsChange={(newMargins) => {
-                    setMargins(newMargins);
-                    // Actualizar los atributos del editor
-                    if (editor && editor.view && editor.view.dom) {
-                      const editorElement = editor.view.dom as HTMLElement;
-                      editorElement.style.padding = `${newMargins.top}px ${newMargins.right}px ${newMargins.bottom}px ${newMargins.left}px`;
-                    }
-                  }}
-                />
+                <Separator orientation="vertical" className="h-5 mx-1" />
+
+                {/* Grupo: Configuración */}
+                <div className="flex items-center gap-0.5">
+                  <MarginControls 
+                    currentMargins={margins}
+                    onMarginsChange={(newMargins) => {
+                      setMargins(newMargins);
+                      // Actualizar los atributos del editor
+                      if (editor && editor.view && editor.view.dom) {
+                        const editorElement = editor.view.dom as HTMLElement;
+                        editorElement.style.padding = `${newMargins.top}px ${newMargins.right}px ${newMargins.bottom}px ${newMargins.left}px`;
+                      }
+                    }}
+                  />
+                </div>
               </div>
             </div>
 

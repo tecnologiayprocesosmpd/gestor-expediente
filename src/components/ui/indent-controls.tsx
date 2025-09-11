@@ -28,22 +28,24 @@ export function IndentControls({ editor }: IndentControlsProps) {
 
   return (
     <>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={removeIndent}
-        title="Disminuir sangría"
-      >
-        <Outdent className="w-4 h-4" />
-      </Button>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={addIndent}
-        title="Aumentar sangría"
-      >
-        <Indent className="w-4 h-4" />
-      </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={removeIndent}
+          title="Disminuir sangría"
+          className="h-8 w-8 p-0 hover:bg-muted"
+        >
+          <Outdent className="w-4 h-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={addIndent}
+          title="Aumentar sangría"
+          className="h-8 w-8 p-0 hover:bg-muted"
+        >
+          <Indent className="w-4 h-4" />
+        </Button>
     </>
   );
 }
