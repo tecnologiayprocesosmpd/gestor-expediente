@@ -140,7 +140,7 @@ export function ExpedientList({
       variant="ghost"
       size="sm"
       onClick={() => handleSort(field)}
-      className="h-auto p-1 font-medium"
+      className="h-8 px-2 text-xs font-medium"
     >
       {children}
       {sortField === field && (
@@ -150,7 +150,7 @@ export function ExpedientList({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -167,33 +167,31 @@ export function ExpedientList({
         )}
       </div>
 
-      {/* Filters and Search */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Filter className="w-5 h-5" />
-            <span>Filtros y Búsqueda</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
+      {/* Compact Filter Navbar */}
+      <div className="bg-background border rounded-lg shadow-sm">
+        <div className="px-4 py-3">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
+            {/* Search Bar */}
+            <div className="relative flex-1 min-w-[300px]">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Buscar por título, número o creador..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 h-9"
               />
             </div>
-            <div className="flex gap-2">
+
+            {/* Status Filters */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground whitespace-nowrap">Estado:</span>
               {['all', 'active', 'draft', 'closed'].map((status) => (
                 <Button
                   key={status}
                   variant={selectedStatus === status ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setSelectedStatus(status as any)}
-                  className="capitalize"
+                  className="h-8 px-3 text-xs"
                 >
                   {status === 'all' ? 'Todos' : 
                    status === 'active' ? 'Activos' :
@@ -201,22 +199,22 @@ export function ExpedientList({
                 </Button>
               ))}
             </div>
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Results Count */}
-      <div className="flex items-center justify-between text-sm text-muted-foreground">
-        <span>
-          Mostrando {sortedExpedients.length} de {expedients.length} expedientes
-        </span>
-        <div className="flex items-center space-x-4">
-          <span>Ordenar por:</span>
-          <div className="flex items-center space-x-2">
-            <SortButton field="createdAt">Fecha</SortButton>
-            <SortButton field="number">Número</SortButton>
-            <SortButton field="title">Título</SortButton>
-            <SortButton field="status">Estado</SortButton>
+            {/* Sort Options */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground whitespace-nowrap">Ordenar:</span>
+              <div className="flex items-center gap-1">
+                <SortButton field="createdAt">Fecha</SortButton>
+                <SortButton field="number">Número</SortButton>
+                <SortButton field="title">Título</SortButton>
+                <SortButton field="status">Estado</SortButton>
+              </div>
+            </div>
+
+            {/* Results Count */}
+            <div className="text-sm text-muted-foreground whitespace-nowrap">
+              {sortedExpedients.length} de {expedients.length}
+            </div>
           </div>
         </div>
       </div>
