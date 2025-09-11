@@ -65,16 +65,32 @@ export function ExpedientEditor({ expedientId, onBack, onSave }: ExpedientEditor
 
   const handleSave = () => {
     const content = editor.getHTML();
-    const data = {
-      title,
-      number: expedientNumber,
-      content,
-      status,
-      updatedAt: new Date(),
-    };
     
-    onSave?.(data);
-    console.log('Guardando expediente:', data);
+    if (canOnlyAddActuaciones) {
+      // Si es una oficina, crear nueva actuación
+      const newActuacion = {
+        title,
+        content,
+        status: 'borrador' as const,
+        createdBy: user?.name || 'Usuario',
+        createdAt: new Date(),
+      };
+      
+      onSave?.(newActuacion);
+      console.log('Guardando nueva actuación:', newActuacion);
+    } else {
+      // Si es mesa de entrada, guardar expediente
+      const data = {
+        title,
+        number: expedientNumber,
+        content,
+        status,
+        updatedAt: new Date(),
+      };
+      
+      onSave?.(data);
+      console.log('Guardando expediente:', data);
+    }
   };
 
   const handleExportPDF = () => {
@@ -409,7 +425,7 @@ export function ExpedientEditor({ expedientId, onBack, onSave }: ExpedientEditor
           </Button>
           <Button onClick={handleSave}>
             <Save className="w-4 h-4 mr-2" />
-            Guardar Expediente
+            {canOnlyAddActuaciones ? 'Guardar Actuación' : 'Guardar Expediente'}
           </Button>
         </div>
       </div>

@@ -137,6 +137,23 @@ export function ExpedientView({ expedientId, onBack }: ExpedientViewProps) {
     );
   };
 
+  const handleSaveActuacion = (actuacionData: any) => {
+    const newActuacion = {
+      id: String(Date.now()),
+      expedientId: expedient.id,
+      number: actuaciones.length + 1,
+      title: actuacionData.title || 'Nueva Actuación',
+      content: actuacionData.content || '<p>Contenido de la actuación...</p>',
+      status: 'borrador' as const,
+      createdBy: user?.name || 'Usuario',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    setActuaciones(prev => [newActuacion, ...prev]);
+    setShowEditor(false);
+  };
+
   const statusColors = getStatusColors(expedient.status);
   const latestActuacion = actuaciones.sort((a, b) => 
     new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -147,7 +164,7 @@ export function ExpedientView({ expedientId, onBack }: ExpedientViewProps) {
       <ExpedientEditor 
         expedientId={expedientId}
         onBack={() => setShowEditor(false)}
-        onSave={() => setShowEditor(false)}
+        onSave={handleSaveActuacion}
       />
     );
   }
