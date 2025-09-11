@@ -1,36 +1,43 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Building2, FileText, Users, ArrowRight } from "lucide-react";
+import { Building2, FileText, ArrowRight } from "lucide-react";
 import { useUser, type UserProfile } from "@/contexts/UserContext";
 
 const profiles = [
   {
     id: 'mesa-entrada' as UserProfile,
     title: 'Mesa de Entrada',
-    description: 'Gestión integral de expedientes y comunicación con oficinas dependientes',
+    description: 'Gestión integral de expedientes, creación, derivación y asignación a oficinas dependientes',
     role: 'mesa' as const,
     icon: FileText,
-    features: ['Crear expedientes', 'Comunicación con oficinas', 'Gestión completa', 'Exportar a PDF'],
-    bgClass: 'bg-gradient-primary'
+    capabilities: [
+      'Crear y editar expedientes completos',
+      'Asignar expedientes a oficinas',
+      'Gestionar carátulas y datos principales',
+      'Derivar expedientes entre oficinas',
+      'Exportar documentos a PDF',
+      'Control total del sistema'
+    ],
+    bgClass: 'bg-gradient-primary',
+    badgeText: 'Control Total'
   },
   {
-    id: 'defensoria' as UserProfile,
-    title: 'Defensoría',
-    description: 'Visualización y seguimiento de expedientes asignados',
+    id: 'oficina' as UserProfile,
+    title: 'Oficina',
+    description: 'Visualización de expedientes asignados y agregado de actuaciones complementarias',
     role: 'oficina' as const,
     icon: Building2,
-    features: ['Visualizar expedientes', 'Seguimiento de casos', 'Consulta de documentos', 'Solo lectura'],
-    bgClass: 'bg-gradient-secondary'
-  },
-  {
-    id: 'secretaria' as UserProfile,
-    title: 'Secretaría',
-    description: 'Acceso a expedientes para consulta y revisión',
-    role: 'oficina' as const,
-    icon: Users,
-    features: ['Consultar expedientes', 'Revisión de documentos', 'Acceso restringido', 'Solo lectura'],
-    bgClass: 'bg-gradient-secondary'
+    capabilities: [
+      'Visualizar expedientes asignados',
+      'Agregar nuevas actuaciones',
+      'Consultar historial de expedientes',
+      'Exportar actuaciones a PDF',
+      'Sin acceso a datos principales',
+      'Sin permisos de creación de expedientes'
+    ],
+    bgClass: 'bg-gradient-secondary',
+    badgeText: 'Solo Actuaciones'
   }
 ];
 
@@ -54,14 +61,17 @@ export function ProfileSelector() {
       <div className="w-full max-w-6xl">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-foreground mb-4">
-            Sistema de Gestión de Expedientes
+            SAE MPD - Sistema de Administración de Expedientes
           </h1>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-xl text-muted-foreground mb-2">
+            Ministerio Pupilar y de la Defensa - San Miguel de Tucumán
+          </p>
+          <p className="text-lg text-muted-foreground">
             Seleccione su perfil para acceder al sistema
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {profiles.map((profile) => {
             const Icon = profile.icon;
             return (
@@ -78,7 +88,7 @@ export function ProfileSelector() {
                     {profile.title}
                   </CardTitle>
                   <Badge variant="secondary" className="w-fit mx-auto">
-                    {profile.role === 'mesa' ? 'Gestión Completa' : 'Solo Lectura'}
+                    {profile.badgeText}
                   </Badge>
                 </CardHeader>
                 <CardContent className="text-center">
@@ -86,11 +96,12 @@ export function ProfileSelector() {
                     {profile.description}
                   </p>
                   
-                  <div className="space-y-2 mb-6">
-                    {profile.features.map((feature, index) => (
-                      <div key={index} className="flex items-center justify-center text-sm text-muted-foreground">
-                        <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2" />
-                        {feature}
+                  <div className="space-y-3 mb-6">
+                    <h4 className="text-sm font-semibold text-foreground">Permisos y capacidades:</h4>
+                    {profile.capabilities.map((capability, index) => (
+                      <div key={index} className="flex items-start text-sm text-muted-foreground">
+                        <div className="w-1.5 h-1.5 bg-primary rounded-full mr-3 mt-2 flex-shrink-0" />
+                        <span className="text-left">{capability}</span>
                       </div>
                     ))}
                   </div>
@@ -108,10 +119,20 @@ export function ProfileSelector() {
           })}
         </div>
         
-        <div className="text-center mt-8">
-          <p className="text-sm text-muted-foreground">
-            Sistema desarrollado para la gestión eficiente de documentos y expedientes
-          </p>
+        <div className="text-center mt-12">
+          <div className="bg-muted/30 rounded-lg p-6 max-w-3xl mx-auto">
+            <h3 className="text-lg font-semibold text-foreground mb-3">
+              Información del Sistema
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-muted-foreground">
+              <div>
+                <strong className="text-foreground">Mesa de Entrada:</strong> Creación, gestión y asignación completa de expedientes a oficinas.
+              </div>
+              <div>
+                <strong className="text-foreground">Oficina:</strong> Visualización de expedientes asignados y agregado de actuaciones.
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

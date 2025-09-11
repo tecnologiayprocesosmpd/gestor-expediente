@@ -3,6 +3,7 @@ import StarterKit from '@tiptap/starter-kit';
 import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import { useState } from 'react';
+import { useUser } from "@/contexts/UserContext";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,6 +37,11 @@ export function ExpedientEditor({ expedientId, onBack, onSave }: ExpedientEditor
   const [title, setTitle] = useState('');
   const [expedientNumber, setExpedientNumber] = useState('');
   const [status, setStatus] = useState<'draft' | 'active' | 'closed' | 'archived' | 'derivado'>('draft');
+  const [assignedOffice, setAssignedOffice] = useState('');
+
+  const { user } = useUser();
+  const canEditBasicInfo = user?.role === 'mesa';
+  const canOnlyAddActuaciones = user?.role === 'oficina';
 
   const editor = useEditor({
     extensions: [
@@ -178,9 +184,16 @@ export function ExpedientEditor({ expedientId, onBack, onSave }: ExpedientEditor
               Estado del Expediente: <span className={statusColors.text}>{getStatusLabel(status)}</span>
             </span>
           </div>
-          <Badge className={`${statusColors.bg} ${statusColors.text} px-3 py-1`}>
-            {getStatusLabel(status)}
-          </Badge>
+          <div className="flex items-center space-x-3">
+            <Badge className={`${statusColors.bg} ${statusColors.text} px-3 py-1`}>
+              {getStatusLabel(status)}
+            </Badge>
+            {canOnlyAddActuaciones && (
+              <Badge variant="outline" className="text-xs">
+                Solo Actuaciones
+              </Badge>
+            )}
+          </div>
         </AlertDescription>
       </Alert>
 
@@ -205,13 +218,20 @@ export function ExpedientEditor({ expedientId, onBack, onSave }: ExpedientEditor
       {/* Document Info */}
       <Card className={`${statusColors.border} border-l-4`}>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <FileText className="w-5 h-5" />
-            <span>Información del Expediente</span>
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <FileText className="w-5 h-5" />
+              <span>Información del Expediente</span>
+            </div>
+            {canOnlyAddActuaciones && (
+              <Badge variant="outline" className="text-xs text-muted-foreground">
+                Solo lectura - Mesa de Entrada
+              </Badge>
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
             <div className="space-y-2">
               <Label htmlFor="expedient-number">Número de Expediente</Label>
               <Input
@@ -219,6 +239,8 @@ export function ExpedientEditor({ expedientId, onBack, onSave }: ExpedientEditor
                 value={expedientNumber}
                 onChange={(e) => setExpedientNumber(e.target.value)}
                 placeholder="EXP-2024-XXX"
+                disabled={!canEditBasicInfo}
+                className={!canEditBasicInfo ? 'bg-muted cursor-not-allowed' : ''}
               />
             </div>
             <div className="space-y-2">
@@ -228,6 +250,8 @@ export function ExpedientEditor({ expedientId, onBack, onSave }: ExpedientEditor
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Descripción breve del expediente"
+                disabled={!canEditBasicInfo}
+                className={!canEditBasicInfo ? 'bg-muted cursor-not-allowed' : ''}
               />
             </div>
             <div className="space-y-2">
@@ -236,7 +260,8 @@ export function ExpedientEditor({ expedientId, onBack, onSave }: ExpedientEditor
                 id="status"
                 value={status}
                 onChange={(e) => setStatus(e.target.value as any)}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                disabled={!canEditBasicInfo}
+                className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${!canEditBasicInfo ? 'bg-muted cursor-not-allowed' : ''}`}
               >
                 <option value="draft">Borrador</option>
                 <option value="active">Activo</option>
@@ -245,6 +270,24 @@ export function ExpedientEditor({ expedientId, onBack, onSave }: ExpedientEditor
                 <option value="derivado">Derivado</option>
               </select>
             </div>
+            {canEditBasicInfo && (
+              <div className="space-y-2">
+                <Label htmlFor="assigned-office">Oficina Asignada</Label>
+                <select
+                  id="assigned-office"
+                  value={assignedOffice}
+                  onChange={(e) => setAssignedOffice(e.target.value)}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <option value="">Sin asignar</option>
+                  <option value="defensoria-1">Defensoría Civil Nº 1</option>
+                  <option value="defensoria-2">Defensoría Civil Nº 2</option>
+                  <option value="defensoria-penal">Defensoría Penal</option>
+                  <option value="secretaria-administrativa">Secretaría Administrativa</option>
+                  <option value="secretaria-tecnica">Secretaría Técnica</option>
+                </select>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -252,7 +295,19 @@ export function ExpedientEditor({ expedientId, onBack, onSave }: ExpedientEditor
       {/* Editor Toolbar */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle>Editor de Contenido</CardTitle>
+          <CardTitle className="flex items-center justify-between">
+            <span>{canOnlyAddActuaciones ? 'Agregar Actuación' : 'Editor de Contenido'}</span>
+            {canOnlyAddActuaciones && (
+              <Badge variant="secondary" className="text-xs">
+                Solo nuevas actuaciones permitidas
+              </Badge>
+            )}
+          </CardTitle>
+          {canOnlyAddActuaciones && (
+            <p className="text-sm text-muted-foreground">
+              Como oficina, solo puede agregar nuevas actuaciones al expediente. No puede modificar el contenido principal.
+            </p>
+          )}
         </CardHeader>
         <CardContent>
           <div className="border rounded-lg overflow-hidden">

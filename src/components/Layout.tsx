@@ -29,10 +29,10 @@ export function Layout({ children, currentView = 'dashboard', onNavigate, onCrea
     switch (user.profile) {
       case 'mesa-entrada':
         return FileText;
-      case 'defensoria':
+      case 'oficina':
         return Building2;
-      case 'secretaria':
-        return Users;
+      default:
+        return FileText;
     }
   };
 
@@ -53,17 +53,17 @@ export function Layout({ children, currentView = 'dashboard', onNavigate, onCrea
                 </div>
                 <div>
                   <h1 className="text-xl font-bold text-foreground">
-                    Sistema de Expedientes
+                    SAE MPD - Sistema de Expedientes
                   </h1>
                   <div className="flex items-center space-x-2">
                     <Badge variant="secondary" className="text-xs">
-                      {user.department}
+                      {user.profile === 'mesa-entrada' ? 'Mesa de Entrada' : 'Oficina'}
                     </Badge>
                     <Badge 
                       variant={user.role === 'mesa' ? 'default' : 'outline'}
                       className="text-xs"
                     >
-                      {user.role === 'mesa' ? 'Gestión Completa' : 'Solo Lectura'}
+                      {user.role === 'mesa' ? 'Control Total' : 'Solo Actuaciones'}
                     </Badge>
                   </div>
                 </div>

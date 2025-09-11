@@ -31,23 +31,30 @@ export function Dashboard({
   if (!user) return null;
 
   const canEdit = user.role === 'mesa';
-  const recentExpedients = expedients.slice(0, 5);
+  
+  // Para oficinas, solo mostrar expedientes asignados (mock - aquí filtrarías por oficina asignada)
+  const filteredExpedients = user.role === 'oficina' 
+    ? expedients.filter(e => e.status === 'derivado' || e.status === 'active') // Mock: asumimos que estos están asignados
+    : expedients;
+    
+  const recentExpedients = filteredExpedients.slice(0, 5);
   
   const stats = {
-    total: expedients.length,
-    active: expedients.filter(e => e.status === 'active').length,
-    draft: expedients.filter(e => e.status === 'draft').length,
-    high: expedients.filter(e => e.priority === 'high').length,
+    total: filteredExpedients.length,
+    active: filteredExpedients.filter(e => e.status === 'active').length,
+    draft: filteredExpedients.filter(e => e.status === 'draft').length,
+    derivados: filteredExpedients.filter(e => e.status === 'derivado').length,
+    high: filteredExpedients.filter(e => e.priority === 'high').length,
   };
 
   const getStatusBadge = (status: 'draft' | 'active' | 'closed' | 'archived' | 'derivado') => {
-    const variants = {
-      draft: 'secondary',
-      active: 'default', 
-      closed: 'outline',
-      archived: 'outline',
-      derivado: 'secondary'
-    } as const;
+    const colors = {
+      draft: 'bg-[hsl(var(--status-draft))] text-[hsl(var(--status-draft-foreground))] border-[hsl(var(--status-draft))]',
+      active: 'bg-[hsl(var(--status-active))] text-[hsl(var(--status-active-foreground))] border-[hsl(var(--status-active))]',
+      closed: 'bg-[hsl(var(--status-closed))] text-[hsl(var(--status-closed-foreground))] border-[hsl(var(--status-closed))]',
+      archived: 'bg-[hsl(var(--status-archived))] text-[hsl(var(--status-archived-foreground))] border-[hsl(var(--status-archived))]',
+      derivado: 'bg-[hsl(var(--status-derivado))] text-[hsl(var(--status-derivado-foreground))] border-[hsl(var(--status-derivado))]'
+    };
     
     const labels = {
       draft: 'Borrador',
@@ -58,7 +65,7 @@ export function Dashboard({
     };
 
     return (
-      <Badge variant={variants[status]}>
+      <Badge className={colors[status]}>
         {labels[status]}
       </Badge>
     );
@@ -94,7 +101,12 @@ export function Dashboard({
           Bienvenido, {user.name}
         </h2>
         <p className="text-white/90 text-lg">
-          {user.department} • {user.role === 'mesa' ? 'Gestión Completa' : 'Solo Lectura'}
+          {user.profile === 'mesa-entrada' ? 'Mesa de Entrada' : 'Oficina'} • {user.role === 'mesa' ? 'Control Total' : 'Solo Actuaciones'}
+        </p>
+        <p className="text-white/70 text-sm mt-1">
+          {user.role === 'mesa' 
+            ? 'Puede crear, editar y asignar expedientes a oficinas' 
+            : 'Puede ver expedientes asignados y agregar actuaciones'}
         </p>
         {canEdit && (
           <Button
@@ -112,13 +124,15 @@ export function Dashboard({
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Expedientes</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {user.role === 'mesa' ? 'Total Expedientes' : 'Expedientes Asignados'}
+            </CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.total}</div>
             <p className="text-xs text-muted-foreground">
-              Todos los expedientes
+              {user.role === 'mesa' ? 'En el sistema' : 'A su oficina'}
             </p>
           </CardContent>
         </Card>
@@ -136,18 +150,33 @@ export function Dashboard({
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Borradores</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.draft}</div>
-            <p className="text-xs text-muted-foreground">
-              Sin finalizar
-            </p>
-          </CardContent>
-        </Card>
+        {user.role === 'mesa' ? (
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Borradores</CardTitle>
+              <Clock className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.draft}</div>
+              <p className="text-xs text-muted-foreground">
+                Sin finalizar
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Derivados</CardTitle>
+              <Clock className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.derivados}</div>
+              <p className="text-xs text-muted-foreground">
+                A su oficina
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
