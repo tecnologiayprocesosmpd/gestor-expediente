@@ -153,133 +153,138 @@ export function ExpedientView({ expedientId, onBack }: ExpedientViewProps) {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Status Banner */}
-      <Alert className={`${statusColors.border} border-2 ${statusColors.bg}/10`}>
-        <AlertDescription className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className={`w-4 h-4 rounded-full ${statusColors.bg}`}></div>
-            <span className="text-lg font-semibold">
-              Estado del Expediente: <span className={statusColors.text}>{getStatusLabel(expedient.status)}</span>
+    <div className={`min-h-screen ${statusColors.bg}/5 ${statusColors.border} border-4 rounded-2xl relative overflow-hidden`}>
+      {/* Status Banner Wrapper - Envuelve toda la página */}
+      <div className="absolute top-0 left-0 right-0 z-10">
+        <div className={`${statusColors.bg} h-20 flex items-center justify-center relative`}>
+          <div className="flex items-center space-x-6">
+            <div className={`w-8 h-8 rounded-full bg-white/90 shadow-lg flex items-center justify-center`}>
+              <div className={`w-4 h-4 rounded-full ${statusColors.bg}`}></div>
+            </div>
+            <span className="text-2xl font-bold text-white drop-shadow-lg">
+              EXPEDIENTE {getStatusLabel(expedient.status).toUpperCase()}
             </span>
-          </div>
-          <div className="flex items-center space-x-3">
-            <Badge className={`${statusColors.bg} ${statusColors.text} px-3 py-1`}>
+            <Badge className="bg-white/20 text-white border-white/30 px-6 py-3 text-lg font-semibold shadow-lg backdrop-blur-sm">
               {getStatusLabel(expedient.status)}
             </Badge>
           </div>
-        </AlertDescription>
-      </Alert>
-
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" onClick={onBack}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Volver
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">
-              {expedient.title}
-            </h1>
-            <p className="text-muted-foreground">
-              Expediente: {expedient.number}
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center space-x-3">
-          <Button variant="outline">
-            <Download className="w-4 h-4 mr-2" />
-            Exportar PDF
-          </Button>
         </div>
       </div>
 
-      {/* Expedient Info */}
-      <Card className={`${statusColors.border} border-l-4`}>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <FileText className="w-5 h-5" />
-            <span>Información del Expediente</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="flex items-center space-x-3">
-              <Calendar className="w-4 h-4 text-muted-foreground" />
-              <div>
-                <p className="text-sm font-medium">Fecha de Creación</p>
-                <p className="text-sm text-muted-foreground">
-                  {expedient.createdAt.toLocaleDateString('es-ES')}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <Clock className="w-4 h-4 text-muted-foreground" />
-              <div>
-                <p className="text-sm font-medium">Última Modificación</p>
-                <p className="text-sm text-muted-foreground">
-                  {expedient.updatedAt.toLocaleDateString('es-ES')}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <User className="w-4 h-4 text-muted-foreground" />
-              <div>
-                <p className="text-sm font-medium">Oficina Asignada</p>
-                <p className="text-sm text-muted-foreground">
-                  {expedient.assignedOffice}
-                </p>
-              </div>
+      {/* Main Content with Top Padding */}
+      <div className="pt-24 p-8 space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <Button variant="outline" onClick={onBack} className="shadow-sm">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Volver
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">
+                {expedient.title}
+              </h1>
+              <p className="text-lg text-muted-foreground">
+                Expediente: {expedient.number}
+              </p>
             </div>
           </div>
-        </CardContent>
-      </Card>
+          <div className="flex items-center space-x-3">
+            <Button variant="outline" className="shadow-sm">
+              <Download className="w-4 h-4 mr-2" />
+              Exportar PDF
+            </Button>
+          </div>
+        </div>
 
-      {/* Latest Actuacion */}
-      {latestActuacion && (
-        <Card>
+        {/* Expedient Info */}
+        <Card className={`${statusColors.border} border-l-4 shadow-lg`}>
           <CardHeader>
-            <CardTitle>Última Actuación</CardTitle>
+            <CardTitle className="flex items-center space-x-2 text-xl">
+              <FileText className="w-6 h-6" />
+              <span>Información del Expediente</span>
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="flex items-center space-x-4">
+                <Calendar className="w-5 h-5 text-muted-foreground" />
                 <div>
-                  <h3 className="font-medium">{latestActuacion.title}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    ACT-{latestActuacion.number.toString().padStart(3, '0')} - {latestActuacion.createdBy}
+                  <p className="font-medium">Fecha de Creación</p>
+                  <p className="text-muted-foreground">
+                    {expedient.createdAt.toLocaleDateString('es-ES')}
                   </p>
                 </div>
-                <Badge variant={latestActuacion.status === 'firmado' ? 'default' : 'secondary'}>
-                  {latestActuacion.status === 'firmado' ? 'Firmado' : 
-                   latestActuacion.status === 'para-firmar' ? 'Para Firmar' : 'Borrador'}
-                </Badge>
               </div>
-              <div 
-                className="prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{ __html: latestActuacion.content }}
-              />
-              <p className="text-xs text-muted-foreground">
-                Creado: {latestActuacion.createdAt.toLocaleString('es-ES')}
-                {latestActuacion.signedAt && (
-                  <span> • Firmado: {latestActuacion.signedAt.toLocaleString('es-ES')}</span>
-                )}
-              </p>
+              <div className="flex items-center space-x-4">
+                <Clock className="w-5 h-5 text-muted-foreground" />
+                <div>
+                  <p className="font-medium">Última Modificación</p>
+                  <p className="text-muted-foreground">
+                    {expedient.updatedAt.toLocaleDateString('es-ES')}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-4">
+                <User className="w-5 h-5 text-muted-foreground" />
+                <div>
+                  <p className="font-medium">Oficina Asignada</p>
+                  <p className="text-muted-foreground">
+                    {expedient.assignedOffice}
+                  </p>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
-      )}
 
-      {/* Actuaciones List */}
-      <ActuacionList
-        expedientId={expedient.id}
-        actuaciones={actuaciones}
-        onViewActuacion={handleViewActuacion}
-        onEditActuacion={handleEditActuacion}
-        onCreateActuacion={handleAddActuacion}
-        onChangeStatus={handleStatusChange}
-      />
+        {/* Latest Actuacion */}
+        {latestActuacion && (
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-xl">Última Actuación</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-medium">{latestActuacion.title}</h3>
+                    <p className="text-muted-foreground">
+                      ACT-{latestActuacion.number.toString().padStart(3, '0')} - {latestActuacion.createdBy}
+                    </p>
+                  </div>
+                  <Badge variant={latestActuacion.status === 'firmado' ? 'default' : 'secondary'} className="px-4 py-2">
+                    {latestActuacion.status === 'firmado' ? 'Firmado' : 
+                     latestActuacion.status === 'para-firmar' ? 'Para Firmar' : 'Borrador'}
+                  </Badge>
+                </div>
+                <div 
+                  className="prose prose-sm max-w-none"
+                  dangerouslySetInnerHTML={{ __html: latestActuacion.content }}
+                />
+                <p className="text-sm text-muted-foreground">
+                  Creado: {latestActuacion.createdAt.toLocaleString('es-ES')}
+                  {latestActuacion.signedAt && (
+                    <span> • Firmado: {latestActuacion.signedAt.toLocaleString('es-ES')}</span>
+                  )}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Actuaciones List */}
+        <div className="shadow-lg rounded-lg overflow-hidden">
+          <ActuacionList
+            expedientId={expedient.id}
+            actuaciones={actuaciones}
+            onViewActuacion={handleViewActuacion}
+            onEditActuacion={handleEditActuacion}
+            onCreateActuacion={handleAddActuacion}
+            onChangeStatus={handleStatusChange}
+          />
+        </div>
+      </div>
     </div>
   );
 }
