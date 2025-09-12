@@ -415,7 +415,7 @@ export function ExpedientView({
     <div className="space-y-6">
       {/* Header unificado con mejor espaciado */}
       <div className="bg-card rounded-lg border shadow-sm">
-        <div className="flex items-start justify-between p-6">
+        <div className={`flex items-start justify-between p-6 border-l-4 ${statusColors.border}`}>
           <div className="flex items-start space-x-6">
             <Button 
               variant="outline" 
