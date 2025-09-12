@@ -414,34 +414,32 @@ export function ExpedientView({
         </div>
       </div>
 
-      {/* Main Content con padding para el contorno */}
-      <div className="p-8 pt-16 pb-8 space-y-6 relative z-1">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Button variant="outline" onClick={onBack} className="shadow-sm">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Volver
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">
-                {expedient.title}
-              </h1>
-              <p className="text-lg text-muted-foreground">
-                Expediente: {expedient.number}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-3 pr-20">
-            <Button variant="outline" className="shadow-sm" onClick={handleExportPDF}>
-              <Download className="w-4 h-4 mr-2" />
-              Exportar PDF
-            </Button>
+      {/* Header */}
+      <div className="flex items-center justify-between p-8 pt-16 relative z-1">
+        <div className="flex items-center space-x-4">
+          <Button variant="outline" onClick={onBack} className="shadow-sm">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Volver
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">
+              {expedient.title}
+            </h1>
+            <p className="text-lg text-muted-foreground">
+              Expediente: {expedient.number}
+            </p>
           </div>
         </div>
+        <div className="flex items-center space-x-3 pr-20">
+          <Button variant="outline" className="shadow-sm" onClick={handleExportPDF}>
+            <Download className="w-4 h-4 mr-2" />
+            Exportar PDF
+          </Button>
+        </div>
+      </div>
 
-        {/* Content with border outline */}
-        <div className="border border-border rounded-lg p-6 space-y-6">
+      {/* Main Content with border outline */}
+      <div className="border border-border rounded-lg p-6 space-y-6 mx-8 mb-8 relative z-1">
 
         {/* Expedient Info */}
         <Card className={`${statusColors.border} border-l-4 shadow-lg relative`}>
@@ -529,7 +527,6 @@ export function ExpedientView({
             onCreateActuacion={handleAddActuacion}
             onChangeStatus={handleStatusChange}
           />
-        </div>
         </div>
       </div>
     </div>
