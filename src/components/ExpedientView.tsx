@@ -439,7 +439,7 @@ export function ExpedientView({
       </div>
 
       {/* Main Content with border outline */}
-      <div className="border border-border rounded-lg p-6 space-y-6 mx-8 mb-8 relative z-1">
+      <div className={`border-2 ${statusColors.border} rounded-lg p-6 space-y-6 mx-8 mb-8 relative z-1`}>
 
         {/* Expedient Info */}
         <Card className={`${statusColors.border} border-l-4 shadow-lg relative`}>
