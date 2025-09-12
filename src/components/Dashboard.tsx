@@ -44,7 +44,6 @@ export function Dashboard({
     active: filteredExpedients.filter(e => e.status === 'en_tramite').length,
     draft: filteredExpedients.filter(e => e.status === 'draft').length,
     derivados: filteredExpedients.filter(e => e.status === 'derivado').length,
-    high: filteredExpedients.filter(e => e.priority === 'high').length,
   };
 
   const getStatusBadge = (status: 'draft' | 'en_tramite' | 'archivado' | 'derivado' | 'desistido') => {
@@ -67,28 +66,6 @@ export function Dashboard({
     return (
       <Badge className={colors[status]}>
         {labels[status]}
-      </Badge>
-    );
-  };
-
-  const getPriorityBadge = (priority: 'low' | 'medium' | 'high' | 'urgent') => {
-    const colors = {
-      low: 'bg-secondary text-secondary-foreground',
-      medium: 'bg-accent text-accent-foreground',
-      high: 'bg-destructive text-destructive-foreground',
-      urgent: 'bg-red-600 text-white border-red-700'
-    };
-    
-    const labels = {
-      low: 'Baja',
-      medium: 'Media', 
-      high: 'Alta',
-      urgent: 'Urgente'
-    };
-
-    return (
-      <Badge className={colors[priority]}>
-        {labels[priority]}
       </Badge>
     );
   };
@@ -177,19 +154,6 @@ export function Dashboard({
             </CardContent>
           </Card>
         )}
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Alta Prioridad</CardTitle>
-            <AlertCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.high}</div>
-            <p className="text-xs text-muted-foreground">
-              Requieren atención
-            </p>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Recent Expedients */}
@@ -229,7 +193,6 @@ export function Dashboard({
                         {expedient.number}
                       </span>
                       {getStatusBadge(expedient.status)}
-                      {getPriorityBadge(expedient.priority)}
                     </div>
                     <h4 className="font-medium text-foreground mb-1">
                       {expedient.title}

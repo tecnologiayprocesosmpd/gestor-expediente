@@ -25,7 +25,7 @@ interface ExpedientListProps {
   onCreateExpedient?: () => void;
 }
 
-type SortField = 'number' | 'title' | 'createdAt' | 'status' | 'priority';
+type SortField = 'number' | 'title' | 'createdAt' | 'status';
 type SortDirection = 'asc' | 'desc';
 
 export function ExpedientList({ 
@@ -71,10 +71,6 @@ export function ExpedientList({
       case 'status':
         comparison = a.status.localeCompare(b.status);
         break;
-      case 'priority':
-        const priorityOrder = { low: 0, medium: 1, high: 2 };
-        comparison = priorityOrder[a.priority] - priorityOrder[b.priority];
-        break;
     }
     
     return sortDirection === 'asc' ? comparison : -comparison;
@@ -109,28 +105,6 @@ export function ExpedientList({
     return (
       <Badge className={colors[status]}>
         {labels[status]}
-      </Badge>
-    );
-  };
-
-  const getPriorityBadge = (priority: 'low' | 'medium' | 'high' | 'urgent') => {
-    const colors = {
-      low: 'bg-secondary text-secondary-foreground',
-      medium: 'bg-accent text-accent-foreground', 
-      high: 'bg-destructive text-destructive-foreground',
-      urgent: 'bg-red-600 text-white border-red-700'
-    };
-    
-    const labels = {
-      low: 'Baja',
-      medium: 'Media',
-      high: 'Alta',
-      urgent: 'Urgente'
-    };
-
-    return (
-      <Badge className={colors[priority]}>
-        {labels[priority]}
       </Badge>
     );
   };
@@ -250,7 +224,6 @@ export function ExpedientList({
                     <th className="text-left p-4 font-medium">Número</th>
                     <th className="text-left p-4 font-medium">Título</th>
                     <th className="text-left p-4 font-medium">Estado</th>
-                    <th className="text-left p-4 font-medium">Prioridad</th>
                     <th className="text-left p-4 font-medium">Creado por</th>
                     <th className="text-left p-4 font-medium">Fecha</th>
                     <th className="text-right p-4 font-medium">Acciones</th>
@@ -277,9 +250,6 @@ export function ExpedientList({
                       </td>
                       <td className="p-4">
                         {getStatusBadge(expedient.status)}
-                      </td>
-                      <td className="p-4">
-                        {getPriorityBadge(expedient.priority)}
                       </td>
                       <td className="p-4">
                         <div className="flex items-center text-sm">

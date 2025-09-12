@@ -8,7 +8,6 @@ export interface Expedient {
   createdBy: string;
   department: string; // Secretaría responsable
   status: 'draft' | 'en_tramite' | 'archivado' | 'derivado' | 'desistido';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
   tags: string[];
   
   // Metadatos obligatorios
@@ -54,7 +53,6 @@ export interface ExpedientSummary {
   createdBy: string;
   department: string;
   status: 'draft' | 'en_tramite' | 'archivado' | 'derivado' | 'desistido';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
   tipoTramite: string;
   solicitante: string;
   confidencial: boolean;
@@ -92,7 +90,6 @@ export interface TipoTramite {
 export interface FiltroExpediente {
   searchTerm?: string;
   status?: string[];
-  priority?: string[];
   department?: string[];
   tipoTramite?: string[];
   dateRange?: {
