@@ -32,7 +32,7 @@ export function AuthenticationFlow() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isCredentialsValidated, setIsCredentialsValidated] = useState(false);
-  const [selectedProfile, setSelectedProfile] = useState<UserProfile | ''>('');
+  const [selectedProfile, setSelectedProfile] = useState<string>('');
   const { login, isLoading } = useSecurity();
   const { setUser } = useUser();
   const { toast } = useToast();
@@ -208,18 +208,18 @@ export function AuthenticationFlow() {
 
                 <div className="space-y-2">
                   <Label>Perfil de Acceso</Label>
-                  <Select value={selectedProfile} onValueChange={(value) => setSelectedProfile(value as UserProfile)}>
+                  <Select value={selectedProfile} onValueChange={setSelectedProfile}>
                     <SelectTrigger className="w-full h-12 bg-background">
                       <SelectValue placeholder="Seleccione un perfil..." />
                     </SelectTrigger>
-                    <SelectContent className="bg-background border shadow-lg">
+                    <SelectContent className="bg-background border shadow-lg z-50">
                       {profiles.map((profile) => {
                         const Icon = profile.icon;
                         return (
                           <SelectItem 
                             key={profile.id} 
                             value={profile.id}
-                            className="cursor-pointer hover:bg-muted/50 focus:bg-muted/50"
+                            className="cursor-pointer hover:bg-muted/50 focus:bg-muted/50 bg-background"
                           >
                             <div className="flex items-center gap-3 py-2">
                               <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
