@@ -108,10 +108,14 @@ export function ExpedientView({
   const getStatusLabel = (status: string) => {
     const labels = {
       draft: 'Borrador',
-      active: 'Activo',
-      closed: 'Cerrado',
-      archived: 'Archivado',
-      derivado: 'Derivado'
+      en_tramite: 'En Trámite',
+      archivado: 'Archivado',
+      derivado: 'Derivado',
+      desistido: 'Desistido',
+      // Fallbacks para compatibilidad
+      active: 'En Trámite',
+      closed: 'Archivado',
+      archived: 'Archivado'
     };
     
     return labels[status as keyof typeof labels] || 'Borrador';
@@ -429,8 +433,8 @@ export function ExpedientView({
                 </h1>
                 
                 <div className={`${statusColors.bg} rounded-md px-4 py-2 flex items-center space-x-2 shadow-sm border border-white/20`}>
-                  <div className="w-2.5 h-2.5 rounded-full bg-white animate-pulse"></div>
-                  <span className="text-sm font-semibold text-white">
+                  <div className={`w-2.5 h-2.5 rounded-full ${statusColors.text === 'text-[hsl(var(--status-draft-foreground))]' ? 'bg-white' : 'bg-white'} animate-pulse`}></div>
+                  <span className={`text-sm font-semibold ${statusColors.text}`}>
                     {getStatusLabel(expedient.status)}
                   </span>
                 </div>
