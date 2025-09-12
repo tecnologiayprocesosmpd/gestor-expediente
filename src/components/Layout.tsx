@@ -27,41 +27,38 @@ export function Layout({ children, currentView = 'dashboard', onNavigate, onCrea
   if (!user) return null;
 
   return (
-    <SidebarProvider defaultOpen={false}>
-      <div className="min-h-screen flex w-full">
-        <AppSidebar 
-          currentView={currentView}
-          onNavigate={onNavigate}
-          onCreateExpedient={onCreateExpedient}
-        />
-        
-        <div className="flex-1 flex flex-col">
-          {/* Header */}
-          <header className="bg-card border-b shadow-soft h-20 flex items-center justify-between px-6">
-            <div className="flex items-center space-x-4">
-              <SidebarTrigger />
-              <h1 className="text-xl font-bold text-foreground">
-                MPD - Sistema de Expedientes
-              </h1>
-            </div>
+    <div className="min-h-screen flex w-full">
+      <AppSidebar 
+        currentView={currentView}
+        onNavigate={onNavigate}
+        onCreateExpedient={onCreateExpedient}
+      />
+      
+      <div className="flex-1 flex flex-col ml-16">
+        {/* Header */}
+        <header className="bg-card border-b shadow-soft h-20 flex items-center justify-between px-6">
+          <div className="flex items-center space-x-4">
+            <h1 className="text-xl font-bold text-foreground">
+              MPD - Sistema de Expedientes
+            </h1>
+          </div>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleLogout}
-              className="flex items-center space-x-2"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Salir</span>
-            </Button>
-          </header>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleLogout}
+            className="flex items-center space-x-2"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Salir</span>
+          </Button>
+        </header>
 
-          {/* Main Content */}
-          <main className="flex-1 p-6">
-            {children}
-          </main>
-        </div>
+        {/* Main Content */}
+        <main className="flex-1 p-6">
+          {children}
+        </main>
       </div>
-    </SidebarProvider>
+    </div>
   );
 }
