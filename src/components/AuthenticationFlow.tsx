@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Shield, AlertCircle, Eye, EyeOff, Building2, FileText } from "lucide-react";
 import { useSecurity } from "@/contexts/SecurityContext";
 import { useUser, type UserProfile } from "@/contexts/UserContext";
@@ -28,14 +29,15 @@ const profiles = [
 
 export function AuthenticationFlow() {
   const [credentials, setCredentials] = useState({ username: '', password: '' });
-  const [selectedProfile, setSelectedProfile] = useState<UserProfile>('mesa-entrada');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [isCredentialsValidated, setIsCredentialsValidated] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState<UserProfile | ''>('');
   const { login, isLoading } = useSecurity();
   const { setUser } = useUser();
   const { toast } = useToast();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleCredentialsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -49,22 +51,37 @@ export function AuthenticationFlow() {
       if (!success) {
         setError('Usuario o contraseña incorrectos');
       } else {
-        const profile = profiles.find(p => p.id === selectedProfile);
-        if (profile) {
-          setUser({
-            profile: selectedProfile,
-            role: profile.role,
-            name: `Usuario ${profile.title}`,
-            department: profile.title
-          });
-          toast({
-            title: "Sesión iniciada",
-            description: `Bienvenido como ${profile.title}`,
-          });
-        }
+        setIsCredentialsValidated(true);
+        toast({
+          title: "Credenciales validadas",
+          description: "Ahora seleccione su perfil de acceso",
+        });
       }
     } catch (error) {
       setError('Error al conectar con el sistema. Intente nuevamente.');
+    }
+  };
+
+  const handleProfileSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!selectedProfile) {
+      setError('Por favor seleccione un perfil');
+      return;
+    }
+
+    const profile = profiles.find(p => p.id === selectedProfile);
+    if (profile) {
+      setUser({
+        profile: selectedProfile as UserProfile,
+        role: profile.role,
+        name: `Usuario ${profile.title}`,
+        department: profile.title
+      });
+      toast({
+        title: "Sesión iniciada",
+        description: `Bienvenido como ${profile.title}`,
+      });
     }
   };
 
@@ -91,140 +108,175 @@ export function AuthenticationFlow() {
         {/* Login Card */}
         <Card className="shadow-medium">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center">Iniciar Sesión</CardTitle>
+            <CardTitle className="text-2xl text-center">
+              {!isCredentialsValidated ? 'Iniciar Sesión' : 'Seleccionar Perfil'}
+            </CardTitle>
             <p className="text-sm text-muted-foreground text-center">
-              Ingrese sus credenciales para acceder al sistema
+              {!isCredentialsValidated 
+                ? 'Ingrese sus credenciales para acceder al sistema'
+                : 'Seleccione el perfil con el que desea trabajar'
+              }
             </p>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleLogin} className="space-y-6">
-              {error && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
+            {!isCredentialsValidated ? (
+              // Credentials Form
+              <form onSubmit={handleCredentialsSubmit} className="space-y-6">
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
 
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="username">Usuario</Label>
-                  <Input
-                    id="username"
-                    type="text"
-                    placeholder="Ingrese su usuario"
-                    value={credentials.username}
-                    onChange={(e) => setCredentials(prev => ({ 
-                      ...prev, 
-                      username: e.target.value 
-                    }))}
-                    disabled={isLoading}
-                    className="h-11"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="password">Contraseña</Label>
-                  <div className="relative">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="username">Usuario</Label>
                     <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Ingrese su contraseña"
-                      value={credentials.password}
+                      id="username"
+                      type="text"
+                      placeholder="Ingrese su usuario"
+                      value={credentials.username}
                       onChange={(e) => setCredentials(prev => ({ 
                         ...prev, 
-                        password: e.target.value 
+                        username: e.target.value 
                       }))}
                       disabled={isLoading}
-                      className="h-11 pr-10"
+                      className="h-11"
                       required
                     />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowPassword(prev => !prev)}
-                      disabled={isLoading}
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4 text-muted-foreground" />
-                      ) : (
-                        <Eye className="h-4 w-4 text-muted-foreground" />
-                      )}
-                    </Button>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Contraseña</Label>
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Ingrese su contraseña"
+                        value={credentials.password}
+                        onChange={(e) => setCredentials(prev => ({ 
+                          ...prev, 
+                          password: e.target.value 
+                        }))}
+                        disabled={isLoading}
+                        className="h-11 pr-10"
+                        required
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                        onClick={() => setShowPassword(prev => !prev)}
+                        disabled={isLoading}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4 text-muted-foreground" />
+                        ) : (
+                          <Eye className="h-4 w-4 text-muted-foreground" />
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 </div>
+
+                <Button 
+                  type="submit" 
+                  className="w-full h-11 bg-gradient-primary hover:bg-gradient-primary/90"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Validando credenciales...
+                    </div>
+                  ) : (
+                    'Validar Credenciales'
+                  )}
+                </Button>
+              </form>
+            ) : (
+              // Profile Selection Form
+              <form onSubmit={handleProfileSubmit} className="space-y-6">
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
 
                 <div className="space-y-2">
                   <Label>Perfil de Acceso</Label>
-                  <div className="grid grid-cols-1 gap-3">
-                    {profiles.map((profile) => {
-                      const Icon = profile.icon;
-                      const isSelected = selectedProfile === profile.id;
-                      return (
-                        <button
-                          key={profile.id}
-                          type="button"
-                          onClick={() => setSelectedProfile(profile.id)}
-                          className={`p-3 rounded-lg border-2 transition-all duration-200 text-left ${
-                            isSelected 
-                              ? 'border-primary bg-primary/5 shadow-sm' 
-                              : 'border-border hover:border-primary/50 hover:bg-muted/50'
-                          }`}
-                          disabled={isLoading}
-                        >
-                          <div className="flex items-center space-x-3">
-                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                              isSelected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-                            }`}>
-                              <Icon className="w-5 h-5" />
-                            </div>
-                            <div className="flex-1">
-                              <div className={`font-medium ${isSelected ? 'text-primary' : 'text-foreground'}`}>
-                                {profile.title}
+                  <Select value={selectedProfile} onValueChange={(value) => setSelectedProfile(value as UserProfile)}>
+                    <SelectTrigger className="w-full h-12 bg-background">
+                      <SelectValue placeholder="Seleccione un perfil..." />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background border shadow-lg">
+                      {profiles.map((profile) => {
+                        const Icon = profile.icon;
+                        return (
+                          <SelectItem 
+                            key={profile.id} 
+                            value={profile.id}
+                            className="cursor-pointer hover:bg-muted/50 focus:bg-muted/50"
+                          >
+                            <div className="flex items-center gap-3 py-2">
+                              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                <Icon className="w-4 h-4 text-primary" />
                               </div>
-                              <div className="text-sm text-muted-foreground">
-                                {profile.description}
+                              <div className="flex-1 text-left">
+                                <div className="font-medium text-foreground">
+                                  {profile.title}
+                                </div>
+                                <div className="text-xs text-muted-foreground">
+                                  {profile.description}
+                                </div>
                               </div>
                             </div>
-                            {isSelected && (
-                              <div className="w-2 h-2 bg-primary rounded-full"></div>
-                            )}
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
                 </div>
-              </div>
 
-              <Button 
-                type="submit" 
-                className="w-full h-11 bg-gradient-primary hover:bg-gradient-primary/90"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Iniciando sesión...
-                  </div>
-                ) : (
-                  'Iniciar Sesión'
-                )}
-              </Button>
-            </form>
+                <div className="flex gap-3">
+                  <Button 
+                    type="button"
+                    variant="outline"
+                    className="flex-1 h-11"
+                    onClick={() => {
+                      setIsCredentialsValidated(false);
+                      setSelectedProfile('');
+                      setError('');
+                    }}
+                  >
+                    Volver
+                  </Button>
+                  <Button 
+                    type="submit" 
+                    className="flex-1 h-11 bg-gradient-primary hover:bg-gradient-primary/90"
+                    disabled={!selectedProfile}
+                  >
+                    Ingresar al Sistema
+                  </Button>
+                </div>
+              </form>
+            )}
 
             {/* Demo credentials info */}
-            <div className="mt-6 p-4 bg-muted/30 rounded-lg">
-              <p className="text-xs text-muted-foreground mb-2 font-medium">
-                Credenciales de prueba:
-              </p>
-              <div className="space-y-1 text-xs text-muted-foreground">
-                <div>Usuario: <code className="bg-background px-1 rounded">admin</code></div>
-                <div>Contraseña: <code className="bg-background px-1 rounded">admin</code></div>
+            {!isCredentialsValidated && (
+              <div className="mt-6 p-4 bg-muted/30 rounded-lg">
+                <p className="text-xs text-muted-foreground mb-2 font-medium">
+                  Credenciales de prueba:
+                </p>
+                <div className="space-y-1 text-xs text-muted-foreground">
+                  <div>Usuario: <code className="bg-background px-1 rounded">admin</code></div>
+                  <div>Contraseña: <code className="bg-background px-1 rounded">admin</code></div>
+                </div>
               </div>
-            </div>
+            )}
           </CardContent>
         </Card>
 
