@@ -37,7 +37,7 @@ export function Layout({ children, currentView = 'dashboard', onNavigate, onCrea
         
         <div className="flex-1 flex flex-col">
           {/* Header */}
-          <header className="bg-card border-b shadow-soft h-16 flex items-center justify-between px-6">
+          <header className="bg-card border-b shadow-soft h-20 flex items-center justify-between px-6">
             <div className="flex items-center space-x-4">
               <SidebarTrigger />
               <h1 className="text-xl font-bold text-foreground">
