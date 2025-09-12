@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useUser } from '@/contexts/UserContext';
-import { AccessSelector } from '@/components/AccessSelector';
 import { Layout } from '@/components/Layout';
 import { Dashboard } from '@/components/Dashboard';
 import { ExpedientList } from '@/components/ExpedientList';
@@ -86,7 +85,7 @@ const mockExpedients: ExpedientSummary[] = [
 ];
 
 function AppContent() {
-  const { user, selectAccess } = useUser();
+  const { user } = useUser();
   const { toast } = useToast();
   const [currentView, setCurrentView] = useState<'dashboard' | 'expedientes' | 'view' | 'editor' | 'legajos' | 'reportes'>('dashboard');
   const [expedients, setExpedients] = useState<ExpedientSummary[]>(mockExpedients);
@@ -104,11 +103,6 @@ function AppContent() {
   // If user is not authenticated, the ProtectedRoute will handle showing AuthenticationFlow
   if (!user) {
     return null;
-  }
-
-  // If user is authenticated but hasn't selected an access area, show AccessSelector
-  if (!user.hasSelectedAccess) {
-    return <AccessSelector onSelectAccess={selectAccess} />;
   }
 
   const handleCreateExpedient = () => {

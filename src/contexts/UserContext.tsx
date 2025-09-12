@@ -8,14 +8,11 @@ interface User {
   role: UserRole;
   name: string;
   department?: string;
-  hasSelectedAccess?: boolean;
-  selectedArea?: string;
 }
 
 interface UserContextType {
   user: User | null;
   setUser: (user: User) => void;
-  selectAccess: (areaId: string) => void;
   logout: () => void;
 }
 
@@ -28,22 +25,12 @@ export function UserProvider({ children }: { children: ReactNode }) {
     setUserState(userData);
   };
 
-  const selectAccess = (areaId: string) => {
-    if (user) {
-      setUserState({
-        ...user,
-        hasSelectedAccess: true,
-        selectedArea: areaId
-      });
-    }
-  };
-
   const logout = () => {
     setUserState(null);
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser, selectAccess, logout }}>
+    <UserContext.Provider value={{ user, setUser, logout }}>
       {children}
     </UserContext.Provider>
   );
