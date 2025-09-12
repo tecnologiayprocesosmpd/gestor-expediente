@@ -1,18 +1,13 @@
 import { ReactNode } from 'react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { 
-  FileText, 
-  Building2, 
-  Users, 
-  LogOut, 
-  Home, 
-  Plus,
-  Search,
-  BarChart3
+  LogOut
 } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
 import { useSecurity } from "@/contexts/SecurityContext";
+import { AppSidebar } from "./AppSidebar";
 
 interface LayoutProps {
   children: ReactNode;
@@ -22,139 +17,51 @@ interface LayoutProps {
 }
 
 export function Layout({ children, currentView = 'dashboard', onNavigate, onCreateExpedient }: LayoutProps) {
-  const { user, logout: userLogout } = useUser();
+  const { user } = useUser();
   const { logout: securityLogout } = useSecurity();
 
   const handleLogout = () => {
-    userLogout(); // Clear UserContext
-    securityLogout(); // Clear SecurityContext
+    securityLogout(); // Clear SecurityContext - UserContext will clear automatically
   };
 
   if (!user) return null;
 
-  const getProfileIcon = () => {
-    switch (user.profile) {
-      case 'mesa-entrada':
-        return FileText;
-      case 'oficina':
-        return Building2;
-      default:
-        return FileText;
-    }
-  };
-
-  const ProfileIcon = getProfileIcon();
-
-  const canCreateExpedients = user.role === 'mesa';
-
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-card border-b shadow-soft">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar 
+          currentView={currentView}
+          onNavigate={onNavigate}
+          onCreateExpedient={onCreateExpedient}
+        />
+        
+        <div className="flex-1 flex flex-col">
+          {/* Header */}
+          <header className="bg-card border-b shadow-soft h-16 flex items-center justify-between px-6">
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center">
-                  <ProfileIcon className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold text-foreground">
-                    MPD - Sistema de Expedientes
-                  </h1>
-                  <div className="flex items-center space-x-2">
-                    <Badge variant="secondary" className="text-xs">
-                      {user.profile === 'mesa-entrada' ? 'Mesa de Entrada' : 'Oficina'}
-                    </Badge>
-                    <Badge 
-                      variant={user.role === 'mesa' ? 'default' : 'outline'}
-                      className="text-xs"
-                    >
-                      {user.role === 'mesa' ? 'Control Total' : 'Solo Actuaciones'}
-                    </Badge>
-                  </div>
-                </div>
-              </div>
+              <SidebarTrigger />
+              <h1 className="text-xl font-bold text-foreground">
+                MPD - Sistema de Expedientes
+              </h1>
             </div>
 
-            <div className="flex items-center space-x-3">
-              <span className="text-sm text-muted-foreground">
-                {user.name}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleLogout}
-                className="flex items-center space-x-2"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>Salir</span>
-              </Button>
-            </div>
-          </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleLogout}
+              className="flex items-center space-x-2"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Salir</span>
+            </Button>
+          </header>
+
+          {/* Main Content */}
+          <main className="flex-1 p-6">
+            {children}
+          </main>
         </div>
-      </header>
-
-      {/* Navigation */}
-      <nav className="bg-card border-b">
-        <div className="px-6 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-1">
-              <Button
-                variant={currentView === 'dashboard' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => onNavigate?.('dashboard')}
-                className="flex items-center space-x-2"
-              >
-                <Home className="w-4 h-4" />
-                <span>Inicio</span>
-              </Button>
-              <Button
-                variant={currentView === 'expedientes' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => onNavigate?.('expedientes')}
-                className="flex items-center space-x-2"
-              >
-                <Search className="w-4 h-4" />
-                <span>Expedientes</span>
-              </Button>
-              <Button
-                variant={currentView === 'legajos' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => onNavigate?.('legajos')}
-                className="flex items-center space-x-2"
-              >
-                <Users className="w-4 h-4" />
-                <span>Legajos</span>
-              </Button>
-              <Button
-                variant={currentView === 'reportes' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => onNavigate?.('reportes')}
-                className="flex items-center space-x-2"
-              >
-                <BarChart3 className="w-4 h-4" />
-                <span>Reportes</span>
-              </Button>
-            </div>
-
-            {canCreateExpedients && (
-              <Button
-                onClick={onCreateExpedient}
-                className="flex items-center space-x-2"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Nuevo Expediente</span>
-              </Button>
-            )}
-          </div>
-        </div>
-      </nav>
-
-      {/* Main Content */}
-      <main className="p-6">
-        {children}
-      </main>
-    </div>
+      </div>
+    </SidebarProvider>
   );
 }
