@@ -90,12 +90,6 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
                 <Badge variant="secondary" className="text-xs w-fit">
                   {user.profile === 'mesa-entrada' ? 'Mesa de Entrada' : 'Oficina'}
                 </Badge>
-                <Badge 
-                  variant={user.role === 'mesa' ? 'default' : 'outline'}
-                  className="text-xs w-fit"
-                >
-                  {user.role === 'mesa' ? 'Control Total' : 'Solo Actuaciones'}
-                </Badge>
               </div>
             </div>
           </div>
