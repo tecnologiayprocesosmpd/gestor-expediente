@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSecurity } from '@/contexts/SecurityContext';
-import { LoginForm } from '@/components/LoginForm';
+import { AuthenticationFlow } from '@/components/AuthenticationFlow';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -41,7 +41,7 @@ export function ProtectedRoute({
 
   // Not authenticated
   if (!user) {
-    return <LoginForm />;
+    return <AuthenticationFlow />;
   }
 
   // Check role permission
