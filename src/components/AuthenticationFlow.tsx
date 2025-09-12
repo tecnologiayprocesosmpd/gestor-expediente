@@ -52,6 +52,7 @@ export function AuthenticationFlow() {
         setError('Usuario o contraseña incorrectos');
       } else {
         setIsCredentialsValidated(true);
+        setError(''); // Clear any previous errors
         toast({
           title: "Credenciales validadas",
           description: "Ahora seleccione su perfil de acceso",
@@ -64,6 +65,7 @@ export function AuthenticationFlow() {
 
   const handleProfileSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     
     if (!selectedProfile) {
       setError('Por favor seleccione un perfil');

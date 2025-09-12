@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useUser } from '@/contexts/UserContext';
-import SelectProfilePostLogin from '@/components/SelectProfilePostLogin';
 import { Layout } from '@/components/Layout';
 import { Dashboard } from '@/components/Dashboard';
 import { ExpedientList } from '@/components/ExpedientList';
@@ -101,9 +100,9 @@ function AppContent() {
     return expedients.find(exp => exp.id === currentExpedientId);
   };
 
-  // If user not set in UserContext yet (post-login), show profile selector dropdown
+  // If user is not authenticated, the ProtectedRoute will handle showing AuthenticationFlow
   if (!user) {
-    return <SelectProfilePostLogin />;
+    return null;
   }
 
   const handleCreateExpedient = () => {
