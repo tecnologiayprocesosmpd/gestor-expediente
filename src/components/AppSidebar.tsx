@@ -100,7 +100,7 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
         </div>
 
         {/* Navigation */}
-        <div className="flex-1 py-4">
+        <div className="flex-1 py-4 flex flex-col h-full">
           <div className="px-2 mb-2">
             <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-all duration-300 overflow-hidden whitespace-nowrap">
               Navegación
