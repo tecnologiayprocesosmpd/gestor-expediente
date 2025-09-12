@@ -402,18 +402,6 @@ export function ExpedientView({
         <div className={`absolute -bottom-1 -right-1 w-8 h-8 border-b-4 border-r-4 ${statusColors.border} rounded-br-xl`}></div>
       </div>
 
-      {/* Status Indicator integrado en el contorno */}
-      <div className="absolute top-4 right-4 z-10">
-        <div className={`${statusColors.bg} rounded-full px-4 py-2 shadow-lg backdrop-blur-sm border-2 border-white/20 relative`}>
-          <div className="flex items-center space-x-2">
-            <div className={`w-3 h-3 rounded-full bg-white/90 shadow-sm animate-pulse`}></div>
-            <span className="text-sm font-semibold text-white">
-              {getStatusLabel(expedient.status)}
-            </span>
-          </div>
-        </div>
-      </div>
-
       {/* Header */}
       <div className="flex items-center justify-between p-8 pt-16 relative z-1">
         <div className="flex items-center space-x-4">
@@ -430,11 +418,23 @@ export function ExpedientView({
             </p>
           </div>
         </div>
-        <div className="flex items-center space-x-3 pr-20">
+        <div className="flex items-center space-x-3">
           <Button variant="outline" className="shadow-sm" onClick={handleExportPDF}>
             <Download className="w-4 h-4 mr-2" />
             Exportar PDF
           </Button>
+        </div>
+      </div>
+
+      {/* Status Indicator */}
+      <div className="flex justify-center px-8 mb-4">
+        <div className={`${statusColors.bg} rounded-full px-4 py-2 shadow-lg backdrop-blur-sm border-2 border-white/20`}>
+          <div className="flex items-center space-x-2">
+            <div className={`w-3 h-3 rounded-full bg-white/90 shadow-sm animate-pulse`}></div>
+            <span className="text-sm font-semibold text-white">
+              {getStatusLabel(expedient.status)}
+            </span>
+          </div>
         </div>
       </div>
 
