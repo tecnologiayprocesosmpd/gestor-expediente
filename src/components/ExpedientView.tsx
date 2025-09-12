@@ -393,14 +393,6 @@ export function ExpedientView({
 
   return (
     <div className="min-h-screen relative">
-      {/* Contorno integrado del expediente con indicador de estado */}
-      <div className={`absolute inset-0 border-2 ${statusColors.border} rounded-xl pointer-events-none z-0`}>
-        {/* Esquinas decorativas */}
-        <div className={`absolute -top-1 -left-1 w-8 h-8 border-t-4 border-l-4 ${statusColors.border} rounded-tl-xl`}></div>
-        <div className={`absolute -top-1 -right-1 w-8 h-8 border-t-4 border-r-4 ${statusColors.border} rounded-tr-xl`}></div>
-        <div className={`absolute -bottom-1 -left-1 w-8 h-8 border-b-4 border-l-4 ${statusColors.border} rounded-bl-xl`}></div>
-        <div className={`absolute -bottom-1 -right-1 w-8 h-8 border-b-4 border-r-4 ${statusColors.border} rounded-br-xl`}></div>
-      </div>
 
       {/* Header */}
       <div className="flex items-center justify-between p-8 pt-16 relative z-1">
