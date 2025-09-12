@@ -64,25 +64,41 @@ export function ExpedientView({
         border: 'border-[hsl(var(--status-draft))]',
         text: 'text-[hsl(var(--status-draft-foreground))]'
       },
-      active: {
-        bg: 'bg-[hsl(var(--status-active))]',
-        border: 'border-[hsl(var(--status-active))]',
-        text: 'text-[hsl(var(--status-active-foreground))]'
+      en_tramite: {
+        bg: 'bg-[hsl(var(--status-en-tramite))]',
+        border: 'border-[hsl(var(--status-en-tramite))]',
+        text: 'text-[hsl(var(--status-en-tramite-foreground))]'
       },
-      closed: {
-        bg: 'bg-[hsl(var(--status-closed))]',
-        border: 'border-[hsl(var(--status-closed))]',
-        text: 'text-[hsl(var(--status-closed-foreground))]'
-      },
-      archived: {
-        bg: 'bg-[hsl(var(--status-archived))]',
-        border: 'border-[hsl(var(--status-archived))]',
-        text: 'text-[hsl(var(--status-archived-foreground))]'
+      archivado: {
+        bg: 'bg-[hsl(var(--status-archivado))]',
+        border: 'border-[hsl(var(--status-archivado))]',
+        text: 'text-[hsl(var(--status-archivado-foreground))]'
       },
       derivado: {
         bg: 'bg-[hsl(var(--status-derivado))]',
         border: 'border-[hsl(var(--status-derivado))]',
         text: 'text-[hsl(var(--status-derivado-foreground))]'
+      },
+      desistido: {
+        bg: 'bg-[hsl(var(--status-desistido))]',
+        border: 'border-[hsl(var(--status-desistido))]',
+        text: 'text-[hsl(var(--status-desistido-foreground))]'
+      },
+      // Fallbacks para estados que pueden no estar definidos
+      active: {
+        bg: 'bg-[hsl(var(--status-en-tramite))]',
+        border: 'border-[hsl(var(--status-en-tramite))]',
+        text: 'text-[hsl(var(--status-en-tramite-foreground))]'
+      },
+      closed: {
+        bg: 'bg-[hsl(var(--status-archivado))]',
+        border: 'border-[hsl(var(--status-archivado))]',
+        text: 'text-[hsl(var(--status-archivado-foreground))]'
+      },
+      archived: {
+        bg: 'bg-[hsl(var(--status-archivado))]',
+        border: 'border-[hsl(var(--status-archivado))]',
+        text: 'text-[hsl(var(--status-archivado-foreground))]'
       }
     };
     
@@ -468,7 +484,7 @@ export function ExpedientView({
                 </div>
                 <div className="flex items-center justify-between py-2 border-b border-border/50">
                   <span className="text-sm font-medium">Estado</span>
-                  <Badge variant="secondary" className={statusColors.text}>
+                  <Badge className={`${statusColors.bg} ${statusColors.text} border-0`}>
                     {getStatusLabel(expedient.status)}
                   </Badge>
                 </div>
