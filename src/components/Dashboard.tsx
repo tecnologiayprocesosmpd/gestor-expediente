@@ -70,6 +70,18 @@ export function Dashboard({
     );
   };
 
+  const getStatusBorderClass = (status: 'draft' | 'en_tramite' | 'archivado' | 'derivado' | 'desistido') => {
+    const borderColors = {
+      draft: 'border-[hsl(var(--status-draft))]',
+      en_tramite: 'border-[hsl(var(--status-en-tramite))]',
+      archivado: 'border-[hsl(var(--status-archivado))]',
+      derivado: 'border-[hsl(var(--status-derivado))]',
+      desistido: 'border-[hsl(var(--status-desistido))]'
+    };
+    
+    return borderColors[status];
+  };
+
   return (
     <div className="space-y-6">
       {/* Statistics Cards */}
@@ -160,7 +172,7 @@ export function Dashboard({
               {recentExpedients.map((expedient) => (
                 <div 
                   key={expedient.id}
-                  className="flex items-center justify-between p-4 rounded-lg border hover:shadow-soft transition-shadow"
+                  className={`flex items-center justify-between p-4 rounded-lg border-2 hover:shadow-soft transition-all ${getStatusBorderClass(expedient.status)}`}
                 >
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
