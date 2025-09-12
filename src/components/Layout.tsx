@@ -34,7 +34,7 @@ export function Layout({ children, currentView = 'dashboard', onNavigate, onCrea
         onCreateExpedient={onCreateExpedient}
       />
       
-      <div className="flex-1 flex flex-col ml-16">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
         <header className="bg-card border-b shadow-soft h-20 flex items-center justify-between px-6">
           <div className="flex items-center space-x-4">
@@ -55,7 +55,7 @@ export function Layout({ children, currentView = 'dashboard', onNavigate, onCrea
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 overflow-auto">
           {children}
         </main>
       </div>
