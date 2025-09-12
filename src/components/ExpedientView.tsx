@@ -427,7 +427,7 @@ export function ExpedientView({
       </div>
 
       {/* Status Indicator */}
-      <div className="flex justify-center px-8 mb-4">
+      <div className="flex justify-end px-8 mb-4">
         <div className={`${statusColors.bg} rounded-full px-4 py-2 shadow-lg backdrop-blur-sm border-2 border-white/20`}>
           <div className="flex items-center space-x-2">
             <div className={`w-3 h-3 rounded-full bg-white/90 shadow-sm animate-pulse`}></div>
