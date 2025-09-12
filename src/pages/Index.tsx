@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { UserProvider, useUser } from '@/contexts/UserContext';
+import { useUser } from '@/contexts/UserContext';
 import { ProfileSelector } from '@/components/ProfileSelector';
 import { Layout } from '@/components/Layout';
 import { Dashboard } from '@/components/Dashboard';
@@ -280,12 +280,6 @@ function AppContent() {
   );
 }
 
-const Index = () => {
-  return (
-    <UserProvider>
-      <AppContent />
-    </UserProvider>
-  );
+export default function Index() {
+  return <AppContent />;
 };
-
-export default Index;
