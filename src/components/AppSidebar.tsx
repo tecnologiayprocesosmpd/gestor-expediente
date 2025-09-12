@@ -30,7 +30,7 @@ interface AppSidebarProps {
 
 export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSidebarProps) {
   const { user } = useUser();
-  const { state } = useSidebar();
+  const { state, setOpen } = useSidebar();
 
   if (!user) return null;
 
@@ -53,19 +53,28 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
       id: 'dashboard', 
       title: 'Inicio', 
       icon: Home,
-      onClick: () => onNavigate?.('dashboard')
+      onClick: () => {
+        onNavigate?.('dashboard');
+        setOpen(false); // Colapsar después de navegar
+      }
     },
     { 
       id: 'expedientes', 
       title: 'Expedientes', 
       icon: FileText,
-      onClick: () => onNavigate?.('expedientes')
+      onClick: () => {
+        onNavigate?.('expedientes');
+        setOpen(false); // Colapsar después de navegar
+      }
     },
     { 
       id: 'agenda', 
       title: 'Agenda', 
       icon: Calendar,
-      onClick: () => onNavigate?.('agenda')
+      onClick: () => {
+        onNavigate?.('agenda');
+        setOpen(false); // Colapsar después de navegar
+      }
     },
   ];
 
@@ -99,7 +108,7 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
   };
 
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={300}>
       <Sidebar className={isCollapsed ? "w-16" : "w-64"}>
         <SidebarContent>
           {/* User Profile Section */}
@@ -148,7 +157,10 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
                       item={{
                         title: 'Nuevo Expediente',
                         icon: Plus,
-                        onClick: onCreateExpedient
+                        onClick: () => {
+                          onCreateExpedient?.();
+                          setOpen(false); // Colapsar después de crear
+                        }
                       }} 
                       isActive={false} 
                     />

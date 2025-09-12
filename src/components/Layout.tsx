@@ -27,7 +27,7 @@ export function Layout({ children, currentView = 'dashboard', onNavigate, onCrea
   if (!user) return null;
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <div className="min-h-screen flex w-full">
         <AppSidebar 
           currentView={currentView}
