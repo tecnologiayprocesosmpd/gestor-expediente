@@ -70,7 +70,7 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
 
   return (
     <div 
-      className="group h-full bg-background border-r transition-all duration-300 hover:w-64 w-16 flex-shrink-0"
+      className="group h-full min-h-screen bg-background border-r transition-all duration-300 hover:w-64 w-16 flex-shrink-0"
       onMouseLeave={(e) => {
         // Prevenir que se colapse si el mouse está sobre un dropdown/tooltip
         const relatedTarget = e.relatedTarget as Element;
@@ -100,7 +100,7 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
         </div>
 
         {/* Navigation */}
-        <div className="flex-1 py-4 flex flex-col h-full">
+        <div className="flex-1 py-4 flex flex-col h-full min-h-full">
           <div className="px-2 mb-2">
             <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-all duration-300 overflow-hidden whitespace-nowrap">
               Navegación
