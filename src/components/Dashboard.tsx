@@ -72,31 +72,6 @@ export function Dashboard({
 
   return (
     <div className="space-y-6">
-      {/* Welcome Section */}
-      <div className="bg-gradient-primary rounded-xl p-8 text-white">
-        <h2 className="text-3xl font-bold mb-2">
-          Bienvenido, {user.name}
-        </h2>
-        <p className="text-white/90 text-lg">
-          {user.profile === 'mesa-entrada' ? 'Mesa de Entrada' : 'Oficina'} • {user.role === 'mesa' ? 'Control Total' : 'Solo Actuaciones'}
-        </p>
-        <p className="text-white/70 text-sm mt-1">
-          {user.role === 'mesa' 
-            ? 'Puede crear, editar y asignar expedientes a oficinas' 
-            : 'Puede ver expedientes asignados y agregar actuaciones'}
-        </p>
-        {canEdit && (
-          <Button
-            onClick={onCreateExpedient}
-            className="mt-4 bg-white/10 hover:bg-white/20 text-white border-white/20"
-            variant="outline"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Crear Nuevo Expediente
-          </Button>
-        )}
-      </div>
-
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
