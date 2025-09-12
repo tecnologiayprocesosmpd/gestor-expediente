@@ -415,7 +415,7 @@ export function ExpedientView({
       </div>
 
       {/* Main Content con padding para el contorno */}
-      <div className="p-8 pt-16 pb-8 space-y-6 relative z-1">
+      <div className="border border-border rounded-lg relative z-1">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
