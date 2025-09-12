@@ -407,13 +407,14 @@ export function ExpedientView({
             </Button>
             
             <div className="space-y-2">
-              <div className="flex items-center space-x-3">
+              <div className="flex items-start justify-between">
                 <h1 className="text-2xl font-bold text-foreground">
                   {expedient.title}
                 </h1>
-                <div className={`${statusColors.bg} rounded-full px-3 py-1 flex items-center space-x-2`}>
-                  <div className="w-2 h-2 rounded-full bg-white/90"></div>
-                  <span className="text-xs font-medium text-white">
+                
+                <div className={`${statusColors.bg} rounded-md px-4 py-2 flex items-center space-x-2 shadow-sm border border-white/20`}>
+                  <div className="w-2.5 h-2.5 rounded-full bg-white animate-pulse"></div>
+                  <span className="text-sm font-semibold text-white">
                     {getStatusLabel(expedient.status)}
                   </span>
                 </div>
