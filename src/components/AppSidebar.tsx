@@ -88,8 +88,11 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
             </div>
             <div className="flex-1 min-w-0 opacity-0 group-hover:opacity-100 transition-all duration-300 overflow-hidden">
               <h2 className="text-sm font-semibold text-foreground truncate whitespace-nowrap">
-                Bienvenido, {user.name}
+                Bienvenido
               </h2>
+              <h3 className="text-xs text-muted-foreground truncate whitespace-nowrap">
+                {user.name}
+              </h3>
               <div className="flex flex-col gap-1 mt-1">
                 <Badge variant="secondary" className="text-xs w-fit">
                   {user.profile === 'mesa-entrada' ? 'Mesa de Entrada' : 'Oficina'}
