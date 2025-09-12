@@ -467,7 +467,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
                     variant="ghost"
                     size="sm"
                     onClick={() => editor.chain().focus().undo().run()}
-                    disabled={!editor.can().undo()}
+                    disabled={!editor.can().chain().focus().undo().run()}
                     className="h-8 w-8 p-0 hover:bg-muted"
                     title="Deshacer (Ctrl+Z)"
                   >
@@ -477,7 +477,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
                     variant="ghost"
                     size="sm"
                     onClick={() => editor.chain().focus().redo().run()}
-                    disabled={!editor.can().redo()}
+                    disabled={!editor.can().chain().focus().redo().run()}
                     className="h-8 w-8 p-0 hover:bg-muted"
                     title="Rehacer (Ctrl+Y)"
                   >
