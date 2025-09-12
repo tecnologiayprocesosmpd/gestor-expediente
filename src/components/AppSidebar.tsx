@@ -79,7 +79,7 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
         }
       }}
     >
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col h-full min-h-screen">
         {/* User Profile Section */}
         <div className="p-4 border-b">
           <div className="flex items-center group-hover:space-x-3 justify-center group-hover:justify-start transition-all duration-300">
