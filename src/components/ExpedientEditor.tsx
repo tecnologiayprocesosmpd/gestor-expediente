@@ -8,8 +8,8 @@ import { TextStyle } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
 import { Highlight } from '@tiptap/extension-highlight';
 import { Strike } from '@tiptap/extension-strike';
-import { Superscript } from '@tiptap/extension-superscript';
-import { Subscript } from '@tiptap/extension-subscript';
+import { Superscript as SuperscriptExtension } from '@tiptap/extension-superscript';
+import { Subscript as SubscriptExtension } from '@tiptap/extension-subscript';
 import { Link } from '@tiptap/extension-link';
 import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
@@ -88,8 +88,8 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
         multicolor: true,
       }),
       Strike,
-      Superscript,
-      Subscript,
+      SuperscriptExtension,
+      SubscriptExtension,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
