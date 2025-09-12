@@ -4,6 +4,18 @@ import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import Image from '@tiptap/extension-image';
 import FontFamily from '@tiptap/extension-font-family';
+import { TextStyle } from '@tiptap/extension-text-style';
+import { Color } from '@tiptap/extension-color';
+import { Highlight } from '@tiptap/extension-highlight';
+import { Strike } from '@tiptap/extension-strike';
+import { Superscript } from '@tiptap/extension-superscript';
+import { Subscript } from '@tiptap/extension-subscript';
+import { Link } from '@tiptap/extension-link';
+import { Table } from '@tiptap/extension-table';
+import { TableRow } from '@tiptap/extension-table-row';
+import { TableHeader } from '@tiptap/extension-table-header';
+import { TableCell } from '@tiptap/extension-table-cell';
+import { CharacterCount } from '@tiptap/extension-character-count';
 import { useState, useEffect } from 'react';
 import { useUser } from "@/contexts/UserContext";
 
@@ -18,20 +30,33 @@ import {
   Bold,
   Italic,
   Underline as UnderlineIcon,
+  Strikethrough,
+  Superscript as SuperscriptIcon,
+  Subscript as SubscriptIcon,
   List,
   ListOrdered,
   AlignLeft,
   AlignCenter,
   AlignRight,
+  AlignJustify,
   Save,
   Download,
   ArrowLeft,
-  FileText
+  FileText,
+  Undo,
+  Redo,
+  Minus
 } from "lucide-react";
 
 // Import new editor components
 import { LineHeightSelector } from "@/components/ui/line-height-selector";
 import { FontSelector } from "@/components/ui/font-selector";
+import { FontSizeSelector } from "@/components/ui/font-size-selector";
+import { TextColorSelector } from "@/components/ui/text-color-selector";
+import { HeadingSelector } from "@/components/ui/heading-selector";
+import { TableControls } from "@/components/ui/table-controls";
+import { LinkControls } from "@/components/ui/link-controls";
+import { DocumentStats } from "@/components/ui/document-stats";
 import { ImageInsert } from "@/components/ui/image-insert";
 import { IndentControls } from "@/components/ui/indent-controls";
 import { MarginControls } from "@/components/ui/margin-controls";
@@ -57,10 +82,41 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
   const editor = useEditor({
     extensions: [
       StarterKit,
+      TextStyle,
+      Color,
+      Highlight.configure({
+        multicolor: true,
+      }),
+      Strike,
+      Superscript,
+      Subscript,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
       Underline,
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: {
+          class: 'text-blue-600 underline hover:text-blue-800 cursor-pointer',
+        },
+      }),
+      Table.configure({
+        resizable: true,
+        HTMLAttributes: {
+          class: 'border-collapse border border-gray-300 w-full my-4',
+        },
+      }),
+      TableRow,
+      TableHeader.configure({
+        HTMLAttributes: {
+          class: 'border border-gray-300 bg-gray-100 font-bold px-3 py-2',
+        },
+      }),
+      TableCell.configure({
+        HTMLAttributes: {
+          class: 'border border-gray-300 px-3 py-2',
+        },
+      }),
       Image.configure({
         inline: true,
         allowBase64: true,
@@ -71,12 +127,49 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
       FontFamily.configure({
         types: ['textStyle'],
       }),
+      CharacterCount,
     ],
     content: propExpedient?.content || '<p>Comience a redactar el contenido del expediente aquí...</p>',
     editorProps: {
       attributes: {
-        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[400px] p-4',
-        style: `padding: ${margins.top}px ${margins.right}px ${margins.bottom}px ${margins.left}px;`,
+        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[500px] p-6 bg-white',
+        style: `padding: ${margins.top}px ${margins.right}px ${margins.bottom}px ${margins.left}px; line-height: 1.6;`,
+      },
+      handleKeyDown: (view, event) => {
+        // Atajos de teclado personalizados
+        if (event.ctrlKey || event.metaKey) {
+          switch (event.key) {
+            case 'b':
+              event.preventDefault();
+              editor?.chain().focus().toggleBold().run();
+              return true;
+            case 'i':
+              event.preventDefault();
+              editor?.chain().focus().toggleItalic().run();
+              return true;
+            case 'u':
+              event.preventDefault();
+              editor?.chain().focus().toggleUnderline().run();
+              return true;
+            case 's':
+              event.preventDefault();
+              handleSave();
+              return true;
+            case 'z':
+              event.preventDefault();
+              if (event.shiftKey) {
+                editor?.chain().focus().redo().run();
+              } else {
+                editor?.chain().focus().undo().run();
+              }
+              return true;
+            case 'y':
+              event.preventDefault();
+              editor?.chain().focus().redo().run();
+              return true;
+          }
+        }
+        return false;
       },
     },
   });
@@ -366,11 +459,45 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
         <CardContent>
           <div className="border rounded-lg overflow-hidden">
             {/* Toolbar */}
-            <div className="border-b bg-background/50 backdrop-blur-sm px-4 py-2">
+            <div className="border-b bg-background/50 backdrop-blur-sm px-4 py-3">
               <div className="flex items-center gap-1 overflow-x-auto">
+                {/* Grupo: Deshacer/Rehacer */}
+                <div className="flex items-center gap-0.5 pr-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().undo().run()}
+                    disabled={!editor.can().undo()}
+                    className="h-8 w-8 p-0 hover:bg-muted"
+                    title="Deshacer (Ctrl+Z)"
+                  >
+                    <Undo className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().redo().run()}
+                    disabled={!editor.can().redo()}
+                    className="h-8 w-8 p-0 hover:bg-muted"
+                    title="Rehacer (Ctrl+Y)"
+                  >
+                    <Redo className="w-4 h-4" />
+                  </Button>
+                </div>
+
+                <Separator orientation="vertical" className="h-5 mx-1" />
+
+                {/* Grupo: Estilos */}
+                <div className="flex items-center gap-1 pr-2">
+                  <HeadingSelector editor={editor} />
+                </div>
+
+                <Separator orientation="vertical" className="h-5 mx-1" />
+
                 {/* Grupo: Fuente y Tipografía */}
                 <div className="flex items-center gap-1 pr-2">
                   <FontSelector editor={editor} />
+                  <FontSizeSelector editor={editor} />
                   <LineHeightSelector editor={editor} />
                 </div>
 
@@ -383,7 +510,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
                     size="sm"
                     onClick={() => editor.chain().focus().toggleBold().run()}
                     className={`h-8 w-8 p-0 hover:bg-muted ${editor.isActive('bold') ? 'bg-accent text-accent-foreground' : ''}`}
-                    title="Negrita"
+                    title="Negrita (Ctrl+B)"
                   >
                     <Bold className="w-4 h-4" />
                   </Button>
@@ -392,7 +519,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
                     size="sm"
                     onClick={() => editor.chain().focus().toggleItalic().run()}
                     className={`h-8 w-8 p-0 hover:bg-muted ${editor.isActive('italic') ? 'bg-accent text-accent-foreground' : ''}`}
-                    title="Cursiva"
+                    title="Cursiva (Ctrl+I)"
                   >
                     <Italic className="w-4 h-4" />
                   </Button>
@@ -401,10 +528,45 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
                     size="sm"
                     onClick={() => editor.chain().focus().toggleUnderline().run()}
                     className={`h-8 w-8 p-0 hover:bg-muted ${editor.isActive('underline') ? 'bg-accent text-accent-foreground' : ''}`}
-                    title="Subrayado"
+                    title="Subrayado (Ctrl+U)"
                   >
                     <UnderlineIcon className="w-4 h-4" />
                   </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().toggleStrike().run()}
+                    className={`h-8 w-8 p-0 hover:bg-muted ${editor.isActive('strike') ? 'bg-accent text-accent-foreground' : ''}`}
+                    title="Tachado"
+                  >
+                    <Strikethrough className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().toggleSuperscript().run()}
+                    className={`h-8 w-8 p-0 hover:bg-muted ${editor.isActive('superscript') ? 'bg-accent text-accent-foreground' : ''}`}
+                    title="Superíndice"
+                  >
+                    <SuperscriptIcon className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().toggleSubscript().run()}
+                    className={`h-8 w-8 p-0 hover:bg-muted ${editor.isActive('subscript') ? 'bg-accent text-accent-foreground' : ''}`}
+                    title="Subíndice"
+                  >
+                    <SubscriptIcon className="w-4 h-4" />
+                  </Button>
+                </div>
+
+                <Separator orientation="vertical" className="h-5 mx-1" />
+
+                {/* Grupo: Colores */}
+                <div className="flex items-center gap-0.5">
+                  <TextColorSelector editor={editor} type="text" />
+                  <TextColorSelector editor={editor} type="highlight" />
                 </div>
 
                 <Separator orientation="vertical" className="h-5 mx-1" />
@@ -437,6 +599,15 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
                     title="Alinear a la derecha"
                   >
                     <AlignRight className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().setTextAlign('justify').run()}
+                    className={`h-8 w-8 p-0 hover:bg-muted ${editor.isActive({ textAlign: 'justify' }) ? 'bg-accent text-accent-foreground' : ''}`}
+                    title="Justificar"
+                  >
+                    <AlignJustify className="w-4 h-4" />
                   </Button>
                 </div>
 
@@ -475,7 +646,18 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
 
                 {/* Grupo: Insertar */}
                 <div className="flex items-center gap-0.5">
+                  <LinkControls editor={editor} />
+                  <TableControls editor={editor} />
                   <ImageInsert editor={editor} />
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => editor.chain().focus().setHorizontalRule().run()}
+                    className="h-8 w-8 p-0 hover:bg-muted"
+                    title="Línea horizontal"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </Button>
                 </div>
 
                 <Separator orientation="vertical" className="h-5 mx-1" />
@@ -498,19 +680,23 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
             </div>
 
             {/* Editor */}
-            <div className="min-h-[500px] bg-white">
+            <div className="min-h-[600px] bg-white shadow-inner border border-gray-200 rounded-b-lg">
               <EditorContent editor={editor} />
+            </div>
+            
+            {/* Editor Footer with Statistics */}
+            <div className="border-t bg-muted/30 px-4 py-2 flex items-center justify-between text-xs">
+              <DocumentStats editor={editor} />
+              <div className="text-muted-foreground">
+                Última modificación: {new Date().toLocaleString('es-ES')}
+              </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Actions */}
-      <div className="flex items-center justify-between pt-4 border-t">
-        <div className="text-sm text-muted-foreground">
-          Última modificación: {new Date().toLocaleString('es-ES')}
-        </div>
-        
+      <div className="flex items-center justify-between pt-4">        
         <div className="flex items-center space-x-3">
           <Button variant="outline" onClick={handlePrint}>
             Imprimir
@@ -519,7 +705,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
             <Download className="w-4 h-4 mr-2" />
             Exportar PDF
           </Button>
-          <Button onClick={handleSave}>
+          <Button onClick={handleSave} className="bg-primary hover:bg-primary/90">
             <Save className="w-4 h-4 mr-2" />
             {canOnlyAddActuaciones ? 'Guardar Actuación' : 'Guardar Expediente'}
           </Button>
