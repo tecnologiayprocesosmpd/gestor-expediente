@@ -12,6 +12,7 @@ import {
   BarChart3
 } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
+import { useSecurity } from "@/contexts/SecurityContext";
 
 interface LayoutProps {
   children: ReactNode;
@@ -21,7 +22,13 @@ interface LayoutProps {
 }
 
 export function Layout({ children, currentView = 'dashboard', onNavigate, onCreateExpedient }: LayoutProps) {
-  const { user, logout } = useUser();
+  const { user, logout: userLogout } = useUser();
+  const { logout: securityLogout } = useSecurity();
+
+  const handleLogout = () => {
+    userLogout(); // Clear UserContext
+    securityLogout(); // Clear SecurityContext
+  };
 
   if (!user) return null;
 
@@ -77,7 +84,7 @@ export function Layout({ children, currentView = 'dashboard', onNavigate, onCrea
               <Button
                 variant="outline"
                 size="sm"
-                onClick={logout}
+                onClick={handleLogout}
                 className="flex items-center space-x-2"
               >
                 <LogOut className="w-4 h-4" />
