@@ -236,7 +236,7 @@ export function ExpedientList({
                       className="border-b hover:bg-muted/20 transition-colors"
                     >
                       <td className="p-4">
-                        <Badge variant="outline" className="text-xs font-mono">
+                        <Badge variant="secondary" className="text-xs font-mono bg-primary/10 text-primary border-primary/20 rounded-md px-2 py-1">
                           {expedient.number}
                         </Badge>
                       </td>
