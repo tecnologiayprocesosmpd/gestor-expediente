@@ -392,133 +392,202 @@ export function ExpedientView({
   }
 
   return (
-    <div className="min-h-screen relative">
-
-      {/* Header */}
-      <div className="flex items-center justify-between p-8 pt-16 relative z-1">
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" onClick={onBack} className="shadow-sm">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Volver
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">
-              {expedient.title}
-            </h1>
-            <p className="text-lg text-muted-foreground">
-              Expediente: {expedient.number}
-            </p>
+    <div className="space-y-6">
+      {/* Header unificado con mejor espaciado */}
+      <div className="bg-card rounded-lg border shadow-sm">
+        <div className="flex items-start justify-between p-6">
+          <div className="flex items-start space-x-6">
+            <Button 
+              variant="outline" 
+              onClick={onBack} 
+              className="px-4 py-2 h-auto"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Volver
+            </Button>
+            
+            <div className="space-y-2">
+              <div className="flex items-center space-x-3">
+                <h1 className="text-2xl font-bold text-foreground">
+                  {expedient.title}
+                </h1>
+                <div className={`${statusColors.bg} rounded-full px-3 py-1 flex items-center space-x-2`}>
+                  <div className="w-2 h-2 rounded-full bg-white/90"></div>
+                  <span className="text-xs font-medium text-white">
+                    {getStatusLabel(expedient.status)}
+                  </span>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                <span className="flex items-center space-x-1">
+                  <FileText className="w-4 h-4" />
+                  <span>Expediente: {expedient.number}</span>
+                </span>
+                <span className="flex items-center space-x-1">
+                  <Calendar className="w-4 h-4" />
+                  <span>Creado: {expedient.createdAt.toLocaleDateString('es-ES')}</span>
+                </span>
+                <span className="flex items-center space-x-1">
+                  <User className="w-4 h-4" />
+                  <span>{expedient.assignedOffice}</span>
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="flex items-center space-x-3">
-          <Button variant="outline" className="shadow-sm" onClick={handleExportPDF}>
+          
+          <Button 
+            variant="outline" 
+            className="px-4 py-2 h-auto" 
+            onClick={handleExportPDF}
+          >
             <Download className="w-4 h-4 mr-2" />
             Exportar PDF
           </Button>
         </div>
       </div>
 
-      {/* Status Indicator */}
-      <div className="flex justify-end px-8 mb-4">
-        <div className={`${statusColors.bg} rounded-full px-4 py-2 shadow-lg backdrop-blur-sm border-2 border-white/20`}>
-          <div className="flex items-center space-x-2">
-            <div className={`w-3 h-3 rounded-full bg-white/90 shadow-sm animate-pulse`}></div>
-            <span className="text-sm font-semibold text-white">
-              {getStatusLabel(expedient.status)}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content with border outline */}
-      <div className={`border-2 ${statusColors.border} rounded-lg p-6 space-y-6 mx-8 mb-8 relative z-1`}>
-
-        {/* Expedient Info */}
-        <Card className={`${statusColors.border} border-l-4 shadow-lg relative`}>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2 text-xl">
-              <FileText className="w-6 h-6" />
-              <span>Información del Expediente</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="flex items-center space-x-4">
-                <Calendar className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="font-medium">Fecha de Creación</p>
-                  <p className="text-muted-foreground">
-                    {expedient.createdAt.toLocaleDateString('es-ES')}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-4">
-                <Clock className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="font-medium">Última Modificación</p>
-                  <p className="text-muted-foreground">
-                    {expedient.updatedAt.toLocaleDateString('es-ES')}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-4">
-                <User className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="font-medium">Oficina Asignada</p>
-                  <p className="text-muted-foreground">
-                    {expedient.assignedOffice}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Latest Actuacion */}
-        {latestActuacion && (
-          <Card className="shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-xl">Última Actuación</CardTitle>
+      {/* Información del expediente y actuaciones unificadas */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* Panel izquierdo: Información del expediente */}
+        <div className="lg:col-span-1 space-y-4">
+          <Card className={`${statusColors.border} border-l-4`}>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center space-x-2">
+                <FileText className="w-5 h-5" />
+                <span>Información del Expediente</span>
+              </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-medium">{latestActuacion.title}</h3>
-                    <p className="text-muted-foreground">
-                      ACT-{latestActuacion.number.toString().padStart(3, '0')} - {latestActuacion.createdBy}
-                    </p>
-                  </div>
-                  <Badge variant={latestActuacion.status === 'firmado' ? 'default' : 'secondary'} className="px-4 py-2">
-                    {latestActuacion.status === 'firmado' ? 'Firmado' : 
-                     latestActuacion.status === 'para-firmar' ? 'Para Firmar' : 'Borrador'}
+            <CardContent className="space-y-4">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between py-2 border-b border-border/50">
+                  <span className="text-sm font-medium">Número</span>
+                  <span className="text-sm text-muted-foreground">{expedient.number}</span>
+                </div>
+                <div className="flex items-center justify-between py-2 border-b border-border/50">
+                  <span className="text-sm font-medium">Estado</span>
+                  <Badge variant="secondary" className={statusColors.text}>
+                    {getStatusLabel(expedient.status)}
                   </Badge>
                 </div>
-                <div 
-                  className="prose prose-sm max-w-none"
-                  dangerouslySetInnerHTML={{ __html: latestActuacion.content }}
-                />
-                <p className="text-sm text-muted-foreground">
-                  Creado: {latestActuacion.createdAt.toLocaleString('es-ES')}
-                  {latestActuacion.signedAt && (
-                    <span> • Firmado: {latestActuacion.signedAt.toLocaleString('es-ES')}</span>
-                  )}
-                </p>
+                <div className="flex items-center justify-between py-2 border-b border-border/50">
+                  <span className="text-sm font-medium">Creado</span>
+                  <span className="text-sm text-muted-foreground">
+                    {expedient.createdAt.toLocaleDateString('es-ES')}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between py-2 border-b border-border/50">
+                  <span className="text-sm font-medium">Modificado</span>
+                  <span className="text-sm text-muted-foreground">
+                    {expedient.updatedAt.toLocaleDateString('es-ES')}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <span className="text-sm font-medium">Oficina</span>
+                  <span className="text-sm text-muted-foreground">
+                    {expedient.assignedOffice}
+                  </span>
+                </div>
               </div>
             </CardContent>
           </Card>
-        )}
 
-        {/* Actuaciones List */}
-        <div className="shadow-lg rounded-lg overflow-hidden">
-          <ActuacionList
-            expedientId={expedient.id}
-            actuaciones={actuaciones}
-            onViewActuacion={handleViewActuacion}
-            onEditActuacion={handleEditActuacion}
-            onCreateActuacion={handleAddActuacion}
-            onChangeStatus={handleStatusChange}
-          />
+          {/* Resumen de actuaciones */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Resumen de Actuaciones</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Total</span>
+                  <Badge variant="outline">{actuaciones.length}</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Borradores</span>
+                  <Badge variant="secondary">
+                    {actuaciones.filter(a => a.status === 'borrador').length}
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Para Firmar</span>
+                  <Badge variant="default">
+                    {actuaciones.filter(a => a.status === 'para-firmar').length}
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Firmadas</span>
+                  <Badge className="bg-green-100 text-green-800 border-green-200">
+                    {actuaciones.filter(a => a.status === 'firmado').length}
+                  </Badge>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Panel derecho: Última actuación y lista */}
+        <div className="lg:col-span-2 space-y-4">
+          
+          {/* Última actuación destacada */}
+          {latestActuacion && (
+            <Card className="border-l-4 border-l-primary">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">Última Actuación</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                      <h3 className="font-medium">{latestActuacion.title}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        ACT-{latestActuacion.number.toString().padStart(3, '0')} • {latestActuacion.createdBy}
+                      </p>
+                    </div>
+                    <Badge 
+                      variant={latestActuacion.status === 'firmado' ? 'default' : 'secondary'}
+                      className="ml-2"
+                    >
+                      {latestActuacion.status === 'firmado' ? 'Firmado' : 
+                       latestActuacion.status === 'para-firmar' ? 'Para Firmar' : 'Borrador'}
+                    </Badge>
+                  </div>
+                  
+                  <div className="bg-muted/30 rounded-md p-3">
+                    <div 
+                      className="prose prose-sm max-w-none text-sm"
+                      dangerouslySetInnerHTML={{ __html: latestActuacion.content }}
+                    />
+                  </div>
+                  
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>Creado: {latestActuacion.createdAt.toLocaleString('es-ES')}</span>
+                    {latestActuacion.signedAt && (
+                      <span>Firmado: {latestActuacion.signedAt.toLocaleString('es-ES')}</span>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Lista completa de actuaciones */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Todas las Actuaciones</CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <ActuacionList
+                expedientId={expedient.id}
+                actuaciones={actuaciones}
+                onViewActuacion={handleViewActuacion}
+                onEditActuacion={handleEditActuacion}
+                onCreateActuacion={handleAddActuacion}
+                onChangeStatus={handleStatusChange}
+              />
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
