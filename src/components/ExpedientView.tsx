@@ -415,7 +415,7 @@ export function ExpedientView({
       </div>
 
       {/* Main Content con padding para el contorno */}
-      <div className="border border-border rounded-lg relative z-1">
+      <div className="p-8 pt-16 pb-8 space-y-6 relative z-1">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -439,6 +439,9 @@ export function ExpedientView({
             </Button>
           </div>
         </div>
+
+        {/* Content with border outline */}
+        <div className="border border-border rounded-lg p-6 space-y-6">
 
         {/* Expedient Info */}
         <Card className={`${statusColors.border} border-l-4 shadow-lg relative`}>
@@ -526,6 +529,7 @@ export function ExpedientView({
             onCreateActuacion={handleAddActuacion}
             onChangeStatus={handleStatusChange}
           />
+        </div>
         </div>
       </div>
     </div>
