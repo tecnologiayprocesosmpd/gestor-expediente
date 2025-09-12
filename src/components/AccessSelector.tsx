@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   FileText, 
   FolderOpen, 
@@ -10,9 +11,10 @@ import {
   Archive,
   Shield,
   Clock,
-  ArrowRight
+  ChevronDown
 } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
+import { useState } from "react";
 
 const accessAreas = {
   'mesa-entrada': [
@@ -83,10 +85,25 @@ interface AccessSelectorProps {
 
 export function AccessSelector({ onSelectAccess }: AccessSelectorProps) {
   const { user, logout } = useUser();
+  const [selectedArea, setSelectedArea] = useState<string>('');
 
   if (!user) return null;
 
   const userAreas = accessAreas[user.profile] || [];
+
+  const handleSelectChange = (value: string) => {
+    setSelectedArea(value);
+  };
+
+  const handleAccess = () => {
+    if (selectedArea) {
+      onSelectAccess(selectedArea);
+    }
+  };
+
+  const getSelectedAreaData = () => {
+    return userAreas.find(area => area.id === selectedArea);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
@@ -138,58 +155,106 @@ export function AccessSelector({ onSelectAccess }: AccessSelectorProps) {
           </Button>
         </div>
 
-        {/* Access Areas Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {userAreas.map((area) => {
-            const Icon = area.icon;
-            return (
-              <Card 
-                key={area.id}
-                className="group hover:shadow-medium transition-all duration-300 cursor-pointer border-2 hover:border-primary/20 overflow-hidden"
-                onClick={() => onSelectAccess(area.id)}
-              >
-                <CardHeader className="text-center pb-4">
-                  <div className={`w-16 h-16 mx-auto rounded-2xl ${area.bgClass} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
-                    <Icon className="w-8 h-8 text-white" />
-                  </div>
-                  <CardTitle className="text-lg text-foreground group-hover:text-primary transition-colors">
-                    {area.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="text-center space-y-4">
-                  <p className="text-sm text-muted-foreground">
-                    {area.description}
-                  </p>
-                  
-                  {/* Permissions Preview */}
-                  <div className="flex flex-wrap gap-1 justify-center">
-                    {area.permissions.slice(0, 2).map((permission) => (
-                      <Badge 
-                        key={permission} 
-                        variant="outline" 
-                        className="text-xs"
-                      >
-                        {permission.replace('_', ' ')}
-                      </Badge>
-                    ))}
-                    {area.permissions.length > 2 && (
-                      <Badge variant="secondary" className="text-xs">
-                        +{area.permissions.length - 2} más
-                      </Badge>
-                    )}
-                  </div>
+        {/* Access Area Selector */}
+        <div className="max-w-2xl mx-auto">
+          <Card className="shadow-medium">
+            <CardHeader className="text-center">
+              <CardTitle className="text-xl">Seleccionar Área de Acceso</CardTitle>
+              <p className="text-muted-foreground">
+                Elija el área del sistema a la que desea acceder
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Dropdown Selector */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">
+                  Área disponible para su perfil:
+                </label>
+                <Select value={selectedArea} onValueChange={handleSelectChange}>
+                  <SelectTrigger className="w-full h-12 bg-background">
+                    <SelectValue placeholder="Seleccione un área..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border shadow-lg">
+                    {userAreas.map((area) => {
+                      const Icon = area.icon;
+                      return (
+                        <SelectItem 
+                          key={area.id} 
+                          value={area.id}
+                          className="cursor-pointer hover:bg-muted/50 focus:bg-muted/50"
+                        >
+                          <div className="flex items-center gap-3 py-2">
+                            <div className={`w-8 h-8 rounded-lg ${area.bgClass} flex items-center justify-center flex-shrink-0`}>
+                              <Icon className="w-4 h-4 text-white" />
+                            </div>
+                            <div className="flex-1 text-left">
+                              <div className="font-medium text-foreground">
+                                {area.title}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                {area.description}
+                              </div>
+                            </div>
+                          </div>
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
 
-                  <Button 
-                    className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
-                    variant="outline"
-                  >
-                    Acceder al Área
-                    <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </CardContent>
-              </Card>
-            );
-          })}
+              {/* Selected Area Preview */}
+              {selectedArea && getSelectedAreaData() && (
+                <div className="bg-muted/30 rounded-lg p-4 space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-lg ${getSelectedAreaData()?.bgClass} flex items-center justify-center`}>
+                      {(() => {
+                        const selectedAreaData = getSelectedAreaData();
+                        const Icon = selectedAreaData?.icon;
+                        return Icon ? <Icon className="w-5 h-5 text-white" /> : null;
+                      })()}
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-foreground">
+                        {getSelectedAreaData()?.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {getSelectedAreaData()?.description}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Permissions */}
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                      Permisos incluidos:
+                    </p>
+                    <div className="flex flex-wrap gap-1">
+                      {getSelectedAreaData()?.permissions.map((permission) => (
+                        <Badge 
+                          key={permission} 
+                          variant="secondary" 
+                          className="text-xs"
+                        >
+                          {permission.replace('_', ' ')}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Access Button */}
+              <Button 
+                onClick={handleAccess}
+                disabled={!selectedArea}
+                className="w-full h-12 bg-gradient-primary hover:bg-gradient-primary/90 disabled:opacity-50"
+              >
+                Acceder al Área Seleccionada
+                <ChevronDown className="ml-2 w-4 h-4" />
+              </Button>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Quick Actions */}
