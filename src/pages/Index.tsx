@@ -6,8 +6,6 @@ import { Dashboard } from '@/components/Dashboard';
 import { ExpedientList } from '@/components/ExpedientList';
 import { ExpedientView } from '@/components/ExpedientView';
 import { ExpedientEditor } from '@/components/ExpedientEditor';
-import { LegajoManager } from '@/components/LegajoManager';
-import { ReportesManager } from '@/components/ReportesManager';
 import { ExpedientSummary, Expedient } from '@/types/expedient';
 import { useToast } from '@/hooks/use-toast';
 
@@ -88,7 +86,7 @@ const mockExpedients: ExpedientSummary[] = [
 function AppContent() {
   const { user } = useUser();
   const { toast } = useToast();
-  const [currentView, setCurrentView] = useState<'dashboard' | 'expedientes' | 'view' | 'editor' | 'legajos' | 'reportes'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'expedientes' | 'view' | 'editor' | 'agenda'>('dashboard');
   const [expedients, setExpedients] = useState<ExpedientSummary[]>(mockExpedients);
   const [currentExpedientId, setCurrentExpedientId] = useState<string | null>(null);
   
@@ -245,19 +243,11 @@ function AppContent() {
             onSave={user?.role === 'oficina' ? handleSaveActuacion : handleSaveExpedient}
           />
         );
-      case 'legajos':
+      case 'agenda':
         return (
-          <LegajoManager
-            onViewLegajo={(id) => console.log('Ver legajo:', id)}
-            onEditLegajo={(id) => console.log('Editar legajo:', id)}
-            onCreateLegajo={() => console.log('Crear legajo')}
-          />
-        );
-      case 'reportes':
-        return (
-          <ReportesManager
-            onGenerateReport={(params) => console.log('Generar reporte:', params)}
-          />
+          <div className="flex items-center justify-center h-64">
+            <p className="text-muted-foreground">Sección de Agenda próximamente</p>
+          </div>
         );
       default:
         return null;

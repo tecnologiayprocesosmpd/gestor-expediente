@@ -1,8 +1,7 @@
 import { 
   Home, 
   FileText, 
-  Users, 
-  BarChart3, 
+  Calendar,
   Plus,
   Building2,
   Shield
@@ -23,7 +22,7 @@ import { Badge } from '@/components/ui/badge';
 
 interface AppSidebarProps {
   currentView: string;
-  onNavigate?: (view: 'dashboard' | 'expedientes' | 'legajos' | 'reportes') => void;
+  onNavigate?: (view: 'dashboard' | 'expedientes' | 'agenda') => void;
   onCreateExpedient?: () => void;
 }
 
@@ -60,16 +59,10 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
       onClick: () => onNavigate?.('expedientes')
     },
     { 
-      id: 'legajos', 
-      title: 'Legajos', 
-      icon: Users,
-      onClick: () => onNavigate?.('legajos')
-    },
-    { 
-      id: 'reportes', 
-      title: 'Reportes', 
-      icon: BarChart3,
-      onClick: () => onNavigate?.('reportes')
+      id: 'agenda', 
+      title: 'Agenda', 
+      icon: Calendar,
+      onClick: () => onNavigate?.('agenda')
     },
   ];
 

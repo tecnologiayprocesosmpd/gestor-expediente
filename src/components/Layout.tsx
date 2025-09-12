@@ -11,8 +11,8 @@ import { AppSidebar } from "./AppSidebar";
 
 interface LayoutProps {
   children: ReactNode;
-  currentView?: 'dashboard' | 'expedientes' | 'view' | 'editor' | 'legajos' | 'reportes';
-  onNavigate?: (view: 'dashboard' | 'expedientes' | 'view' | 'editor' | 'legajos' | 'reportes') => void;
+  currentView?: 'dashboard' | 'expedientes' | 'view' | 'editor' | 'agenda';
+  onNavigate?: (view: 'dashboard' | 'expedientes' | 'view' | 'editor' | 'agenda') => void;
   onCreateExpedient?: () => void;
 }
 
