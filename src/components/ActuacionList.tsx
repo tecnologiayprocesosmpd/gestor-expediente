@@ -9,10 +9,12 @@ import {
   CheckCircle, 
   Clock,
   AlertTriangle,
-  Plus
+  Plus,
+  Calendar
 } from "lucide-react";
 import { Actuacion } from "@/types/actuacion";
 import { useUser } from "@/contexts/UserContext";
+import { CitacionDialog } from "./CitacionDialog";
 
 interface ActuacionListProps {
   expedientId: string;
@@ -21,6 +23,7 @@ interface ActuacionListProps {
   onEditActuacion?: (id: string) => void;
   onCreateActuacion?: () => void;
   onChangeStatus?: (id: string, status: Actuacion['status']) => void;
+  onCitacionCreated?: () => void;
 }
 
 export function ActuacionList({
@@ -29,7 +32,8 @@ export function ActuacionList({
   onViewActuacion,
   onEditActuacion,
   onCreateActuacion,
-  onChangeStatus
+  onChangeStatus,
+  onCitacionCreated
 }: ActuacionListProps) {
   const { user } = useUser();
   const canEdit = user?.role === 'mesa';
@@ -151,6 +155,12 @@ export function ActuacionList({
                     <Eye className="w-4 h-4 mr-1" />
                     Ver
                   </Button>
+                  
+                  <CitacionDialog
+                    expedientId={expedientId}
+                    actuacionId={actuacion.id}
+                    onCitacionCreated={onCitacionCreated}
+                  />
                   
                   {canEdit && actuacion.status !== 'firmado' && (
                     <Button

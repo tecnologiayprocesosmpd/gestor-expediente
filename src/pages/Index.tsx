@@ -6,6 +6,7 @@ import { Dashboard } from '@/components/Dashboard';
 import { ExpedientList } from '@/components/ExpedientList';
 import { ExpedientView } from '@/components/ExpedientView';
 import { ExpedientEditor } from '@/components/ExpedientEditor';
+import { AgendaView } from '@/components/AgendaView';
 import { ExpedientSummary, Expedient } from '@/types/expedient';
 import { useToast } from '@/hooks/use-toast';
 
@@ -245,9 +246,12 @@ function AppContent() {
         );
       case 'agenda':
         return (
-          <div className="flex items-center justify-center h-64">
-            <p className="text-muted-foreground">Sección de Agenda próximamente</p>
-          </div>
+          <AgendaView 
+            onNavigateToExpedient={(expedientId) => {
+              setCurrentExpedientId(expedientId);
+              setCurrentView('view');
+            }}
+          />
         );
       default:
         return null;
