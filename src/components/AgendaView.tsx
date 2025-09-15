@@ -220,14 +220,16 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
           <CardHeader>
             <CardTitle>Calendario</CardTitle>
           </CardHeader>
-          <CardContent>
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={(date) => date && setSelectedDate(date)}
-              locale={es}
-              className="w-full pointer-events-auto"
-            />
+          <CardContent className="p-4">
+            <div className="calendar-container w-full overflow-hidden">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={(date) => date && setSelectedDate(date)}
+                locale={es}
+                className="w-full pointer-events-auto mx-auto"
+              />
+            </div>
             
             <div className="mt-4 space-y-2">
               <Label>Vista</Label>
@@ -235,7 +237,7 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="z-50">
                   <SelectItem value="dia">Día</SelectItem>
                   <SelectItem value="semana">Semana</SelectItem>
                   <SelectItem value="mes">Mes</SelectItem>
