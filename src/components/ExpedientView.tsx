@@ -534,39 +534,6 @@ export function ExpedientView({
             </CardContent>
           </Card>
 
-          {/* Resumen de actuaciones */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Resumen de Actuaciones</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Total</span>
-                  <Badge variant="outline">{actuaciones.length}</Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Borradores</span>
-                  <Badge variant="secondary">
-                    {actuaciones.filter(a => a.status === 'borrador').length}
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Para Firmar</span>
-                  <Badge variant="default">
-                    {actuaciones.filter(a => a.status === 'para-firmar').length}
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Firmadas</span>
-                  <Badge className="bg-green-100 text-green-800 border-green-200">
-                    {actuaciones.filter(a => a.status === 'firmado').length}
-                  </Badge>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
         </div>
 
         {/* Panel derecho: Última actuación y lista */}
