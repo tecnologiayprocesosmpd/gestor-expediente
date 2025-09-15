@@ -221,13 +221,13 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
             <CardTitle>Calendario</CardTitle>
           </CardHeader>
           <CardContent className="p-4">
-            <div className="calendar-container w-full overflow-hidden">
+            <div className="w-full max-w-sm mx-auto">
               <Calendar
                 mode="single"
                 selected={selectedDate}
                 onSelect={(date) => date && setSelectedDate(date)}
                 locale={es}
-                className="w-full pointer-events-auto mx-auto"
+                className="rounded-md border shadow w-full"
               />
             </div>
             
