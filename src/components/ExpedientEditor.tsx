@@ -16,6 +16,7 @@ import { TableRow } from '@tiptap/extension-table-row';
 import { TableHeader } from '@tiptap/extension-table-header';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { CharacterCount } from '@tiptap/extension-character-count';
+import { Placeholder } from '@tiptap/extension-placeholder';
 import { useState, useEffect } from 'react';
 import { useUser } from "@/contexts/UserContext";
 
@@ -130,8 +131,11 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
         types: ['textStyle'],
       }),
       CharacterCount,
+      Placeholder.configure({
+        placeholder: 'Comience a redactar el contenido del expediente aquí...',
+      }),
     ],
-    content: propExpedient?.content || '<p>Comience a redactar el contenido del expediente aquí...</p>',
+    content: propExpedient?.content || '<p></p>',
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[500px] p-6 bg-white',
