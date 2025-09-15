@@ -189,4 +189,42 @@ All colors MUST be HSL.
     height: 0;
     pointer-events: none;
   }
+
+  /* Calendar wrapper styles */
+  .calendar-wrapper {
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  .calendar-wrapper .rdp {
+    width: 100%;
+    margin: 0;
+  }
+
+  .calendar-wrapper .rdp-months {
+    width: 100%;
+  }
+
+  .calendar-wrapper .rdp-month {
+    width: 100%;
+  }
+
+  .calendar-wrapper .rdp-table {
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  .calendar-wrapper .rdp-head_cell,
+  .calendar-wrapper .rdp-cell {
+    width: calc(100% / 7);
+    min-width: 0;
+    padding: 2px;
+  }
+
+  .calendar-wrapper .rdp-day {
+    width: 100%;
+    height: 100%;
+    min-height: 32px;
+    border-radius: 4px;
+  }
 }
