@@ -220,27 +220,15 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
           <CardHeader>
             <CardTitle>Calendario</CardTitle>
           </CardHeader>
-          <CardContent className="p-4">
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={(date) => date && setSelectedDate(date)}
-              locale={es}
-              className="rounded-md border"
-            />
-            
-            <div className="mt-4 space-y-2">
-              <Label>Vista</Label>
-              <Select value={viewMode} onValueChange={(value: any) => setViewMode(value)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="z-50">
-                  <SelectItem value="dia">Día</SelectItem>
-                  <SelectItem value="semana">Semana</SelectItem>
-                  <SelectItem value="mes">Mes</SelectItem>
-                </SelectContent>
-              </Select>
+          <CardContent className="p-4 flex justify-center">
+            <div className="w-full max-w-[300px]">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={(date) => date && setSelectedDate(date)}
+                locale={es}
+                className="rounded-md border bg-card shadow-sm w-full"
+              />
             </div>
           </CardContent>
         </Card>

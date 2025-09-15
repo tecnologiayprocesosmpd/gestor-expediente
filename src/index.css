@@ -189,4 +189,56 @@ All colors MUST be HSL.
     height: 0;
     pointer-events: none;
   }
+
+  /* Calendar fixed layout styles */
+  .rdp {
+    width: 280px !important;
+    max-width: 280px !important;
+  }
+  
+  .rdp-months {
+    width: 280px !important;
+  }
+  
+  .rdp-month {
+    width: 280px !important;
+  }
+  
+  .rdp-table {
+    width: 280px !important;
+    table-layout: fixed !important;
+    border-spacing: 0 !important;
+  }
+  
+  .rdp-head_row,
+  .rdp-row {
+    width: 280px !important;
+    display: flex !important;
+  }
+  
+  .rdp-head_cell,
+  .rdp-cell {
+    width: 40px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
+    height: 40px !important;
+    flex: none !important;
+  }
+  
+  .rdp-day {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+    margin: 2px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+  }
+  
+  .rdp-caption {
+    height: 40px !important;
+    margin-bottom: 16px !important;
+  }
 }
