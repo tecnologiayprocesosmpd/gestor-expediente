@@ -214,27 +214,31 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
         </Dialog>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Calendario */}
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle>Calendario</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 flex justify-center">
-            <div className="w-full max-w-[300px]">
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={(date) => date && setSelectedDate(date)}
-                locale={es}
-                className="rounded-md border bg-card shadow-sm w-full"
-              />
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        {/* Calendario - Movido a una columna más ancha */}
+        <div className="xl:col-span-1">
+          <Card>
+            <CardHeader>
+              <CardTitle>Calendario</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="flex justify-center">
+                <div className="calendar-container overflow-hidden rounded-lg border bg-background p-4">
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={(date) => date && setSelectedDate(date)}
+                    locale={es}
+                    className="mx-auto"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Lista de Citas */}
-        <div className="lg:col-span-3">
+        <div className="xl:col-span-2">
           <h2 className="text-2xl font-bold tracking-tight mb-4">Citas</h2>
           <div className="space-y-2">
             {citasFiltradas.length === 0 ? (
