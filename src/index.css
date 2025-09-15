@@ -133,4 +133,60 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Editor styles */
+  .ProseMirror {
+    padding: 1rem;
+    outline: none;
+  }
+
+  .ProseMirror img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    resize: both;
+    overflow: auto;
+    min-width: 50px;
+    min-height: 50px;
+  }
+
+  .ProseMirror img:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+  }
+
+  .ProseMirror img.ProseMirror-selectednode {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+  }
+
+  .ProseMirror table {
+    border-collapse: collapse;
+    margin: 1rem 0;
+    overflow-x: auto;
+    width: 100%;
+  }
+
+  .ProseMirror table td,
+  .ProseMirror table th {
+    border: 1px solid hsl(var(--border));
+    padding: 8px 12px;
+    vertical-align: top;
+  }
+
+  .ProseMirror table th {
+    background-color: hsl(var(--muted));
+    font-weight: 600;
+  }
+
+  .ProseMirror p.is-editor-empty:first-child::before {
+    color: hsl(var(--muted-foreground));
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
 }

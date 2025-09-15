@@ -58,6 +58,7 @@ import { TableControls } from "@/components/ui/table-controls";
 import { LinkControls } from "@/components/ui/link-controls";
 import { DocumentStats } from "@/components/ui/document-stats";
 import { ImageInsert } from "@/components/ui/image-insert";
+import { ImageEdit } from "@/components/ui/image-edit";
 import { IndentControls } from "@/components/ui/indent-controls";
 import { MarginControls } from "@/components/ui/margin-controls";
 
@@ -121,7 +122,8 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
         inline: true,
         allowBase64: true,
         HTMLAttributes: {
-          class: 'max-w-full h-auto rounded-lg shadow-sm',
+          class: 'max-w-full h-auto rounded-lg shadow-sm cursor-pointer hover:shadow-lg transition-shadow resizable',
+          style: 'resize: both; overflow: auto;',
         },
       }),
       FontFamily.configure({
@@ -648,7 +650,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
                 <div className="flex items-center gap-0.5">
                   <LinkControls editor={editor} />
                   <TableControls editor={editor} />
-                  <ImageInsert editor={editor} />
+                  <ImageEdit editor={editor} />
                   <Button
                     variant="ghost"
                     size="sm"
