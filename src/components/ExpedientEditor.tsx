@@ -83,7 +83,11 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        // Disable extensions we'll configure separately
+        strike: false,
+        link: false,
+      }),
       TextStyle,
       Color,
       Highlight.configure({
