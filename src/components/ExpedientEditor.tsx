@@ -330,7 +330,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
           <div className="flex items-center space-x-3">
             <div className={`w-4 h-4 rounded-full ${statusColors.bg}`}></div>
             <span className="text-lg font-semibold">
-              Estado del Expediente: <span className={statusColors.text}>{getStatusLabel(status)}</span>
+              Estado del Expediente: {getStatusLabel(status)}
             </span>
           </div>
           <div className="flex items-center space-x-3">
