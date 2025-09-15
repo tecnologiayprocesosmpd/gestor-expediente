@@ -334,7 +334,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
             </span>
           </div>
           <div className="flex items-center space-x-3">
-            <Badge className={`${statusColors.bg} ${statusColors.text} px-3 py-1`}>
+            <Badge className={`${statusColors.bg} ${statusColors.text} px-4 py-2`}>
               {getStatusLabel(status)}
             </Badge>
             {canOnlyAddActuaciones && (
