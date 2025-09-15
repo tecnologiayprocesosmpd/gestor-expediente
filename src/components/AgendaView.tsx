@@ -233,7 +233,7 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
               selected={selectedDate}
               onSelect={(date) => date && setSelectedDate(date)}
               locale={es}
-              className="w-full"
+              className="w-full pointer-events-auto"
             />
             
             <div className="mt-4 space-y-2">
