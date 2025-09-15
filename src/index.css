@@ -192,7 +192,7 @@ All colors MUST be HSL.
 
   /* Calendar wrapper styles */
   .calendar-wrapper {
-    max-width: 320px;
+    max-width: 360px;
     margin: 0 auto;
   }
 
@@ -212,9 +212,26 @@ All colors MUST be HSL.
   .calendar-wrapper .rdp-table {
     width: 100%;
     table-layout: fixed;
+    border-spacing: 0;
   }
 
-  .calendar-wrapper .rdp-head_cell,
+  .calendar-wrapper .rdp-head_row {
+    margin-bottom: 8px;
+  }
+
+  .calendar-wrapper .rdp-head_cell {
+    width: calc(100% / 7);
+    min-width: 0;
+    padding: 12px 4px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .calendar-wrapper .rdp-row {
+    margin-bottom: 4px;
+  }
+
   .calendar-wrapper .rdp-cell {
     width: calc(100% / 7);
     min-width: 0;
@@ -223,8 +240,40 @@ All colors MUST be HSL.
 
   .calendar-wrapper .rdp-day {
     width: 100%;
-    height: 100%;
-    min-height: 32px;
-    border-radius: 4px;
+    min-height: 40px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+  }
+
+  .calendar-wrapper .rdp-nav {
+    position: relative;
+  }
+
+  .calendar-wrapper .rdp-nav_button {
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--background));
+    border-radius: 6px;
+    transition: all 0.2s ease;
+  }
+
+  .calendar-wrapper .rdp-nav_button:hover {
+    background: hsl(var(--accent));
+    border-color: hsl(var(--accent-foreground) / 0.2);
+  }
+
+  .calendar-wrapper .rdp-caption {
+    padding: 0 40px;
+    margin-bottom: 20px;
+  }
+
+  .calendar-wrapper .rdp-caption_label {
+    font-size: 16px;
+    font-weight: 600;
+    color: hsl(var(--foreground));
   }
 }

@@ -220,8 +220,8 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
           <CardHeader>
             <CardTitle>Calendario</CardTitle>
           </CardHeader>
-          <CardContent className="p-4">
-            <div className="calendar-wrapper border rounded-lg p-4 bg-background">
+          <CardContent className="p-6">
+            <div className="calendar-wrapper bg-card border rounded-xl p-6 shadow-sm max-w-sm mx-auto">
               <Calendar
                 mode="single"
                 selected={selectedDate}
