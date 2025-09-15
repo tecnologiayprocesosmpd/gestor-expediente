@@ -131,16 +131,6 @@ export function Dashboard({
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 to-indigo-100">
-            <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-indigo-600 rounded-lg flex items-center justify-center mx-auto mb-3">
-                <AlertCircle className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="font-semibold text-sm text-indigo-900 mb-1">Novedades</h3>
-              <p className="text-xs text-indigo-700">del Sistema</p>
-              <Badge className="mt-2 bg-indigo-600 text-white text-xs">Ver Todas</Badge>
-            </CardContent>
-          </Card>
         </div>
       )}
 
