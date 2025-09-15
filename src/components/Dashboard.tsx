@@ -84,6 +84,38 @@ export function Dashboard({
 
   return (
     <div className="space-y-6">
+      {/* Cuadro de Novedades */}
+      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <AlertCircle className="h-5 w-5 text-blue-600" />
+            Novedades del Sistema
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            <div className="p-3 bg-white rounded-lg border border-blue-100">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h4 className="font-medium text-sm text-blue-900">Nueva funcionalidad: Gestión de Casos Pendientes</h4>
+                  <p className="text-xs text-blue-700 mt-1">Ahora puedes gestionar todos los casos pendientes desde una vista centralizada.</p>
+                </div>
+                <Badge variant="secondary" className="text-xs">Nuevo</Badge>
+              </div>
+            </div>
+            <div className="p-3 bg-white rounded-lg border border-green-100">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h4 className="font-medium text-sm text-green-900">Actualización: Mejoras en Auditoría</h4>
+                  <p className="text-xs text-green-700 mt-1">Se agregaron nuevos reportes de auditoría y seguimiento trimestral.</p>
+                </div>
+                <Badge variant="outline" className="text-xs border-green-300 text-green-700">Actualizado</Badge>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>

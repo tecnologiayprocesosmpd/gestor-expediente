@@ -4,7 +4,11 @@ import {
   Calendar,
   Plus,
   Building2,
-  Shield
+  Shield,
+  Inbox,
+  Search,
+  BarChart3,
+  TrendingUp
 } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import {
@@ -24,7 +28,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 
 interface AppSidebarProps {
   currentView: string;
-  onNavigate?: (view: 'dashboard' | 'expedientes' | 'agenda') => void;
+  onNavigate?: (view: 'dashboard' | 'expedientes' | 'agenda' | 'casos-pendientes' | 'auditoria' | 'cuatrimestre') => void;
   onCreateExpedient?: () => void;
 }
 
@@ -66,6 +70,32 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
       icon: Calendar,
       onClick: () => onNavigate?.('agenda')
     },
+  ];
+
+  // Navegación específica para Mesa de Entrada
+  const mesaEntradaItems = user.role === 'mesa' ? [
+    {
+      id: 'casos-pendientes',
+      title: 'Casos Pendientes',
+      icon: Inbox,
+      onClick: () => onNavigate?.('casos-pendientes')
+    }
+  ] : [];
+
+  // Navegación para reportes y auditoría
+  const reportesItems = [
+    {
+      id: 'auditoria',
+      title: 'Auditoría',
+      icon: Search,
+      onClick: () => onNavigate?.('auditoria')
+    },
+    {
+      id: 'cuatrimestre',
+      title: '1er Cuatrimestre',
+      icon: BarChart3,
+      onClick: () => onNavigate?.('cuatrimestre')
+    }
   ];
 
   return (
@@ -111,6 +141,60 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
           </div>
           <nav className="space-y-1 px-2">
             {navigationItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={item.onClick}
+                className={`w-full flex items-center justify-center group-hover:justify-start p-3 rounded-lg transition-all duration-300 ${
+                  currentView === item.id 
+                    ? "bg-muted text-primary font-medium" 
+                    : "hover:bg-muted/50 text-foreground"
+                }`}
+              >
+                <item.icon className="w-5 h-5 flex-shrink-0" />
+                <span className="ml-3 opacity-0 group-hover:opacity-100 transition-all duration-300 overflow-hidden whitespace-nowrap">
+                  {item.title}
+                </span>
+              </button>
+            ))}
+          </nav>
+
+          {/* Mesa de Entrada specific navigation */}
+          {mesaEntradaItems.length > 0 && (
+            <>
+              <div className="px-2 mb-2 mt-6">
+                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-all duration-300 overflow-hidden whitespace-nowrap">
+                  Gestión
+                </h3>
+              </div>
+              <nav className="space-y-1 px-2">
+                {mesaEntradaItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={item.onClick}
+                    className={`w-full flex items-center justify-center group-hover:justify-start p-3 rounded-lg transition-all duration-300 ${
+                      currentView === item.id 
+                        ? "bg-muted text-primary font-medium" 
+                        : "hover:bg-muted/50 text-foreground"
+                    }`}
+                  >
+                    <item.icon className="w-5 h-5 flex-shrink-0" />
+                    <span className="ml-3 opacity-0 group-hover:opacity-100 transition-all duration-300 overflow-hidden whitespace-nowrap">
+                      {item.title}
+                    </span>
+                  </button>
+                ))}
+              </nav>
+            </>
+          )}
+
+          {/* Reportes navigation */}
+          <div className="px-2 mb-2 mt-6">
+            <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-all duration-300 overflow-hidden whitespace-nowrap">
+              Reportes
+            </h3>
+          </div>
+          <nav className="space-y-1 px-2">
+            {reportesItems.map((item) => (
               <button
                 key={item.id}
                 onClick={item.onClick}
