@@ -567,49 +567,6 @@ export function ExpedientView({
             </CardContent>
           </Card>
 
-          {/* Fechas de Citación */}
-          <Card className="border-l-4 border-l-blue-500">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">Fechas de Citación</CardTitle>
-                <CitacionDialog 
-                  expedientId={expedient.id}
-                  onCitacionCreated={loadFechasCitacion}
-                />
-              </div>
-            </CardHeader>
-            <CardContent>
-              {fechasCitacion.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
-                  No hay fechas de citación programadas
-                </p>
-              ) : (
-                <div className="space-y-2">
-                  {fechasCitacion.map((fecha) => (
-                    <div 
-                      key={fecha.id} 
-                      className={`flex items-center justify-between p-2 rounded border ${
-                        fecha.completada ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'
-                      }`}
-                    >
-                      <div>
-                        <p className="font-medium text-sm">{fecha.descripcion}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {format(fecha.fecha, 'PPp', { locale: es })}
-                        </p>
-                      </div>
-                      <Badge 
-                        variant={fecha.completada ? 'default' : 'secondary'}
-                        className="text-xs"
-                      >
-                        {fecha.completada ? 'Completada' : 'Pendiente'}
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
         </div>
 
         {/* Panel derecho: Última actuación y lista */}
@@ -667,6 +624,50 @@ export function ExpedientView({
             onChangeStatus={handleStatusChange}
             onCitacionCreated={loadFechasCitacion}
           />
+
+          {/* Fechas de Citación */}
+          <Card className="border-l-4 border-l-blue-500">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg">Fechas de Citación</CardTitle>
+                <CitacionDialog 
+                  expedientId={expedient.id}
+                  onCitacionCreated={loadFechasCitacion}
+                />
+              </div>
+            </CardHeader>
+            <CardContent>
+              {fechasCitacion.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  No hay fechas de citación programadas
+                </p>
+              ) : (
+                <div className="space-y-2">
+                  {fechasCitacion.map((fecha) => (
+                    <div 
+                      key={fecha.id} 
+                      className={`flex items-center justify-between p-2 rounded border ${
+                        fecha.completada ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'
+                      }`}
+                    >
+                      <div>
+                        <p className="font-medium text-sm">{fecha.descripcion}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {format(fecha.fecha, 'PPp', { locale: es })}
+                        </p>
+                      </div>
+                      <Badge 
+                        variant={fecha.completada ? 'default' : 'secondary'}
+                        className="text-xs"
+                      >
+                        {fecha.completada ? 'Completada' : 'Pendiente'}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
