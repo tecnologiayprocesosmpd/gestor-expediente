@@ -142,11 +142,11 @@ export function ExpedientList({
       </div>
 
       {/* Compact Filter Navbar */}
-      <div className="bg-background border rounded-lg shadow-sm">
+      <div className="bg-background border rounded-lg shadow-sm overflow-hidden">
         <div className="px-4 py-3">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
+          <div className="flex flex-col gap-4">
             {/* Search Bar */}
-            <div className="relative flex-1 min-w-[300px]">
+            <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Buscar por título, número o creador..."
@@ -156,39 +156,43 @@ export function ExpedientList({
               />
             </div>
 
-            {/* Status Filters */}
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground whitespace-nowrap">Estado:</span>
-              {['all', 'en_tramite', 'draft', 'archivado', 'derivado'].map((status) => (
-                <Button
-                  key={status}
-                  variant={selectedStatus === status ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setSelectedStatus(status as any)}
-                  className="h-8 px-3 text-xs"
-                >
-                  {status === 'all' ? 'Todos' : 
-                   status === 'en_tramite' ? 'En Trámite' :
-                   status === 'draft' ? 'Borradores' : 
-                   status === 'archivado' ? 'Archivados' : 'Derivados'}
-                </Button>
-              ))}
-            </div>
-
-            {/* Sort Options */}
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground whitespace-nowrap">Ordenar:</span>
-              <div className="flex items-center gap-1">
-                <SortButton field="createdAt">Fecha</SortButton>
-                <SortButton field="number">Número</SortButton>
-                <SortButton field="title">Título</SortButton>
-                <SortButton field="status">Estado</SortButton>
+            <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+              {/* Status Filters */}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-sm text-muted-foreground whitespace-nowrap">Estado:</span>
+                <div className="flex flex-wrap gap-1">
+                  {['all', 'en_tramite', 'draft', 'archivado', 'derivado'].map((status) => (
+                    <Button
+                      key={status}
+                      variant={selectedStatus === status ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setSelectedStatus(status as any)}
+                      className="h-8 px-3 text-xs"
+                    >
+                      {status === 'all' ? 'Todos' : 
+                       status === 'en_tramite' ? 'En Trámite' :
+                       status === 'draft' ? 'Borradores' : 
+                       status === 'archivado' ? 'Archivados' : 'Derivados'}
+                    </Button>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* Results Count */}
-            <div className="text-sm text-muted-foreground whitespace-nowrap">
-              {sortedExpedients.length} de {expedients.length}
+              {/* Sort Options */}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-sm text-muted-foreground whitespace-nowrap">Ordenar:</span>
+                <div className="flex flex-wrap items-center gap-1">
+                  <SortButton field="createdAt">Fecha</SortButton>
+                  <SortButton field="number">Número</SortButton>
+                  <SortButton field="title">Título</SortButton>
+                  <SortButton field="status">Estado</SortButton>
+                </div>
+              </div>
+
+              {/* Results Count */}
+              <div className="text-sm text-muted-foreground whitespace-nowrap lg:ml-auto">
+                {sortedExpedients.length} de {expedients.length}
+              </div>
             </div>
           </div>
         </div>
