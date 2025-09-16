@@ -300,6 +300,11 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
         border: 'border-[hsl(var(--status-en-tramite))]',
         text: 'text-[hsl(var(--status-en-tramite-foreground))]'
       },
+      pausado: {
+        bg: 'bg-[hsl(var(--status-pausado))]',
+        border: 'border-[hsl(var(--status-pausado))]',
+        text: 'text-[hsl(var(--status-pausado-foreground))]'
+      },
       archivado: {
         bg: 'bg-[hsl(var(--status-archivado))]',
         border: 'border-[hsl(var(--status-archivado))]',
@@ -309,11 +314,6 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
         bg: 'bg-[hsl(var(--status-derivado))]',
         border: 'border-[hsl(var(--status-derivado))]',
         text: 'text-[hsl(var(--status-derivado-foreground))]'
-      },
-      desistido: {
-        bg: 'bg-[hsl(var(--status-desistido))]',
-        border: 'border-[hsl(var(--status-desistido))]',
-        text: 'text-[hsl(var(--status-desistido-foreground))]'
       }
     };
     
