@@ -91,7 +91,7 @@ export function CasosPendientes({ onViewItem }: CasosPendientesProps) {
         titulo: 'Dictamen Legal - Amparo García',
         creador: 'Dr. María González',
         fechaCreacion: new Date('2024-01-28'),
-        estado: 'Pendiente Firma'
+        estado: 'Para Firmar'
       }
     ],
     actuacionesParaAgregar: [

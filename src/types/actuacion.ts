@@ -7,7 +7,7 @@ export interface Actuacion {
   createdAt: Date;
   updatedAt: Date;
   createdBy: string;
-  status: 'borrador' | 'revision' | 'para-firmar' | 'firmado' | 'observado';
+  status: 'borrador' | 'para-firmar' | 'firmado';
   
   // Firma digital
   signedAt?: Date;
@@ -31,11 +31,8 @@ export interface Actuacion {
   version: number;
   versionAnterior?: string; // ID de versión anterior
   
-  // Observaciones y revisiones
+  // Observaciones (mantener para casos especiales)
   observaciones?: Observacion[];
-  requiereRevision: boolean;
-  revisadoPor?: string;
-  fechaRevision?: Date;
   
   // Auditoría
   modificaciones?: ModificacionActuacion[];

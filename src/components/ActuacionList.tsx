@@ -72,11 +72,9 @@ export function ActuacionList({
     if (!canEdit || !onChangeStatus) return;
 
     const nextStatus: { [key in Actuacion['status']]: Actuacion['status'] | null } = {
-      'borrador': 'revision',
-      'revision': 'para-firmar',
+      'borrador': 'para-firmar',
       'para-firmar': 'firmado',
-      'firmado': null,
-      'observado': 'revision'
+      'firmado': null
     };
 
     const next = nextStatus[currentStatus];
