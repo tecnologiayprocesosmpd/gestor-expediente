@@ -215,41 +215,58 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* Calendario - Responsive con hover */}
+        {/* Calendario - Compacto y eficiente */}
         <div className="xl:col-span-1">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Calendario</CardTitle>
+          <Card className="overflow-hidden">
+            <CardHeader className="pb-1 px-3 pt-3">
+              <CardTitle className="text-sm font-medium">Calendario</CardTitle>
             </CardHeader>
-            <CardContent className="p-2">
-              <div className="w-full">
-                <div className="group relative overflow-hidden rounded border bg-background transition-all duration-300 hover:shadow-md w-full">
-                  {/* Vista compacta - Solo fecha actual/seleccionada */}
-                  <div className="group-hover:opacity-0 group-hover:absolute group-hover:pointer-events-none transition-all duration-300 p-3 bg-gradient-to-r from-primary/5 to-primary/10">
-                    <div className="text-center space-y-1">
-                      <div className="text-xl font-bold text-primary">
-                        {selectedDate.getDate()}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {format(selectedDate, 'MMMM yyyy', { locale: es })}
-                      </div>
-                      <div className="text-xs text-muted-foreground opacity-75">
-                        {format(selectedDate, 'EEEE', { locale: es })}
-                      </div>
+            <CardContent className="p-0">
+              <div className="group relative">
+                {/* Vista compacta - Solo fecha actual */}
+                <div className="group-hover:opacity-0 group-hover:absolute group-hover:pointer-events-none transition-all duration-300 p-3 bg-gradient-to-r from-primary/5 to-primary/10 border-t">
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-primary leading-none">
+                      {selectedDate.getDate()}
                     </div>
-                    <div className="text-xs text-center text-muted-foreground mt-2 opacity-50">
+                    <div className="text-xs text-muted-foreground mt-1 leading-none">
+                      {format(selectedDate, 'MMMM yyyy', { locale: es })}
+                    </div>
+                    <div className="text-xs text-muted-foreground opacity-60 leading-none">
+                      {format(selectedDate, 'EEEE', { locale: es })}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-2 opacity-40 leading-none">
                       Hover para modificar
                     </div>
                   </div>
-                  
-                  {/* Vista expandida - Calendar completo */}
-                  <div className="opacity-0 group-hover:opacity-100 absolute inset-0 group-hover:relative group-hover:pointer-events-auto transition-all duration-300 p-2 animate-fade-in">
+                </div>
+                
+                {/* Vista expandida - Calendar completo */}
+                <div className="opacity-0 group-hover:opacity-100 absolute inset-0 group-hover:relative group-hover:pointer-events-auto transition-all duration-300 animate-fade-in bg-background border-t">
+                  <div className="p-2">
                     <Calendar
                       mode="single"
                       selected={selectedDate}
                       onSelect={(date) => date && setSelectedDate(date)}
                       locale={es}
-                      className="w-full pointer-events-auto text-sm"
+                      className="w-full pointer-events-auto scale-90 origin-top"
+                      classNames={{
+                        months: "space-y-0",
+                        month: "space-y-2",
+                        caption: "relative flex items-center justify-center pt-1 pb-2",
+                        caption_label: "text-xs font-medium",
+                        nav: "space-x-1 flex items-center",
+                        nav_button: "h-6 w-6 bg-transparent p-0 text-muted-foreground hover:text-foreground",
+                        table: "w-full border-collapse space-y-1",
+                        head_row: "flex",
+                        head_cell: "text-muted-foreground rounded-md w-8 font-normal text-xs",
+                        row: "flex w-full mt-1",
+                        cell: "text-center text-xs relative p-0 focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md",
+                        day: "h-7 w-8 p-0 font-normal text-xs hover:bg-accent hover:text-accent-foreground aria-selected:opacity-100",
+                        day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+                        day_today: "bg-accent text-accent-foreground",
+                        day_outside: "text-muted-foreground opacity-50"
+                      }}
                     />
                   </div>
                 </div>
