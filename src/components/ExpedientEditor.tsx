@@ -434,9 +434,9 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
                 className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${!canEditBasicInfo ? 'bg-muted cursor-not-allowed' : ''}`}
               >
                 <option value="draft">Borrador</option>
-                <option value="active">Activo</option>
-                <option value="closed">Cerrado</option>
-                <option value="archived">Archivado</option>
+                <option value="en_tramite">En Trámite</option>
+                <option value="pausado">Pausado</option>
+                <option value="archivado">Archivado</option>
                 <option value="derivado">Derivado</option>
               </select>
             </div>
