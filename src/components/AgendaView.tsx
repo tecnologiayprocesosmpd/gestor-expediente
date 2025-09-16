@@ -215,7 +215,7 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* Calendario - Movido a una columna más ancha */}
+        {/* Calendario - Responsive con hover */}
         <div className="xl:col-span-1">
           <Card>
             <CardHeader>
@@ -223,14 +223,35 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
             </CardHeader>
             <CardContent className="p-6">
               <div className="flex justify-center">
-                <div className="calendar-container overflow-hidden rounded-lg border bg-background p-4">
-                  <Calendar
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={(date) => date && setSelectedDate(date)}
-                    locale={es}
-                    className="mx-auto"
-                  />
+                <div className="group relative overflow-hidden rounded-lg border bg-background transition-all duration-300 hover:shadow-lg">
+                  {/* Vista compacta - Solo fecha actual/seleccionada */}
+                  <div className="group-hover:opacity-0 group-hover:absolute group-hover:pointer-events-none transition-all duration-300 p-4 bg-gradient-to-r from-primary/5 to-primary/10">
+                    <div className="text-center space-y-2">
+                      <div className="text-2xl font-bold text-primary">
+                        {selectedDate.getDate()}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {format(selectedDate, 'MMMM yyyy', { locale: es })}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {format(selectedDate, 'EEEE', { locale: es })}
+                      </div>
+                    </div>
+                    <div className="text-xs text-center text-muted-foreground mt-3 opacity-60">
+                      Pasa el cursor para modificar
+                    </div>
+                  </div>
+                  
+                  {/* Vista expandida - Calendar completo */}
+                  <div className="opacity-0 group-hover:opacity-100 absolute inset-0 group-hover:relative group-hover:pointer-events-auto transition-all duration-300 p-4 animate-fade-in">
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={(date) => date && setSelectedDate(date)}
+                      locale={es}
+                      className="mx-auto pointer-events-auto"
+                    />
+                  </div>
                 </div>
               </div>
             </CardContent>
