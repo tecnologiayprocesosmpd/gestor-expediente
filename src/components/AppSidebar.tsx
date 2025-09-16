@@ -104,7 +104,7 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
       onMouseLeave={(e) => {
         // Prevenir que se colapse si el mouse está sobre un dropdown/tooltip
         const relatedTarget = e.relatedTarget as Element;
-        if (relatedTarget && relatedTarget.closest('[data-radix-popper-content-wrapper]')) {
+        if (relatedTarget && typeof relatedTarget.closest === 'function' && relatedTarget.closest('[data-radix-popper-content-wrapper]')) {
           return;
         }
       }}
