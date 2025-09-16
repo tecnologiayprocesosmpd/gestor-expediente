@@ -7,23 +7,11 @@ interface IndentControlsProps {
 
 export function IndentControls({ editor }: IndentControlsProps) {
   const addIndent = () => {
-    const { from, to } = editor.state.selection;
-    editor.chain()
-      .setTextSelection({ from, to })
-      .updateAttributes('paragraph', { 
-        style: 'margin-left: 2rem' 
-      })
-      .run();
+    editor.chain().focus().increaseIndent().run();
   };
 
   const removeIndent = () => {
-    const { from, to } = editor.state.selection;
-    editor.chain()
-      .setTextSelection({ from, to })
-      .updateAttributes('paragraph', { 
-        style: 'margin-left: 0' 
-      })
-      .run();
+    editor.chain().focus().decreaseIndent().run();
   };
 
   return (

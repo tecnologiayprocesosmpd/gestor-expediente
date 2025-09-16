@@ -145,12 +145,13 @@ All colors MUST be HSL.
     height: auto;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
+    cursor: move;
     transition: all 0.3s ease;
     resize: both;
-    overflow: auto;
+    overflow: hidden;
     min-width: 50px;
     min-height: 50px;
+    position: relative;
   }
 
   .ProseMirror img:hover {
@@ -161,6 +162,17 @@ All colors MUST be HSL.
   .ProseMirror img.ProseMirror-selectednode {
     outline: 2px solid hsl(var(--primary));
     outline-offset: 2px;
+    box-shadow: 0 0 0 4px hsla(var(--primary), 0.2);
+  }
+
+  .ProseMirror img.resizable-image {
+    resize: both;
+    overflow: hidden;
+    border: 1px solid transparent;
+  }
+
+  .ProseMirror img.resizable-image:hover {
+    border: 1px dashed hsl(var(--border));
   }
 
   .ProseMirror table {

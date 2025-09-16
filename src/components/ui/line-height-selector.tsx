@@ -22,13 +22,7 @@ export function LineHeightSelector({ editor }: LineHeightSelectorProps) {
   ];
 
   const setLineHeight = (lineHeight: string) => {
-    editor.chain().focus().selectAll().run();
-    const selection = editor.state.selection;
-    
-    editor.chain()
-      .setTextSelection(selection)
-      .updateAttributes('paragraph', { style: `line-height: ${lineHeight}` })
-      .run();
+    editor.chain().focus().setLineHeight(lineHeight).run();
   };
 
   return (

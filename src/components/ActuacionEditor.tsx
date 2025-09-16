@@ -17,6 +17,8 @@ import { TableHeader } from '@tiptap/extension-table-header';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { CharacterCount } from '@tiptap/extension-character-count';
 import { Placeholder } from '@tiptap/extension-placeholder';
+import { LineHeightExtension } from '@/extensions/LineHeightExtension';
+import { IndentExtension } from '@/extensions/IndentExtension';
 import { useState, useEffect, useMemo } from 'react';
 import { useUser } from "@/contexts/UserContext";
 import { useAutoSave } from "@/hooks/useAutoSave";
@@ -64,6 +66,7 @@ import { DocumentStats } from "@/components/ui/document-stats";
 import { ImageInsert } from "@/components/ui/image-insert";
 import { ImageEdit } from "@/components/ui/image-edit";
 import { IndentControls } from "@/components/ui/indent-controls";
+import { MarginControls } from "@/components/ui/margin-controls";
 import type { Actuacion } from "@/types/actuacion";
 
 interface ActuacionEditorProps {
@@ -88,6 +91,8 @@ export function ActuacionEditor({
   const [status, setStatus] = useState<Actuacion['status']>(propActuacion?.status || 'borrador');
   const [confidencial, setConfidencial] = useState(propActuacion?.confidencial || false);
   const [urgente, setUrgente] = useState(propActuacion?.urgente || false);
+  const [margins, setMargins] = useState({ top: 20, right: 20, bottom: 20, left: 20 });
+  const [content, setContent] = useState(propActuacion?.content || '');
   
   const { user } = useUser();
   const canEdit = status !== 'firmado';
@@ -137,11 +142,18 @@ export function ActuacionEditor({
         inline: true,
         allowBase64: true,
         HTMLAttributes: {
-          class: 'max-w-full h-auto rounded-lg shadow-sm cursor-pointer hover:shadow-lg transition-shadow resizable',
+          class: 'max-w-full h-auto rounded-lg shadow-sm cursor-pointer hover:shadow-lg transition-all resizable-image',
+          style: 'resize: both; overflow: hidden; min-width: 50px; min-height: 50px;'
         },
       }),
       FontFamily.configure({
         types: ['textStyle'],
+      }),
+      LineHeightExtension.configure({
+        types: ['paragraph', 'heading'],
+      }),
+      IndentExtension.configure({
+        types: ['paragraph', 'heading'],
       }),
       CharacterCount,
       Placeholder.configure({
@@ -152,7 +164,7 @@ export function ActuacionEditor({
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[400px] p-6 bg-white',
-        style: 'line-height: 1.6;',
+        style: `padding: ${margins.top}px ${margins.right}px ${margins.bottom}px ${margins.left}px; line-height: 1.6;`,
       },
       handleKeyDown: (view, event) => {
         if (event.ctrlKey || event.metaKey) {
@@ -192,7 +204,17 @@ export function ActuacionEditor({
     },
   });
 
-  const [content, setContent] = useState(propActuacion?.content || '');
+  // Handle margins change
+  const handleMarginsChange = (newMargins: { top: number; right: number; bottom: number; left: number }) => {
+    setMargins(newMargins);
+    if (editor) {
+      // Update editor attributes with new margins
+      const editorElement = document.querySelector('.ProseMirror') as HTMLElement;
+      if (editorElement) {
+        editorElement.style.padding = `${newMargins.top}px ${newMargins.right}px ${newMargins.bottom}px ${newMargins.left}px`;
+      }
+    }
+  };
 
   // Auto-save data structure
   const autoSaveData = useMemo(() => ({
@@ -552,6 +574,10 @@ export function ActuacionEditor({
                 <TableControls editor={editor} />
                 <ImageInsert editor={editor} />
                 <ImageEdit editor={editor} />
+                <MarginControls 
+                  onMarginsChange={handleMarginsChange}
+                  currentMargins={margins}
+                />
               </div>
             </div>
           )}

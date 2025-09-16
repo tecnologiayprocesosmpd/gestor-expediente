@@ -17,6 +17,8 @@ import { TableHeader } from '@tiptap/extension-table-header';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { CharacterCount } from '@tiptap/extension-character-count';
 import { Placeholder } from '@tiptap/extension-placeholder';
+import { LineHeightExtension } from '@/extensions/LineHeightExtension';
+import { IndentExtension } from '@/extensions/IndentExtension';
 import { useState, useEffect, useMemo } from 'react';
 import { useUser } from "@/contexts/UserContext";
 import { useAutoSave } from "@/hooks/useAutoSave";
@@ -129,12 +131,18 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
         inline: true,
         allowBase64: true,
         HTMLAttributes: {
-          class: 'max-w-full h-auto rounded-lg shadow-sm cursor-pointer hover:shadow-lg transition-shadow resizable',
-          style: 'resize: both; overflow: auto;',
+          class: 'max-w-full h-auto rounded-lg shadow-sm cursor-pointer hover:shadow-lg transition-all resizable-image',
+          style: 'resize: both; overflow: hidden; min-width: 50px; min-height: 50px;'
         },
       }),
       FontFamily.configure({
         types: ['textStyle'],
+      }),
+      LineHeightExtension.configure({
+        types: ['paragraph', 'heading'],
+      }),
+      IndentExtension.configure({
+        types: ['paragraph', 'heading'],
       }),
       CharacterCount,
       Placeholder.configure({
@@ -233,6 +241,17 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
   if (!editor) {
     return null;
   }
+
+  const handleMarginsChange = (newMargins: { top: number; right: number; bottom: number; left: number }) => {
+    setMargins(newMargins);
+    if (editor) {
+      // Update editor attributes with new margins
+      const editorElement = document.querySelector('.ProseMirror') as HTMLElement;
+      if (editorElement) {
+        editorElement.style.padding = `${newMargins.top}px ${newMargins.right}px ${newMargins.bottom}px ${newMargins.left}px`;
+      }
+    }
+  };
 
   const handleSave = () => {
     forceSave();
@@ -689,14 +708,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
                 <div className="flex items-center gap-0.5">
                   <MarginControls 
                     currentMargins={margins}
-                    onMarginsChange={(newMargins) => {
-                      setMargins(newMargins);
-                      // Actualizar los atributos del editor
-                      if (editor && editor.view && editor.view.dom) {
-                        const editorElement = editor.view.dom as HTMLElement;
-                        editorElement.style.padding = `${newMargins.top}px ${newMargins.right}px ${newMargins.bottom}px ${newMargins.left}px`;
-                      }
-                    }}
+                    onMarginsChange={handleMarginsChange}
                   />
                 </div>
               </div>
