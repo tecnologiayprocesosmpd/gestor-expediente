@@ -137,55 +137,60 @@ export function Dashboard({
     <div className="space-y-6">
       {/* Funciones Principales - Solo para Mesa de Entrada */}
       {user.role === 'mesa' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-3xl mx-auto">
-          <Card 
-            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-gray-100"
-            onClick={() => {
-              onFilterExpedients?.('draft');
-              onNavigateToExpedients?.();
-            }}
-          >
-            <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-gray-600 rounded-lg flex items-center justify-center mx-auto mb-3">
-                <FileText className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="font-semibold text-sm text-gray-900 mb-1">Borradores</h3>
-              <p className="text-xs text-gray-700">Expedientes en borrador</p>
-              <Badge className="mt-2 bg-gray-600 text-white text-xs">{stats.draft} Pendientes</Badge>
-            </CardContent>
-          </Card>
-
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
           <Card 
             className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100"
-            onClick={() => {
-              onFilterExpedients?.('en_tramite');
-              onNavigateToExpedients?.();
-            }}
+            onClick={() => onNavigateToExpedients?.()}
           >
             <CardContent className="p-6 text-center">
               <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <FileText className="w-6 h-6 text-white" />
               </div>
-              <h3 className="font-semibold text-sm text-blue-900 mb-1">En Trámite</h3>
-              <p className="text-xs text-blue-700">Expedientes activos</p>
-              <Badge className="mt-2 bg-blue-600 text-white text-xs">{stats.en_tramite} Pendientes</Badge>
+              <h3 className="font-semibold text-sm text-blue-900 mb-1">EXPEDIENTES</h3>
+              <p className="text-xs text-blue-700">Gestión de expedientes</p>
+              <Badge className="mt-2 bg-blue-600 text-white text-xs">{stats.total} Total</Badge>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-purple-100"
+            onClick={() => {/* TODO: Navegación a oficios */}}
+          >
+            <CardContent className="p-6 text-center">
+              <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <FileText className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-semibold text-sm text-purple-900 mb-1">OFICIOS</h3>
+              <p className="text-xs text-purple-700">Gestión de oficios</p>
+              <Badge className="mt-2 bg-purple-600 text-white text-xs">Disponible</Badge>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-orange-100"
+            onClick={() => onNavigateToActuaciones?.()}
+          >
+            <CardContent className="p-6 text-center">
+              <div className="w-12 h-12 bg-orange-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <Edit className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-semibold text-sm text-orange-900 mb-1">ACTUACIONES</h3>
+              <p className="text-xs text-orange-700">Para firmar</p>
+              <Badge className="mt-2 bg-orange-600 text-white text-xs">Pendientes</Badge>
             </CardContent>
           </Card>
 
           <Card 
             className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-green-200 bg-gradient-to-br from-green-50 to-green-100"
-            onClick={() => {
-              onFilterExpedients?.('pausado');
-              onNavigateToExpedients?.();
-            }}
+            onClick={() => onCreateActuacion?.()}
           >
             <CardContent className="p-6 text-center">
               <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mx-auto mb-3">
-                <FileText className="w-6 h-6 text-white" />
+                <Plus className="w-6 h-6 text-white" />
               </div>
-              <h3 className="font-semibold text-sm text-green-900 mb-1">Pausados</h3>
-              <p className="text-xs text-green-700">Expedientes pausados</p>
-              <Badge className="mt-2 bg-green-600 text-white text-xs">{stats.pausados} Pendientes</Badge>
+              <h3 className="font-semibold text-sm text-green-900 mb-1">ACTUACIONES</h3>
+              <p className="text-xs text-green-700">Para agregar</p>
+              <Badge className="mt-2 bg-green-600 text-white text-xs">Crear nueva</Badge>
             </CardContent>
           </Card>
         </div>
