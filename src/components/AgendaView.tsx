@@ -221,7 +221,7 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
             <CardHeader>
               <CardTitle>Calendario</CardTitle>
             </CardHeader>
-            <CardContent className="p-6">
+            <CardContent className="p-3">
               <div className="flex justify-center">
                 <div className="group relative overflow-hidden rounded-lg border bg-background transition-all duration-300 hover:shadow-lg">
                   {/* Vista compacta - Solo fecha actual/seleccionada */}
