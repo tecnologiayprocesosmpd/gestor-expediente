@@ -173,7 +173,8 @@ export function ExpedientList({
                        status === 'en_tramite' ? 'En Trámite' :
                        status === 'pausado' ? 'Pausados' :
                        status === 'draft' ? 'Borradores' : 
-                       'Archivados'}
+                       status === 'archivado' ? 'Archivados' :
+                       status === 'derivado' ? 'Derivados' : status}
                     </Button>
                   ))}
                 </div>
