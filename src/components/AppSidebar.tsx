@@ -158,8 +158,8 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
             ))}
           </nav>
 
-          {/* Mesa de Entrada specific navigation */}
-          {mesaEntradaItems.length > 0 && (
+          {/* Mesa de Entrada specific navigation - HIDDEN */}
+          {/* {mesaEntradaItems.length > 0 && (
             <>
               <div className="px-2 mb-2 mt-6">
                 <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-all duration-300 overflow-hidden whitespace-nowrap">
@@ -185,7 +185,7 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
                 ))}
               </nav>
             </>
-          )}
+          )} */}
 
           {/* Reportes navigation - HIDDEN */}
           {/* <div className="px-2 mb-2 mt-6">
