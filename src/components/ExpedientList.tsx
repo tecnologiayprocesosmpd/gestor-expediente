@@ -233,7 +233,6 @@ export function ExpedientList({
               <table className="w-full">
                 <thead className="border-b">
                   <tr className="bg-muted/30">
-                    <th className="text-left p-4 font-medium">Número</th>
                     <th className="text-left p-4 font-medium">Título</th>
                     <th className="text-left p-4 font-medium">Estado</th>
                     <th className="text-left p-4 font-medium">Creado por</th>
@@ -247,11 +246,6 @@ export function ExpedientList({
                       key={expedient.id} 
                       className="border-b hover:bg-muted/20 transition-colors"
                     >
-                      <td className="p-4">
-                        <Badge variant="secondary" className="text-xs font-mono bg-primary/10 text-primary border-primary/20 rounded-md px-2 py-1">
-                          {expedient.number}
-                        </Badge>
-                      </td>
                       <td className="p-4">
                         <div className="font-medium text-foreground line-clamp-1">
                           {expedient.title}
