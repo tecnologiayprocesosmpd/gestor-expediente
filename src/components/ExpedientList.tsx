@@ -233,6 +233,7 @@ export function ExpedientList({
               <table className="w-full">
                 <thead className="border-b">
                   <tr className="bg-muted/30">
+                    <th className="text-left p-4 font-medium">Número</th>
                     <th className="text-left p-4 font-medium">Título</th>
                     <th className="text-left p-4 font-medium">Estado</th>
                     <th className="text-left p-4 font-medium">Creado por</th>
@@ -247,12 +248,14 @@ export function ExpedientList({
                       className="border-b hover:bg-muted/20 transition-colors"
                     >
                       <td className="p-4">
-                        <div className="font-medium text-foreground line-clamp-1">
-                          {expedient.title}
-                        </div>
                         <span className="text-sm font-mono text-primary">
                           {expedient.number}
                         </span>
+                      </td>
+                      <td className="p-4">
+                        <div className="font-medium text-foreground line-clamp-1">
+                          {expedient.title}
+                        </div>
                         <div className="text-sm text-muted-foreground">
                           {expedient.department}
                         </div>
