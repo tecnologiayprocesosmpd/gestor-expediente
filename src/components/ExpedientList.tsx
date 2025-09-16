@@ -250,6 +250,9 @@ export function ExpedientList({
                         <div className="font-medium text-foreground line-clamp-1">
                           {expedient.title}
                         </div>
+                        <span className="text-sm font-mono text-primary">
+                          {expedient.number}
+                        </span>
                         <div className="text-sm text-muted-foreground">
                           {expedient.department}
                         </div>
