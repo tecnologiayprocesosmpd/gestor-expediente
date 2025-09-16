@@ -17,8 +17,9 @@ import { TableHeader } from '@tiptap/extension-table-header';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { CharacterCount } from '@tiptap/extension-character-count';
 import { Placeholder } from '@tiptap/extension-placeholder';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useUser } from "@/contexts/UserContext";
+import { useAutoSave } from "@/hooks/useAutoSave";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -76,6 +77,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
   const [status, setStatus] = useState<'draft' | 'en_tramite' | 'pausado' | 'archivado' | 'derivado'>(propExpedient?.status || 'draft');
   const [assignedOffice, setAssignedOffice] = useState(propExpedient?.assignedOffice || '');
   const [margins, setMargins] = useState({ top: 20, right: 20, bottom: 20, left: 20 });
+  const [content, setContent] = useState(propExpedient?.content || '');
 
   const { user } = useUser();
   const canEditBasicInfo = user?.role === 'mesa';
@@ -182,6 +184,34 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
         return false;
       },
     },
+    onUpdate: ({ editor }) => {
+      // Real-time content change detection for auto-save
+      setContent(editor.getHTML());
+    },
+  });
+
+  // Auto-save data structure  
+  const autoSaveData = useMemo(() => ({
+    id: expedientId,
+    title,
+    number: expedientNumber,
+    content,
+    status,
+    assignedOffice,
+    updatedAt: new Date(),
+    createdBy: user?.name || 'Usuario'
+  }), [expedientId, title, expedientNumber, content, status, assignedOffice, user?.name]);
+
+  // Auto-save functionality
+  const { forceSave, isSaving } = useAutoSave({
+    data: autoSaveData,
+    onSave: (data) => {
+      if (onSave) {
+        onSave(data);
+      }
+    },
+    delay: 3000, // Auto-save after 3 seconds of inactivity
+    enabled: title.trim().length > 0 || content.length > 20 // Only auto-save if there's meaningful content
   });
 
   // Update state when expedient prop changes
@@ -195,6 +225,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
       // Update editor content
       if (editor && propExpedient.content) {
         editor.commands.setContent(propExpedient.content);
+        setContent(propExpedient.content);
       }
     }
   }, [propExpedient, editor]);
@@ -204,34 +235,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
   }
 
   const handleSave = () => {
-    const content = editor.getHTML();
-    
-    if (canOnlyAddActuaciones) {
-      // Si es una oficina, crear nueva actuación
-      const newActuacion = {
-        title,
-        content,
-        status: 'borrador' as const,
-        createdBy: user?.name || 'Usuario',
-        createdAt: new Date(),
-      };
-      
-      onSave?.(newActuacion);
-      console.log('Guardando nueva actuación:', newActuacion);
-    } else {
-      // Si es mesa de entrada, guardar expediente
-      const data = {
-        title,
-        number: expedientNumber,
-        content,
-        status,
-        assignedOffice,
-        updatedAt: new Date(),
-      };
-      
-      onSave?.(data);
-      console.log('Guardando expediente:', data);
-    }
+    forceSave();
   };
 
   const handleExportPDF = () => {
@@ -369,6 +373,15 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
               Editor avanzado de documentos
             </p>
           </div>
+        </div>
+        
+        <div className="flex items-center space-x-2">
+          {isSaving && (
+            <div className="flex items-center text-sm text-muted-foreground">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
+              Guardando...
+            </div>
+          )}
         </div>
       </div>
 

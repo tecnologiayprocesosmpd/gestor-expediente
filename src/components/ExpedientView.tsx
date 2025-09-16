@@ -17,6 +17,7 @@ import {
   Clock
 } from "lucide-react";
 import { ActuacionList } from "./ActuacionList";
+import { ActuacionEditor } from "./ActuacionEditor";
 import { ExpedientEditor } from "./ExpedientEditor";
 import { CitacionDialog } from "./CitacionDialog";
 import type { Actuacion } from "@/types/actuacion";
@@ -42,6 +43,8 @@ export function ExpedientView({
   onUpdateActuaciones 
 }: ExpedientViewProps) {
   const [showEditor, setShowEditor] = useState(false);
+  const [showActuacionEditor, setShowActuacionEditor] = useState(false);
+  const [editingActuacionId, setEditingActuacionId] = useState<string | null>(null);
   const [actuaciones, setActuaciones] = useState<Actuacion[]>(propActuaciones);
   const [selectedActuacion, setSelectedActuacion] = useState<Actuacion | null>(null);
   const [fechasCitacion, setFechasCitacion] = useState<any[]>([]);
@@ -153,8 +156,12 @@ export function ExpedientView({
   };
 
   const handleEditActuacion = (actuacionId: string) => {
-    console.log('Editar actuación:', actuacionId);
-    setShowEditor(true);
+    setEditingActuacionId(actuacionId);
+    const actuacion = actuaciones.find(act => act.id === actuacionId);
+    if (actuacion) {
+      setSelectedActuacion(actuacion);
+    }
+    setShowActuacionEditor(true);
   };
 
   const handleStatusChange = (actuacionId: string, newStatus: Actuacion['status']) => {
@@ -168,8 +175,32 @@ export function ExpedientView({
   };
 
   const handleSaveActuacion = (actuacionData: any) => {
-    onSaveActuacion?.(actuacionData);
+    if (editingActuacionId) {
+      // Editing existing actuacion
+      const updatedActuaciones = actuaciones.map(act => 
+        act.id === editingActuacionId ? { ...act, ...actuacionData } : act
+      );
+      setActuaciones(updatedActuaciones);
+      onUpdateActuaciones?.(updatedActuaciones);
+    } else {
+      // Creating new actuacion
+      const newActuacion = {
+        id: `act-${Date.now()}`,
+        expedientId: expedientId || '',
+        number: actuaciones.length + 1,
+        ...actuacionData,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      const updatedActuaciones = [...actuaciones, newActuacion];
+      setActuaciones(updatedActuaciones);
+      onSaveActuacion?.(newActuacion);
+    }
+    
     setShowEditor(false);
+    setShowActuacionEditor(false);
+    setEditingActuacionId(null);
+    setSelectedActuacion(null);
   };
 
   const handleExportPDF = () => {
@@ -341,6 +372,23 @@ export function ExpedientView({
   const latestActuacion = actuaciones.sort((a, b) => 
     new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   )[0];
+
+  if (showActuacionEditor) {
+    return (
+      <ActuacionEditor 
+        expedientId={expedientId || ''}
+        actuacionId={editingActuacionId || undefined}
+        actuacion={selectedActuacion || undefined}
+        onBack={() => {
+          setShowActuacionEditor(false);
+          setEditingActuacionId(null);
+          setSelectedActuacion(null);
+        }}
+        onSave={handleSaveActuacion}
+        onStatusChange={handleStatusChange}
+      />
+    );
+  }
 
   if (showEditor) {
     return (
