@@ -73,7 +73,7 @@ interface ExpedientEditorProps {
 export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack, onSave }: ExpedientEditorProps) {
   const [title, setTitle] = useState(propExpedient?.title || '');
   const [expedientNumber, setExpedientNumber] = useState(propExpedient?.number || '');
-  const [status, setStatus] = useState<'draft' | 'en_tramite' | 'archivado' | 'derivado' | 'desistido'>(propExpedient?.status || 'draft');
+  const [status, setStatus] = useState<'draft' | 'en_tramite' | 'pausado' | 'archivado' | 'derivado'>(propExpedient?.status || 'draft');
   const [assignedOffice, setAssignedOffice] = useState(propExpedient?.assignedOffice || '');
   const [margins, setMargins] = useState({ top: 20, right: 20, bottom: 20, left: 20 });
 
@@ -320,9 +320,9 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
     const labels = {
       draft: 'Borrador',
       en_tramite: 'En Trámite',
+      pausado: 'Pausado',
       archivado: 'Archivado',
-      derivado: 'Derivado',
-      desistido: 'Desistido'
+      derivado: 'Derivado'
     };
     
     return labels[status as keyof typeof labels] || 'Borrador';

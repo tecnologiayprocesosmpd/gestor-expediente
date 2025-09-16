@@ -43,24 +43,25 @@ export function Dashboard({
     total: filteredExpedients.length,
     active: filteredExpedients.filter(e => e.status === 'en_tramite').length,
     draft: filteredExpedients.filter(e => e.status === 'draft').length,
+    pausados: filteredExpedients.filter(e => e.status === 'pausado').length,
     derivados: filteredExpedients.filter(e => e.status === 'derivado').length,
   };
 
-  const getStatusBadge = (status: 'draft' | 'en_tramite' | 'archivado' | 'derivado' | 'desistido') => {
+  const getStatusBadge = (status: 'draft' | 'en_tramite' | 'pausado' | 'archivado' | 'derivado') => {
     const colors = {
       draft: 'bg-[hsl(var(--status-draft))] text-[hsl(var(--status-draft-foreground))] border-[hsl(var(--status-draft))]',
       en_tramite: 'bg-[hsl(var(--status-en-tramite))] text-[hsl(var(--status-en-tramite-foreground))] border-[hsl(var(--status-en-tramite))]',
+      pausado: 'bg-[hsl(var(--status-pausado))] text-[hsl(var(--status-pausado-foreground))] border-[hsl(var(--status-pausado))]',
       archivado: 'bg-[hsl(var(--status-archivado))] text-[hsl(var(--status-archivado-foreground))] border-[hsl(var(--status-archivado))]',
-      derivado: 'bg-[hsl(var(--status-derivado))] text-[hsl(var(--status-derivado-foreground))] border-[hsl(var(--status-derivado))]',
-      desistido: 'bg-[hsl(var(--status-desistido))] text-[hsl(var(--status-desistido-foreground))] border-[hsl(var(--status-desistido))]'
+      derivado: 'bg-[hsl(var(--status-derivado))] text-[hsl(var(--status-derivado-foreground))] border-[hsl(var(--status-derivado))]'
     };
     
     const labels = {
       draft: 'Borrador',
       en_tramite: 'En Trámite',
+      pausado: 'Pausado',
       archivado: 'Archivado',
-      derivado: 'Derivado',
-      desistido: 'Desistido'
+      derivado: 'Derivado'
     };
 
     return (
@@ -70,13 +71,13 @@ export function Dashboard({
     );
   };
 
-  const getStatusBorderClass = (status: 'draft' | 'en_tramite' | 'archivado' | 'derivado' | 'desistido') => {
+  const getStatusBorderClass = (status: 'draft' | 'en_tramite' | 'pausado' | 'archivado' | 'derivado') => {
     const borderColors = {
       draft: 'border-[hsl(var(--status-draft))]',
       en_tramite: 'border-[hsl(var(--status-en-tramite))]',
+      pausado: 'border-[hsl(var(--status-pausado))]',
       archivado: 'border-[hsl(var(--status-archivado))]',
-      derivado: 'border-[hsl(var(--status-derivado))]',
-      desistido: 'border-[hsl(var(--status-desistido))]'
+      derivado: 'border-[hsl(var(--status-derivado))]'
     };
     
     return borderColors[status];

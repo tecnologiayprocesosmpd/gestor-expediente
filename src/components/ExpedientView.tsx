@@ -129,9 +129,9 @@ export function ExpedientView({
     const labels = {
       draft: 'Borrador',
       en_tramite: 'En Trámite',
+      pausado: 'Pausado',
       archivado: 'Archivado',
       derivado: 'Derivado',
-      desistido: 'Desistido',
       // Fallbacks para compatibilidad
       active: 'En Trámite',
       closed: 'Archivado',

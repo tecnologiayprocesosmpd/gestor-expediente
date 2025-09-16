@@ -62,12 +62,12 @@ All colors MUST be HSL.
     --status-draft-foreground: 0 0% 100%;
     --status-en-tramite: 217 91% 60%; /* Azul intenso para en tramite */
     --status-en-tramite-foreground: 0 0% 100%;
+    --status-pausado: 43 74% 49%; /* Naranja profundo para pausado */
+    --status-pausado-foreground: 0 0% 100%;
     --status-archivado: 215 25% 46%; /* Azul grisáceo profundo para archivado */
     --status-archivado-foreground: 0 0% 100%;
     --status-derivado: 262 83% 58%; /* Púrpura vibrante para derivado */
     --status-derivado-foreground: 0 0% 100%;
-    --status-desistido: 0 72% 51%; /* Rojo profesional para desistido */
-    --status-desistido-foreground: 0 0% 100%;
 
     --sidebar-background: 0 0% 98%;
 
