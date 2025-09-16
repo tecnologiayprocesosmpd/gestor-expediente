@@ -84,7 +84,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
     }
     return propExpedient.number;
   });
-  const [status, setStatus] = useState<'en_tramite' | 'pausado'>(propExpedient?.status || 'en_tramite');
+  const [status, setStatus] = useState<'draft' | 'en_tramite' | 'pausado'>(propExpedient?.status || 'draft');
   const [assignedOffice, setAssignedOffice] = useState(propExpedient?.assignedOffice || '');
   const [margins, setMargins] = useState({ top: 20, right: 20, bottom: 20, left: 20 });
   const [content, setContent] = useState(propExpedient?.content || '');
@@ -212,7 +212,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
     title,
     number: expedientNumber,
     content,
-    status,
+    status: status === 'draft' ? 'en_tramite' : status, // Auto-cambio de draft a en_tramite al guardar
     assignedOffice,
     updatedAt: new Date(),
     createdBy: user?.name || 'Usuario'
@@ -449,6 +449,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
                 disabled={!canEditBasicInfo}
                 className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${!canEditBasicInfo ? 'bg-muted cursor-not-allowed' : ''}`}
               >
+                <option value="draft">Borrador</option>
                 <option value="en_tramite">En Trámite (Oficina recibe expediente)</option>
                 <option value="pausado">Pausado (Oficina recibe trabajo)</option>
               </select>

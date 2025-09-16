@@ -54,7 +54,7 @@ export function ExpedientView({
     id: expedientId || 'unknown',
     number: 'Sin número',
     title: 'Sin título',
-    status: 'en_tramite' as const,
+    status: 'draft' as const,
     assignedOffice: 'Sin asignar',
     createdAt: new Date(),
     updatedAt: new Date()
@@ -82,6 +82,11 @@ export function ExpedientView({
   
   const getStatusColors = (status: string) => {
     const colors = {
+      draft: {
+        bg: 'bg-[hsl(var(--status-draft))]',
+        border: 'border-[hsl(var(--status-draft))]',
+        text: 'text-[hsl(var(--status-draft-foreground))]'
+      },
       en_tramite: {
         bg: 'bg-[hsl(var(--status-en-tramite))]',
         border: 'border-[hsl(var(--status-en-tramite))]',
@@ -94,16 +99,17 @@ export function ExpedientView({
       }
     };
     
-    return colors[status as keyof typeof colors] || colors.en_tramite;
+    return colors[status as keyof typeof colors] || colors.draft;
   };
 
   const getStatusLabel = (status: string) => {
     const labels = {
+      draft: 'Borrador',
       en_tramite: 'En Trámite',
       pausado: 'Pausado'
     };
     
-    return labels[status as keyof typeof labels] || 'En Trámite';
+    return labels[status as keyof typeof labels] || 'Borrador';
   };
 
   const handleAddActuacion = () => {

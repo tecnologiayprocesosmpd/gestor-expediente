@@ -116,7 +116,7 @@ export function ActuacionEditor({
     title,
     content,
     tipo,
-    status,
+    status: status === 'borrador' ? 'para-firmar' : status, // Auto-cambio de borrador a para-firmar al guardar
     confidencial,
     urgente,
     updatedAt: new Date(),

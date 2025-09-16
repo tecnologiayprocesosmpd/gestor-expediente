@@ -49,17 +49,20 @@ export function Dashboard({
   
   const stats = {
     total: filteredExpedients.length,
+    draft: filteredExpedients.filter(e => e.status === 'draft').length,
     en_tramite: filteredExpedients.filter(e => e.status === 'en_tramite').length,
     pausados: filteredExpedients.filter(e => e.status === 'pausado').length,
   };
 
-  const getStatusBadge = (status: 'en_tramite' | 'pausado') => {
+  const getStatusBadge = (status: 'draft' | 'en_tramite' | 'pausado') => {
     const colors = {
+      draft: 'bg-[hsl(var(--status-draft))] text-[hsl(var(--status-draft-foreground))] border-[hsl(var(--status-draft))]',
       en_tramite: 'bg-[hsl(var(--status-en-tramite))] text-[hsl(var(--status-en-tramite-foreground))] border-[hsl(var(--status-en-tramite))]',
       pausado: 'bg-[hsl(var(--status-pausado))] text-[hsl(var(--status-pausado-foreground))] border-[hsl(var(--status-pausado))]'
     };
     
     const labels = {
+      draft: 'Borrador',
       en_tramite: 'En Trámite',
       pausado: 'Pausado'
     };
@@ -71,8 +74,9 @@ export function Dashboard({
     );
   };
 
-  const getStatusBorderClass = (status: 'en_tramite' | 'pausado') => {
+  const getStatusBorderClass = (status: 'draft' | 'en_tramite' | 'pausado') => {
     const borderColors = {
+      draft: 'border-[hsl(var(--status-draft))]',
       en_tramite: 'border-[hsl(var(--status-en-tramite))]',
       pausado: 'border-[hsl(var(--status-pausado))]'
     };
@@ -84,7 +88,24 @@ export function Dashboard({
     <div className="space-y-6">
       {/* Funciones Principales - Solo para Mesa de Entrada */}
       {user.role === 'mesa' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-3xl mx-auto">
+          <Card 
+            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-gray-100"
+            onClick={() => {
+              onFilterExpedients?.('draft');
+              onNavigateToExpedients?.();
+            }}
+          >
+            <CardContent className="p-6 text-center">
+              <div className="w-12 h-12 bg-gray-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <FileText className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-semibold text-sm text-gray-900 mb-1">Borradores</h3>
+              <p className="text-xs text-gray-700">Expedientes en borrador</p>
+              <Badge className="mt-2 bg-gray-600 text-white text-xs">{stats.draft} Pendientes</Badge>
+            </CardContent>
+          </Card>
+
           <Card 
             className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100"
             onClick={() => {

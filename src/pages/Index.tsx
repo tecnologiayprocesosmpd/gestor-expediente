@@ -37,7 +37,7 @@ const mockExpedients: ExpedientSummary[] = [
     updatedAt: new Date('2024-01-18'),
     createdBy: 'Dr. Carlos López',
     department: 'Defensoría Penal',
-    status: 'en_tramite',
+    status: 'draft',
     tipoTramite: 'Defensa Penal',
     solicitante: 'Tribunal Penal Nº 3',
     confidencial: true,
