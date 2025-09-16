@@ -187,8 +187,8 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
             </>
           )}
 
-          {/* Reportes navigation */}
-          <div className="px-2 mb-2 mt-6">
+          {/* Reportes navigation - HIDDEN */}
+          {/* <div className="px-2 mb-2 mt-6">
             <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-all duration-300 overflow-hidden whitespace-nowrap">
               Reportes
             </h3>
@@ -210,7 +210,7 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
                 </span>
               </button>
             ))}
-          </nav>
+          </nav> */}
 
           {/* Quick Actions */}
           {canCreateExpedients && (
