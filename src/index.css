@@ -175,6 +175,55 @@ All colors MUST be HSL.
     border: 1px dashed hsl(var(--border));
   }
 
+  /* Image editing and manipulation styles */
+  .editor-image {
+    @apply cursor-move transition-all duration-200;
+    min-width: 50px;
+    min-height: 50px;
+    user-select: none;
+  }
+
+  .image-container {
+    @apply relative inline-block;
+  }
+
+  .image-container:hover .editor-image {
+    @apply shadow-lg;
+  }
+
+  /* Resize handles */
+  .resize-handle {
+    width: 8px;
+    height: 8px;
+    @apply rounded-full z-10 bg-primary border-2 border-white shadow-md opacity-0 transition-opacity;
+  }
+
+  .image-container:hover .resize-handle {
+    @apply opacity-100;
+  }
+
+  .resize-nw { top: -4px; left: -4px; cursor: nw-resize; }
+  .resize-n { top: -4px; left: 50%; transform: translateX(-50%); cursor: n-resize; }
+  .resize-ne { top: -4px; right: -4px; cursor: ne-resize; }
+  .resize-e { top: 50%; right: -4px; transform: translateY(-50%); cursor: e-resize; }
+  .resize-se { bottom: -4px; right: -4px; cursor: se-resize; }
+  .resize-s { bottom: -4px; left: 50%; transform: translateX(-50%); cursor: s-resize; }
+  .resize-sw { bottom: -4px; left: -4px; cursor: sw-resize; }
+  .resize-w { top: 50%; left: -4px; transform: translateY(-50%); cursor: w-resize; }
+
+  .resize-handle:hover {
+    @apply opacity-100 scale-125;
+  }
+
+  /* Drag and drop styles */
+  .dragging {
+    @apply opacity-50 cursor-grabbing;
+  }
+
+  .drag-over {
+    @apply bg-primary/10 border-2 border-dashed border-primary;
+  }
+
   .ProseMirror table {
     border-collapse: collapse;
     margin: 1rem 0;
