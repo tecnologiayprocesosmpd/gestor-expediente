@@ -23,6 +23,7 @@ interface ExpedientListProps {
   onViewExpedient?: (id: string) => void;
   onEditExpedient?: (id: string) => void;
   onCreateExpedient?: () => void;
+  initialStatusFilter?: string;
 }
 
 type SortField = 'number' | 'title' | 'createdAt' | 'status';
@@ -32,11 +33,16 @@ export function ExpedientList({
   expedients, 
   onViewExpedient, 
   onEditExpedient, 
-  onCreateExpedient 
+  onCreateExpedient,
+  initialStatusFilter 
 }: ExpedientListProps) {
   const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState<'all' | 'draft' | 'en_tramite' | 'pausado' | 'archivado'>('all');
+  const [selectedStatus, setSelectedStatus] = useState<'all' | 'draft' | 'en_tramite' | 'pausado' | 'archivado' | 'derivado'>(
+    initialStatusFilter && ['draft', 'en_tramite', 'pausado', 'archivado', 'derivado'].includes(initialStatusFilter) 
+      ? initialStatusFilter as 'draft' | 'en_tramite' | 'pausado' | 'archivado' | 'derivado'
+      : 'all'
+  );
   const [sortField, setSortField] = useState<SortField>('createdAt');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 

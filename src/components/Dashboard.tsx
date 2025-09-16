@@ -18,13 +18,21 @@ interface DashboardProps {
   onCreateExpedient?: () => void;
   onViewExpedient?: (id: string) => void;
   onEditExpedient?: (id: string) => void;
+  onNavigateToExpedients?: () => void;
+  onNavigateToActuaciones?: () => void;
+  onCreateActuacion?: () => void;
+  onFilterExpedients?: (status: string) => void;
 }
 
 export function Dashboard({ 
   expedients = [], 
   onCreateExpedient, 
   onViewExpedient, 
-  onEditExpedient 
+  onEditExpedient,
+  onNavigateToExpedients,
+  onNavigateToActuaciones,
+  onCreateActuacion,
+  onFilterExpedients
 }: DashboardProps) {
   const { user } = useUser();
 

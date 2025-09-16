@@ -79,11 +79,25 @@ const mockExpedients: ExpedientSummary[] = [
     updatedAt: new Date('2024-01-25'),
     createdBy: 'Dra. Laura Pérez',
     department: 'Defensoría Civil',
-    status: 'draft',
+    status: 'derivado',
     tipoTramite: 'Asesoramiento Civil',
     solicitante: 'Pérez, María Elena',
     confidencial: true,
     urgente: false
+  },
+  {
+    id: '6',
+    number: 'EXP-2024-006',
+    title: 'Amparo Colectivo - Medio Ambiente',
+    createdAt: new Date('2024-01-26'),
+    updatedAt: new Date('2024-01-26'),
+    createdBy: 'Dr. Fernando Costa',
+    department: 'Mesa de Entrada',
+    status: 'derivado',
+    tipoTramite: 'Amparo Colectivo',
+    solicitante: 'Asociación Ecologista',
+    confidencial: false,
+    urgente: true
   }
 ];
 
@@ -93,6 +107,7 @@ function AppContent() {
   const [currentView, setCurrentView] = useState<'dashboard' | 'expedientes' | 'view' | 'editor' | 'agenda' | 'casos-pendientes' | 'auditoria' | 'cuatrimestre'>('dashboard');
   const [expedients, setExpedients] = useState<ExpedientSummary[]>(mockExpedients);
   const [currentExpedientId, setCurrentExpedientId] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string>('');
   
   // State for managing actuaciones per expedient
   const [expedientActuaciones, setExpedientActuaciones] = useState<Record<string, any[]>>({});
@@ -200,6 +215,25 @@ function AppContent() {
     setCurrentView('dashboard');
   };
 
+  // Dashboard button handlers
+  const handleNavigateToExpedients = () => {
+    setCurrentView('expedientes');
+  };
+
+  const handleNavigateToActuaciones = () => {
+    setCurrentView('casos-pendientes');
+  };
+
+  const handleCreateActuacion = () => {
+    // Navigate to create actuacion view
+    setCurrentExpedientId(null);
+    setCurrentView('editor');
+  };
+
+  const handleFilterExpedients = (status: string) => {
+    setStatusFilter(status);
+  };
+
   const renderCurrentView = () => {
     switch (currentView) {
       case 'dashboard':
@@ -209,6 +243,10 @@ function AppContent() {
             onCreateExpedient={user.role === 'mesa' ? handleCreateExpedient : undefined}
             onViewExpedient={handleViewExpedient}
             onEditExpedient={user.role === 'mesa' ? handleEditExpedient : undefined}
+            onNavigateToExpedients={handleNavigateToExpedients}
+            onNavigateToActuaciones={handleNavigateToActuaciones}
+            onCreateActuacion={handleCreateActuacion}
+            onFilterExpedients={handleFilterExpedients}
           />
         );
       case 'expedientes':
@@ -218,6 +256,7 @@ function AppContent() {
             onViewExpedient={handleViewExpedient}
             onEditExpedient={user.role === 'mesa' ? handleEditExpedient : undefined}
             onCreateExpedient={user.role === 'mesa' ? handleCreateExpedient : undefined}
+            initialStatusFilter={statusFilter}
           />
         );
       case 'view':
