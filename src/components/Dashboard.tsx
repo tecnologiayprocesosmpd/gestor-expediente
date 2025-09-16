@@ -145,16 +145,16 @@ export function Dashboard({
           </Card>
 
           <Card 
-            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-orange-100"
+            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-[hsl(67,65%,85%)] bg-gradient-to-br from-[hsl(67,65%,95%)] to-[hsl(67,65%,90%)]"
             onClick={() => onCreateActuacion?.()}
           >
             <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-orange-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 bg-[hsl(67,65%,27%)] rounded-lg flex items-center justify-center mx-auto mb-3">
                 <Plus className="w-6 h-6 text-white" />
               </div>
-              <h3 className="font-semibold text-sm text-orange-900 mb-1">Actuaciones</h3>
-              <p className="text-xs text-orange-700">Para Agregar</p>
-              <Badge className="mt-2 bg-orange-600 text-white text-xs">3 Pendientes</Badge>
+              <h3 className="font-semibold text-sm text-[hsl(67,65%,15%)] mb-1">Actuaciones</h3>
+              <p className="text-xs text-[hsl(67,65%,20%)]">Para Agregar</p>
+              <Badge className="mt-2 bg-[hsl(67,65%,27%)] text-white text-xs">3 Pendientes</Badge>
             </CardContent>
           </Card>
 
