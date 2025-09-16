@@ -161,7 +161,7 @@ function AppContent() {
       // Create new expedient
       const newExpedient: ExpedientSummary = {
         id: String(Date.now()),
-        number: data.number || `EXP-2024-${String(expedients.length + 1).padStart(3, '0')}`,
+        number: data.number, // Use the auto-generated number from editor
         title: data.title || 'Sin título',
         createdAt: new Date(),
         updatedAt: new Date(),

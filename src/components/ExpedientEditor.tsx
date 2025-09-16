@@ -75,7 +75,15 @@ interface ExpedientEditorProps {
 
 export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack, onSave }: ExpedientEditorProps) {
   const [title, setTitle] = useState(propExpedient?.title || '');
-  const [expedientNumber, setExpedientNumber] = useState(propExpedient?.number || '');
+  const [expedientNumber, setExpedientNumber] = useState(() => {
+    // Auto-generate expedient number if creating new
+    if (!propExpedient?.number) {
+      const currentYear = new Date().getFullYear();
+      const randomId = Math.floor(Math.random() * 900000) + 100000; // 6 digit random number
+      return `EXP-${currentYear}-${randomId}`;
+    }
+    return propExpedient.number;
+  });
   const [status, setStatus] = useState<'draft' | 'en_tramite' | 'pausado' | 'archivado' | 'derivado'>(propExpedient?.status || 'draft');
   const [assignedOffice, setAssignedOffice] = useState(propExpedient?.assignedOffice || '');
   const [margins, setMargins] = useState({ top: 20, right: 20, bottom: 20, left: 20 });
@@ -420,27 +428,16 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="expedient-number">Número de Expediente</Label>
               <Input
                 id="expedient-number"
                 value={expedientNumber}
-                onChange={(e) => setExpedientNumber(e.target.value)}
-                placeholder="EXP-2024-XXX"
-                disabled={!canEditBasicInfo}
-                className={!canEditBasicInfo ? 'bg-muted cursor-not-allowed' : ''}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="title">Título del Expediente</Label>
-              <Input
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Descripción breve del expediente"
-                disabled={!canEditBasicInfo}
-                className={!canEditBasicInfo ? 'bg-muted cursor-not-allowed' : ''}
+                readOnly
+                disabled
+                className="bg-muted cursor-not-allowed font-mono"
+                title="Número autogenerado - No modificable"
               />
             </div>
             <div className="space-y-2">
@@ -453,8 +450,8 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
                 className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${!canEditBasicInfo ? 'bg-muted cursor-not-allowed' : ''}`}
               >
                 <option value="draft">Borrador</option>
-                <option value="en_tramite">En Trámite</option>
-                <option value="pausado">Pausado</option>
+                <option value="en_tramite">En Trámite (Oficina recibe expediente)</option>
+                <option value="pausado">Pausado (Oficina recibe trabajo)</option>
                 <option value="archivado">Archivado</option>
                 <option value="derivado">Derivado</option>
               </select>
