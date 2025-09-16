@@ -131,30 +131,30 @@ export function Dashboard({
           </Card>
 
           <Card 
-            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-orange-100"
+            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-slate-200 bg-gradient-to-br from-slate-50 to-slate-100"
             onClick={() => onNavigateToActuaciones?.()}
           >
             <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-orange-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 bg-slate-600 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <Edit className="w-6 h-6 text-white" />
               </div>
-              <h3 className="font-semibold text-sm text-orange-900 mb-1">Actuaciones</h3>
-              <p className="text-xs text-orange-700">Para Firmar</p>
-              <Badge className="mt-2 bg-orange-600 text-white text-xs">5 Pendientes</Badge>
+              <h3 className="font-semibold text-sm text-slate-900 mb-1">Actuaciones</h3>
+              <p className="text-xs text-slate-700">Para Firmar</p>
+              <Badge className="mt-2 bg-slate-600 text-white text-xs">5 Pendientes</Badge>
             </CardContent>
           </Card>
 
           <Card 
-            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-purple-100"
+            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-gray-100"
             onClick={() => onCreateActuacion?.()}
           >
             <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 bg-gray-600 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <Plus className="w-6 h-6 text-white" />
               </div>
-              <h3 className="font-semibold text-sm text-purple-900 mb-1">Actuaciones</h3>
-              <p className="text-xs text-purple-700">Para Agregar</p>
-              <Badge className="mt-2 bg-purple-600 text-white text-xs">3 Pendientes</Badge>
+              <h3 className="font-semibold text-sm text-gray-900 mb-1">Actuaciones</h3>
+              <p className="text-xs text-gray-700">Para Agregar</p>
+              <Badge className="mt-2 bg-gray-600 text-white text-xs">3 Pendientes</Badge>
             </CardContent>
           </Card>
 
