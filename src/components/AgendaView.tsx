@@ -218,38 +218,38 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
         {/* Calendario - Responsive con hover */}
         <div className="xl:col-span-1">
           <Card>
-            <CardHeader>
-              <CardTitle>Calendario</CardTitle>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Calendario</CardTitle>
             </CardHeader>
-            <CardContent className="p-3">
-              <div className="flex justify-center">
-                <div className="group relative overflow-hidden rounded-lg border bg-background transition-all duration-300 hover:shadow-lg">
+            <CardContent className="p-2">
+              <div className="w-full">
+                <div className="group relative overflow-hidden rounded border bg-background transition-all duration-300 hover:shadow-md w-full">
                   {/* Vista compacta - Solo fecha actual/seleccionada */}
-                  <div className="group-hover:opacity-0 group-hover:absolute group-hover:pointer-events-none transition-all duration-300 p-4 bg-gradient-to-r from-primary/5 to-primary/10">
-                    <div className="text-center space-y-2">
-                      <div className="text-2xl font-bold text-primary">
+                  <div className="group-hover:opacity-0 group-hover:absolute group-hover:pointer-events-none transition-all duration-300 p-3 bg-gradient-to-r from-primary/5 to-primary/10">
+                    <div className="text-center space-y-1">
+                      <div className="text-xl font-bold text-primary">
                         {selectedDate.getDate()}
                       </div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="text-xs text-muted-foreground">
                         {format(selectedDate, 'MMMM yyyy', { locale: es })}
                       </div>
-                      <div className="text-xs text-muted-foreground">
+                      <div className="text-xs text-muted-foreground opacity-75">
                         {format(selectedDate, 'EEEE', { locale: es })}
                       </div>
                     </div>
-                    <div className="text-xs text-center text-muted-foreground mt-3 opacity-60">
-                      Pasa el cursor para modificar
+                    <div className="text-xs text-center text-muted-foreground mt-2 opacity-50">
+                      Hover para modificar
                     </div>
                   </div>
                   
                   {/* Vista expandida - Calendar completo */}
-                  <div className="opacity-0 group-hover:opacity-100 absolute inset-0 group-hover:relative group-hover:pointer-events-auto transition-all duration-300 p-4 animate-fade-in">
+                  <div className="opacity-0 group-hover:opacity-100 absolute inset-0 group-hover:relative group-hover:pointer-events-auto transition-all duration-300 p-2 animate-fade-in">
                     <Calendar
                       mode="single"
                       selected={selectedDate}
                       onSelect={(date) => date && setSelectedDate(date)}
                       locale={es}
-                      className="mx-auto pointer-events-auto"
+                      className="w-full pointer-events-auto text-sm"
                     />
                   </div>
                 </div>
