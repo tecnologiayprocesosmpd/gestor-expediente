@@ -97,6 +97,48 @@ export function ActuacionEditor({
   const { user } = useUser();
   const canEdit = status !== 'firmado';
   
+  // Handle margins change
+  const handleMarginsChange = (newMargins: { top: number; right: number; bottom: number; left: number }) => {
+    setMargins(newMargins);
+    if (editor) {
+      // Update editor attributes with new margins
+      const editorElement = document.querySelector('.ProseMirror') as HTMLElement;
+      if (editorElement) {
+        editorElement.style.padding = `${newMargins.top}px ${newMargins.right}px ${newMargins.bottom}px ${newMargins.left}px`;
+      }
+    }
+  };
+
+  // Auto-save data structure
+  const autoSaveData = useMemo(() => ({
+    id: actuacionId,
+    expedientId,
+    title,
+    content,
+    tipo,
+    status,
+    confidencial,
+    urgente,
+    updatedAt: new Date(),
+    createdBy: user?.name || 'Usuario'
+  }), [actuacionId, expedientId, title, content, tipo, status, confidencial, urgente, user?.name]);
+
+  // Auto-save functionality
+  const { forceSave, isSaving } = useAutoSave({
+    data: autoSaveData,
+    onSave: (data) => {
+      if (onSave) {
+        onSave(data);
+      }
+    },
+    delay: 3000, // Auto-save after 3 seconds of inactivity
+    enabled: canEdit && (title.trim().length > 0 || content.length > 20) // Only auto-save if there's meaningful content
+  });
+
+  const handleSave = () => {
+    forceSave();
+  };
+  
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -204,44 +246,6 @@ export function ActuacionEditor({
     },
   });
 
-  // Handle margins change
-  const handleMarginsChange = (newMargins: { top: number; right: number; bottom: number; left: number }) => {
-    setMargins(newMargins);
-    if (editor) {
-      // Update editor attributes with new margins
-      const editorElement = document.querySelector('.ProseMirror') as HTMLElement;
-      if (editorElement) {
-        editorElement.style.padding = `${newMargins.top}px ${newMargins.right}px ${newMargins.bottom}px ${newMargins.left}px`;
-      }
-    }
-  };
-
-  // Auto-save data structure
-  const autoSaveData = useMemo(() => ({
-    id: actuacionId,
-    expedientId,
-    title,
-    content,
-    tipo,
-    status,
-    confidencial,
-    urgente,
-    updatedAt: new Date(),
-    createdBy: user?.name || 'Usuario'
-  }), [actuacionId, expedientId, title, content, tipo, status, confidencial, urgente, user?.name]);
-
-  // Auto-save functionality
-  const { forceSave, isSaving } = useAutoSave({
-    data: autoSaveData,
-    onSave: (data) => {
-      if (onSave) {
-        onSave(data);
-      }
-    },
-    delay: 3000, // Auto-save after 3 seconds of inactivity
-    enabled: canEdit && (title.trim().length > 0 || content.length > 20) // Only auto-save if there's meaningful content
-  });
-
   // Update state when actuacion prop changes
   useEffect(() => {
     if (propActuacion) {
@@ -268,10 +272,6 @@ export function ActuacionEditor({
       </div>
     );
   }
-
-  const handleSave = () => {
-    forceSave();
-  };
 
   const handleStatusChange = () => {
     if (!actuacionId || !onStatusChange) return;
@@ -633,26 +633,25 @@ export function ActuacionEditor({
               variant="secondary"
               onClick={handleStatusChange}
             >
-              {status === 'borrador' ? (
-                <>
-                  <Clock className="w-4 h-4 mr-2" />
-                  Enviar a Firmar
-                </>
-              ) : (
-                <>
-                  <CheckCircle className="w-4 h-4 mr-2" />
-                  Firmar Actuación
-                </>
-              )}
+              {status === 'borrador' ? 'Enviar a Firmar' : 'Firmar Actuación'}
             </Button>
           )}
         </div>
-        
-        <div className="text-sm text-muted-foreground">
-          {!canEdit && 'Solo lectura - Actuación firmada'}
-          {canEdit && isSaving && 'Guardando automáticamente...'}
-          {canEdit && !isSaving && 'Autoguardado activado'}
-        </div>
+
+        {(confidencial || urgente) && (
+          <div className="flex items-center space-x-2">
+            {confidencial && (
+              <Badge variant="destructive" className="text-xs">
+                CONFIDENCIAL
+              </Badge>
+            )}
+            {urgente && (
+              <Badge variant="outline" className="text-xs border-orange-500 text-orange-700">
+                URGENTE
+              </Badge>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
