@@ -134,12 +134,12 @@ export function Dashboard({
         </div>
       )}
 
-      {/* Cuadro de Novedades - Expandido */}
+      {/* Actividad Reciente */}
       <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <AlertCircle className="h-5 w-5 text-blue-600" />
-            Novedades del Sistema
+            <Clock className="h-5 w-5 text-blue-600" />
+            Actividad Reciente
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -147,28 +147,41 @@ export function Dashboard({
             <div className="p-3 bg-white rounded-lg border border-blue-100">
               <div className="flex justify-between items-start">
                 <div>
-                  <h4 className="font-medium text-sm text-blue-900">Nueva funcionalidad: Gestión de Casos Pendientes</h4>
-                  <p className="text-xs text-blue-700 mt-1">Ahora puedes gestionar todos los casos pendientes desde una vista centralizada.</p>
+                  <h4 className="font-medium text-sm text-blue-900">Expediente EXP-2024-0156 modificado</h4>
+                  <p className="text-xs text-blue-700 mt-1">Se agregó nueva actuación - Informe técnico completado</p>
+                  <p className="text-xs text-muted-foreground mt-1">Hace 2 horas</p>
                 </div>
-                <Badge variant="secondary" className="text-xs">Nuevo</Badge>
+                <Badge variant="secondary" className="text-xs">Actualizado</Badge>
               </div>
             </div>
             <div className="p-3 bg-white rounded-lg border border-green-100">
               <div className="flex justify-between items-start">
                 <div>
-                  <h4 className="font-medium text-sm text-green-900">Actualización: Mejoras en Auditoría</h4>
-                  <p className="text-xs text-green-700 mt-1">Se agregaron nuevos reportes de auditoría y seguimiento trimestral.</p>
+                  <h4 className="font-medium text-sm text-green-900">Nuevo agendamiento programado</h4>
+                  <p className="text-xs text-green-700 mt-1">Audiencia pública - 25 de Septiembre, 14:00 hs</p>
+                  <p className="text-xs text-muted-foreground mt-1">Hace 4 horas</p>
                 </div>
-                <Badge variant="outline" className="text-xs border-green-300 text-green-700">Actualizado</Badge>
+                <Badge variant="outline" className="text-xs border-green-300 text-green-700">Agendado</Badge>
+              </div>
+            </div>
+            <div className="p-3 bg-white rounded-lg border border-orange-100">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h4 className="font-medium text-sm text-orange-900">Expediente EXP-2024-0143 derivado</h4>
+                  <p className="text-xs text-orange-700 mt-1">Derivado a Oficina de Recursos Naturales para evaluación</p>
+                  <p className="text-xs text-muted-foreground mt-1">Ayer</p>
+                </div>
+                <Badge variant="outline" className="text-xs border-orange-300 text-orange-700">Derivado</Badge>
               </div>
             </div>
             <div className="p-3 bg-white rounded-lg border border-purple-100">
               <div className="flex justify-between items-start">
                 <div>
-                  <h4 className="font-medium text-sm text-purple-900">Mejora: Editor de Texto Avanzado</h4>
-                  <p className="text-xs text-purple-700 mt-1">Nuevas funcionalidades de edición de imágenes y texto mejorado.</p>
+                  <h4 className="font-medium text-sm text-purple-900">Actuación firmada digitalmente</h4>
+                  <p className="text-xs text-purple-700 mt-1">Resolución N° 245/2024 - EXP-2024-0128</p>
+                  <p className="text-xs text-muted-foreground mt-1">Ayer</p>
                 </div>
-                <Badge variant="outline" className="text-xs border-purple-300 text-purple-700">Mejorado</Badge>
+                <Badge variant="outline" className="text-xs border-purple-300 text-purple-700">Firmado</Badge>
               </div>
             </div>
           </div>
