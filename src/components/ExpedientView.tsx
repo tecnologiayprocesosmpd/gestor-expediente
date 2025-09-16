@@ -54,7 +54,7 @@ export function ExpedientView({
     id: expedientId || 'unknown',
     number: 'Sin número',
     title: 'Sin título',
-    status: 'draft' as const,
+    status: 'en_tramite' as const,
     assignedOffice: 'Sin asignar',
     createdAt: new Date(),
     updatedAt: new Date()
@@ -82,66 +82,28 @@ export function ExpedientView({
   
   const getStatusColors = (status: string) => {
     const colors = {
-      draft: {
-        bg: 'bg-[hsl(var(--status-draft))]',
-        border: 'border-[hsl(var(--status-draft))]',
-        text: 'text-[hsl(var(--status-draft-foreground))]'
-      },
       en_tramite: {
         bg: 'bg-[hsl(var(--status-en-tramite))]',
         border: 'border-[hsl(var(--status-en-tramite))]',
         text: 'text-[hsl(var(--status-en-tramite-foreground))]'
       },
-      archivado: {
-        bg: 'bg-[hsl(var(--status-archivado))]',
-        border: 'border-[hsl(var(--status-archivado))]',
-        text: 'text-[hsl(var(--status-archivado-foreground))]'
-      },
-      derivado: {
-        bg: 'bg-[hsl(var(--status-derivado))]',
-        border: 'border-[hsl(var(--status-derivado))]',
-        text: 'text-[hsl(var(--status-derivado-foreground))]'
-      },
-      desistido: {
-        bg: 'bg-[hsl(var(--status-desistido))]',
-        border: 'border-[hsl(var(--status-desistido))]',
-        text: 'text-[hsl(var(--status-desistido-foreground))]'
-      },
-      // Fallbacks para estados que pueden no estar definidos
-      active: {
-        bg: 'bg-[hsl(var(--status-en-tramite))]',
-        border: 'border-[hsl(var(--status-en-tramite))]',
-        text: 'text-[hsl(var(--status-en-tramite-foreground))]'
-      },
-      closed: {
-        bg: 'bg-[hsl(var(--status-archivado))]',
-        border: 'border-[hsl(var(--status-archivado))]',
-        text: 'text-[hsl(var(--status-archivado-foreground))]'
-      },
-      archived: {
-        bg: 'bg-[hsl(var(--status-archivado))]',
-        border: 'border-[hsl(var(--status-archivado))]',
-        text: 'text-[hsl(var(--status-archivado-foreground))]'
+      pausado: {
+        bg: 'bg-[hsl(var(--status-pausado))]',
+        border: 'border-[hsl(var(--status-pausado))]',
+        text: 'text-[hsl(var(--status-pausado-foreground))]'
       }
     };
     
-    return colors[status as keyof typeof colors] || colors.draft;
+    return colors[status as keyof typeof colors] || colors.en_tramite;
   };
 
   const getStatusLabel = (status: string) => {
     const labels = {
-      draft: 'Borrador',
       en_tramite: 'En Trámite',
-      pausado: 'Pausado',
-      archivado: 'Archivado',
-      derivado: 'Derivado',
-      // Fallbacks para compatibilidad
-      active: 'En Trámite',
-      closed: 'Archivado',
-      archived: 'Archivado'
+      pausado: 'Pausado'
     };
     
-    return labels[status as keyof typeof labels] || 'Borrador';
+    return labels[status as keyof typeof labels] || 'En Trámite';
   };
 
   const handleAddActuacion = () => {

@@ -38,9 +38,9 @@ export function ExpedientList({
 }: ExpedientListProps) {
   const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState<'all' | 'draft' | 'en_tramite' | 'pausado' | 'archivado' | 'derivado'>(
-    initialStatusFilter && ['draft', 'en_tramite', 'pausado', 'archivado', 'derivado'].includes(initialStatusFilter) 
-      ? initialStatusFilter as 'draft' | 'en_tramite' | 'pausado' | 'archivado' | 'derivado'
+  const [selectedStatus, setSelectedStatus] = useState<'all' | 'en_tramite' | 'pausado'>(
+    initialStatusFilter && ['en_tramite', 'pausado'].includes(initialStatusFilter) 
+      ? initialStatusFilter as 'en_tramite' | 'pausado'
       : 'all'
   );
   const [sortField, setSortField] = useState<SortField>('createdAt');
@@ -91,21 +91,15 @@ export function ExpedientList({
     }
   };
 
-  const getStatusBadge = (status: 'draft' | 'en_tramite' | 'pausado' | 'archivado' | 'derivado') => {
+  const getStatusBadge = (status: 'en_tramite' | 'pausado') => {
     const colors = {
-      draft: 'bg-[hsl(var(--status-draft))] text-[hsl(var(--status-draft-foreground))] border-[hsl(var(--status-draft))]',
       en_tramite: 'bg-[hsl(var(--status-en-tramite))] text-[hsl(var(--status-en-tramite-foreground))] border-[hsl(var(--status-en-tramite))]',
-      pausado: 'bg-[hsl(var(--status-pausado))] text-[hsl(var(--status-pausado-foreground))] border-[hsl(var(--status-pausado))]',
-      archivado: 'bg-[hsl(var(--status-archivado))] text-[hsl(var(--status-archivado-foreground))] border-[hsl(var(--status-archivado))]',
-      derivado: 'bg-[hsl(var(--status-derivado))] text-[hsl(var(--status-derivado-foreground))] border-[hsl(var(--status-derivado))]'
+      pausado: 'bg-[hsl(var(--status-pausado))] text-[hsl(var(--status-pausado-foreground))] border-[hsl(var(--status-pausado))]'
     };
     
     const labels = {
-      draft: 'Borrador',
       en_tramite: 'En Trámite',
-      pausado: 'Pausado',
-      archivado: 'Archivado',
-      derivado: 'Derivado'
+      pausado: 'Pausado'
     };
 
     return (
@@ -167,7 +161,7 @@ export function ExpedientList({
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-sm text-muted-foreground whitespace-nowrap">Estado:</span>
                 <div className="flex flex-wrap gap-1">
-                  {['all', 'en_tramite', 'pausado', 'draft', 'archivado', 'derivado'].map((status) => (
+                  {['all', 'en_tramite', 'pausado'].map((status) => (
                     <Button
                       key={status}
                       variant={selectedStatus === status ? 'default' : 'outline'}
@@ -177,10 +171,7 @@ export function ExpedientList({
                     >
                       {status === 'all' ? 'Todos' : 
                        status === 'en_tramite' ? 'En Trámite' :
-                       status === 'pausado' ? 'Pausados' :
-                       status === 'draft' ? 'Borradores' : 
-                       status === 'archivado' ? 'Archivados' :
-                       status === 'derivado' ? 'Derivados' : status}
+                       status === 'pausado' ? 'Pausados' : status}
                     </Button>
                   ))}
                 </div>
@@ -261,7 +252,8 @@ export function ExpedientList({
                         </div>
                       </td>
                       <td className="p-4">
-                        {getStatusBadge(expedient.status)}
+                        {(expedient.status === 'en_tramite' || expedient.status === 'pausado') && 
+                          getStatusBadge(expedient.status)}
                       </td>
                       <td className="p-4">
                         <div className="flex items-center text-sm">

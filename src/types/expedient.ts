@@ -7,7 +7,7 @@ export interface Expedient {
   updatedAt: Date;
   createdBy: string;
   department: string; // Secretaría responsable
-  status: 'draft' | 'en_tramite' | 'pausado' | 'archivado' | 'derivado';
+  status: 'en_tramite' | 'pausado';
   tags: string[];
   
   // Metadatos obligatorios
@@ -52,7 +52,7 @@ export interface ExpedientSummary {
   updatedAt: Date;
   createdBy: string;
   department: string;
-  status: 'draft' | 'en_tramite' | 'pausado' | 'archivado' | 'derivado';
+  status: 'en_tramite' | 'pausado';
   tipoTramite: string;
   solicitante: string;
   confidencial: boolean;

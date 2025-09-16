@@ -42,34 +42,26 @@ export function Dashboard({
   
   // Para oficinas, solo mostrar expedientes asignados (mock - aquí filtrarías por oficina asignada)
   const filteredExpedients = user.role === 'oficina' 
-    ? expedients.filter(e => e.status === 'derivado' || e.status === 'en_tramite') // Mock: asumimos que estos están asignados
+    ? expedients.filter(e => e.status === 'en_tramite' || e.status === 'pausado') // Mock: asumimos que estos están asignados
     : expedients;
     
   const recentExpedients = filteredExpedients.slice(0, 5);
   
   const stats = {
     total: filteredExpedients.length,
-    active: filteredExpedients.filter(e => e.status === 'en_tramite').length,
-    draft: filteredExpedients.filter(e => e.status === 'draft').length,
+    en_tramite: filteredExpedients.filter(e => e.status === 'en_tramite').length,
     pausados: filteredExpedients.filter(e => e.status === 'pausado').length,
-    derivados: filteredExpedients.filter(e => e.status === 'derivado').length,
   };
 
-  const getStatusBadge = (status: 'draft' | 'en_tramite' | 'pausado' | 'archivado' | 'derivado') => {
+  const getStatusBadge = (status: 'en_tramite' | 'pausado') => {
     const colors = {
-      draft: 'bg-[hsl(var(--status-draft))] text-[hsl(var(--status-draft-foreground))] border-[hsl(var(--status-draft))]',
       en_tramite: 'bg-[hsl(var(--status-en-tramite))] text-[hsl(var(--status-en-tramite-foreground))] border-[hsl(var(--status-en-tramite))]',
-      pausado: 'bg-[hsl(var(--status-pausado))] text-[hsl(var(--status-pausado-foreground))] border-[hsl(var(--status-pausado))]',
-      archivado: 'bg-[hsl(var(--status-archivado))] text-[hsl(var(--status-archivado-foreground))] border-[hsl(var(--status-archivado))]',
-      derivado: 'bg-[hsl(var(--status-derivado))] text-[hsl(var(--status-derivado-foreground))] border-[hsl(var(--status-derivado))]'
+      pausado: 'bg-[hsl(var(--status-pausado))] text-[hsl(var(--status-pausado-foreground))] border-[hsl(var(--status-pausado))]'
     };
     
     const labels = {
-      draft: 'Borrador',
       en_tramite: 'En Trámite',
-      pausado: 'Pausado',
-      archivado: 'Archivado',
-      derivado: 'Derivado'
+      pausado: 'Pausado'
     };
 
     return (
@@ -79,13 +71,10 @@ export function Dashboard({
     );
   };
 
-  const getStatusBorderClass = (status: 'draft' | 'en_tramite' | 'pausado' | 'archivado' | 'derivado') => {
+  const getStatusBorderClass = (status: 'en_tramite' | 'pausado') => {
     const borderColors = {
-      draft: 'border-[hsl(var(--status-draft))]',
       en_tramite: 'border-[hsl(var(--status-en-tramite))]',
-      pausado: 'border-[hsl(var(--status-pausado))]',
-      archivado: 'border-[hsl(var(--status-archivado))]',
-      derivado: 'border-[hsl(var(--status-derivado))]'
+      pausado: 'border-[hsl(var(--status-pausado))]'
     };
     
     return borderColors[status];
@@ -95,11 +84,11 @@ export function Dashboard({
     <div className="space-y-6">
       {/* Funciones Principales - Solo para Mesa de Entrada */}
       {user.role === 'mesa' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
           <Card 
             className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100"
             onClick={() => {
-              onFilterExpedients?.('derivado');
+              onFilterExpedients?.('en_tramite');
               onNavigateToExpedients?.();
             }}
           >
@@ -107,16 +96,16 @@ export function Dashboard({
               <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <FileText className="w-6 h-6 text-white" />
               </div>
-              <h3 className="font-semibold text-sm text-blue-900 mb-1">Expedientes</h3>
-              <p className="text-xs text-blue-700">Para Recibir</p>
-              <Badge className="mt-2 bg-blue-600 text-white text-xs">{stats.derivados} Pendientes</Badge>
+              <h3 className="font-semibold text-sm text-blue-900 mb-1">En Trámite</h3>
+              <p className="text-xs text-blue-700">Expedientes activos</p>
+              <Badge className="mt-2 bg-blue-600 text-white text-xs">{stats.en_tramite} Pendientes</Badge>
             </CardContent>
           </Card>
 
           <Card 
             className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-green-200 bg-gradient-to-br from-green-50 to-green-100"
             onClick={() => {
-              onFilterExpedients?.('draft');
+              onFilterExpedients?.('pausado');
               onNavigateToExpedients?.();
             }}
           >
@@ -124,40 +113,11 @@ export function Dashboard({
               <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <FileText className="w-6 h-6 text-white" />
               </div>
-              <h3 className="font-semibold text-sm text-green-900 mb-1">Oficios</h3>
-              <p className="text-xs text-green-700">Para Recibir</p>
-              <Badge className="mt-2 bg-green-600 text-white text-xs">{stats.draft} Pendientes</Badge>
+              <h3 className="font-semibold text-sm text-green-900 mb-1">Pausados</h3>
+              <p className="text-xs text-green-700">Expedientes pausados</p>
+              <Badge className="mt-2 bg-green-600 text-white text-xs">{stats.pausados} Pendientes</Badge>
             </CardContent>
           </Card>
-
-          <Card 
-            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-teal-200 bg-gradient-to-br from-teal-50 to-teal-100"
-            onClick={() => onNavigateToActuaciones?.()}
-          >
-            <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-teal-600 rounded-lg flex items-center justify-center mx-auto mb-3">
-                <Edit className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="font-semibold text-sm text-teal-900 mb-1">Actuaciones</h3>
-              <p className="text-xs text-teal-700">Para Firmar</p>
-              <Badge className="mt-2 bg-teal-600 text-white text-xs">5 Pendientes</Badge>
-            </CardContent>
-          </Card>
-
-          <Card 
-            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-[hsl(67,65%,85%)] bg-gradient-to-br from-[hsl(67,65%,95%)] to-[hsl(67,65%,90%)]"
-            onClick={() => onCreateActuacion?.()}
-          >
-            <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-[hsl(67,65%,27%)] rounded-lg flex items-center justify-center mx-auto mb-3">
-                <Plus className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="font-semibold text-sm text-[hsl(67,65%,15%)] mb-1">Actuaciones</h3>
-              <p className="text-xs text-[hsl(67,65%,20%)]">Para Agregar</p>
-              <Badge className="mt-2 bg-[hsl(67,65%,27%)] text-white text-xs">3 Pendientes</Badge>
-            </CardContent>
-          </Card>
-
         </div>
       )}
 
