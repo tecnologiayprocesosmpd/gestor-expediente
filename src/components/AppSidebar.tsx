@@ -118,11 +118,6 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
               <h3 className="text-xs text-muted-foreground">
                 {user.name}
               </h3>
-              <div className="mt-2">
-                <Badge variant="secondary" className="text-xs">
-                  {user.profile === 'mesa-entrada' ? 'Mesa de Entrada' : 'Oficina'}
-                </Badge>
-              </div>
             </div>
           </div>
         </div>
