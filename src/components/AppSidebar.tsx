@@ -100,7 +100,7 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
 
   return (
     <div 
-      className="h-full min-h-screen bg-background border-r w-1/2 flex-shrink-0"
+      className="h-full min-h-screen bg-background border-r w-64 flex-shrink-0"
     >
       <div className="flex flex-col h-full min-h-screen">
         {/* User Profile Section */}
