@@ -526,27 +526,15 @@ export function ExpedientView({
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-3">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Referencia</p>
-                <p className="text-sm">{expedient.referencia || 'Sin referencia especificada'}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Tipo de Proceso</p>
-                <Badge variant="secondary" className="capitalize">
-                  {expedient.tipoProceso || 'administrativo'}
-                </Badge>
-              </div>
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Referencia</p>
+              <p className="text-sm">{expedient.referencia || 'Sin referencia especificada'}</p>
             </div>
-            <div className="space-y-3">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Solicitante</p>
-                <p className="text-sm">{expedient.solicitante || 'No especificado'}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Tipo de Trámite</p>
-                <p className="text-sm">{expedient.tipoTramite || 'General'}</p>
-              </div>
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Tipo de Proceso</p>
+              <Badge variant="secondary" className="capitalize">
+                {expedient.tipoProceso || 'administrativo'}
+              </Badge>
             </div>
           </div>
           <Separator />
