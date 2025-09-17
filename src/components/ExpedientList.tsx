@@ -38,9 +38,9 @@ export function ExpedientList({
 }: ExpedientListProps) {
   const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState<'all' | 'draft' | 'en_tramite' | 'pausado'>(
-    initialStatusFilter && ['draft', 'en_tramite', 'pausado'].includes(initialStatusFilter) 
-      ? initialStatusFilter as 'draft' | 'en_tramite' | 'pausado'
+  const [selectedStatus, setSelectedStatus] = useState<'all' | 'draft' | 'derivado' | 'recibido' | 'en_tramite' | 'pausado'>(
+    initialStatusFilter && ['draft', 'derivado', 'recibido', 'en_tramite', 'pausado'].includes(initialStatusFilter) 
+      ? initialStatusFilter as 'draft' | 'derivado' | 'recibido' | 'en_tramite' | 'pausado'
       : 'all'
   );
   const [sortField, setSortField] = useState<SortField>('createdAt');
@@ -91,15 +91,19 @@ export function ExpedientList({
     }
   };
 
-  const getStatusBadge = (status: 'draft' | 'en_tramite' | 'pausado') => {
+  const getStatusBadge = (status: 'draft' | 'derivado' | 'recibido' | 'en_tramite' | 'pausado') => {
     const colors = {
       draft: 'bg-[hsl(var(--status-draft))] text-[hsl(var(--status-draft-foreground))] border-[hsl(var(--status-draft))]',
+      derivado: 'bg-[hsl(var(--status-derivado))] text-[hsl(var(--status-derivado-foreground))] border-[hsl(var(--status-derivado))]',
+      recibido: 'bg-[hsl(var(--status-recibido))] text-[hsl(var(--status-recibido-foreground))] border-[hsl(var(--status-recibido))]',
       en_tramite: 'bg-[hsl(var(--status-en-tramite))] text-[hsl(var(--status-en-tramite-foreground))] border-[hsl(var(--status-en-tramite))]',
       pausado: 'bg-[hsl(var(--status-pausado))] text-[hsl(var(--status-pausado-foreground))] border-[hsl(var(--status-pausado))]'
     };
     
     const labels = {
       draft: 'Borrador',
+      derivado: 'Derivado',
+      recibido: 'Recibido',
       en_tramite: 'En Trámite',
       pausado: 'Pausado'
     };
@@ -163,7 +167,7 @@ export function ExpedientList({
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-sm text-muted-foreground whitespace-nowrap">Estado:</span>
                 <div className="flex flex-wrap gap-1">
-                  {['all', 'draft', 'en_tramite', 'pausado'].map((status) => (
+                  {['all', 'draft', 'derivado', 'recibido', 'en_tramite', 'pausado'].map((status) => (
                     <Button
                       key={status}
                       variant={selectedStatus === status ? 'default' : 'outline'}
@@ -173,6 +177,8 @@ export function ExpedientList({
                     >
                       {status === 'all' ? 'Todos' : 
                        status === 'draft' ? 'Borradores' :
+                       status === 'derivado' ? 'Derivados' :
+                       status === 'recibido' ? 'Recibidos' :
                        status === 'en_tramite' ? 'En Trámite' :
                        status === 'pausado' ? 'Pausados' : status}
                     </Button>

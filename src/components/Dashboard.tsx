@@ -15,6 +15,7 @@ import { useUser } from "@/contexts/UserContext";
 import { ExpedientSummary } from "@/types/expedient";
 import { agendaStorage, fechasCitacionStorage } from "@/utils/agendaStorage";
 import { useState, useEffect } from "react";
+import { ExpedientesParaRecibir } from "./ExpedientesParaRecibir";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -27,6 +28,7 @@ interface DashboardProps {
   onNavigateToActuaciones?: () => void;
   onCreateActuacion?: () => void;
   onFilterExpedients?: (status: string) => void;
+  onRecibirExpediente?: (expedientId: string) => void;
 }
 
 export function Dashboard({ 
@@ -37,7 +39,8 @@ export function Dashboard({
   onNavigateToExpedients,
   onNavigateToActuaciones,
   onCreateActuacion,
-  onFilterExpedients
+  onFilterExpedients,
+  onRecibirExpediente
 }: DashboardProps) {
   const { user } = useUser();
   const [novedades, setNovedades] = useState<any[]>([]);
@@ -138,19 +141,10 @@ export function Dashboard({
       {/* Funciones Principales - Solo para Mesa de Entrada */}
       {user.role === 'mesa' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
-          <Card 
-            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100"
-            onClick={() => onFilterExpedients?.('derivados')}
-          >
-            <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-3">
-                <FileText className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="font-semibold text-sm text-blue-900 mb-1">EXPEDIENTES</h3>
-              <p className="text-xs text-blue-700">Para recibir</p>
-              <Badge className="mt-2 bg-blue-600 text-white text-xs">Asignados</Badge>
-            </CardContent>
-          </Card>
+          <ExpedientesParaRecibir 
+            expedients={filteredExpedients}
+            onRecibirExpediente={onRecibirExpediente}
+          />
 
           <Card 
             className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100"

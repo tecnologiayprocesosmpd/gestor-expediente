@@ -14,7 +14,8 @@ import {
   Download,
   Calendar,
   User,
-  Clock
+  Clock,
+  Building2
 } from "lucide-react";
 import { ActuacionList } from "./ActuacionList";
 import { ActuacionEditor } from "./ActuacionEditor";
@@ -485,10 +486,21 @@ export function ExpedientView({
                   <Calendar className="w-4 h-4" />
                   <span>Creado: {expedient.createdAt.toLocaleDateString('es-ES')}</span>
                 </span>
-                <span className="flex items-center space-x-1">
-                  <User className="w-4 h-4" />
-                  <span>{expedient.assignedOffice}</span>
+                {expedient.oficina && (
+                  <span className="flex items-center space-x-1">
+                    <Building2 className="w-4 h-4" />
+                    <span>Oficina: {expedient.oficina}</span>
+                  </span>
+                )}
+                {(expedient.derivadoPor || expedient.recibidoPor) && (
+                  <span className="flex items-center space-x-1">
+                    <User className="w-4 h-4" />
+                  <span>
+                    {expedient.derivadoPor && `Derivado por: ${expedient.derivadoPor}`}
+                    {expedient.recibidoPor && ` | Recibido por: ${expedient.recibidoPor}`}
+                  </span>
                 </span>
+              )}
               </div>
             </div>
           </div>

@@ -65,6 +65,7 @@ import { ImageInsert } from "@/components/ui/image-insert";
 import { ImageEdit } from "@/components/ui/image-edit";
 import { IndentControls } from "@/components/ui/indent-controls";
 import { MarginControls } from "@/components/ui/margin-controls";
+import { ConfirmDerivationDialog } from "./ConfirmDerivationDialog";
 
 interface ExpedientEditorProps {
   expedientId?: string;
@@ -84,10 +85,13 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
     }
     return propExpedient.number;
   });
-  const [status, setStatus] = useState<'draft' | 'en_tramite' | 'pausado'>(propExpedient?.status || 'draft');
-  const [assignedOffice, setAssignedOffice] = useState(propExpedient?.assignedOffice || '');
+  const [status, setStatus] = useState<'draft' | 'derivado' | 'recibido' | 'en_tramite' | 'pausado'>(propExpedient?.status || 'draft');
+  const [assignedOffice, setAssignedOffice] = useState(propExpedient?.oficina || propExpedient?.assignedOffice || '');
+  const [referencia, setReferencia] = useState(propExpedient?.referencia || '');
+  const [tipoProceso, setTipoProceso] = useState<'administrativo' | 'compra'>(propExpedient?.tipoProceso || 'administrativo');
   const [margins, setMargins] = useState({ top: 20, right: 20, bottom: 20, left: 20 });
   const [content, setContent] = useState(propExpedient?.content || '');
+  const [showDerivationDialog, setShowDerivationDialog] = useState(false);
 
   const { user } = useUser();
   const canEditBasicInfo = user?.role === 'mesa';
@@ -236,7 +240,9 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
       setTitle(propExpedient.title || '');
       setExpedientNumber(propExpedient.number || '');
       setStatus(propExpedient.status || 'draft');
-      setAssignedOffice(propExpedient.assignedOffice || '');
+      setAssignedOffice(propExpedient.oficina || propExpedient.assignedOffice || '');
+      setReferencia(propExpedient.referencia || '');
+      setTipoProceso(propExpedient.tipoProceso || 'administrativo');
       
       // Update editor content
       if (editor && propExpedient.content) {
@@ -263,6 +269,41 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
 
   const handleSave = () => {
     forceSave();
+  };
+
+  const handleDerivation = () => {
+    if (!assignedOffice) {
+      alert('Debe seleccionar una oficina antes de derivar el expediente');
+      return;
+    }
+    setShowDerivationDialog(true);
+  };
+
+  const confirmDerivation = () => {
+    const derivationData = {
+      id: expedientId || `exp-${Date.now()}`,
+      title,
+      number: expedientNumber,
+      content,
+      status: 'derivado' as const,
+      oficina: assignedOffice,
+      referencia,
+      tipoProceso,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      fechaDerivacion: new Date(),
+      derivadoPor: user?.name || 'Usuario',
+      createdBy: user?.name || 'Usuario'
+    };
+
+    if (onSave) {
+      onSave(derivationData);
+    }
+
+    // Navigate back to dashboard
+    if (onBack) {
+      onBack();
+    }
   };
 
   const handleExportPDF = () => {
@@ -341,6 +382,11 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
         bg: 'bg-[hsl(var(--status-derivado))]',
         border: 'border-[hsl(var(--status-derivado))]',
         text: 'text-[hsl(var(--status-derivado-foreground))]'
+      },
+      recibido: {
+        bg: 'bg-[hsl(var(--status-recibido))]',
+        border: 'border-[hsl(var(--status-recibido))]',
+        text: 'text-[hsl(var(--status-recibido-foreground))]'
       }
     };
     
@@ -353,7 +399,8 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
       en_tramite: 'En Trámite',
       pausado: 'Pausado',
       archivado: 'Archivado',
-      derivado: 'Derivado'
+      derivado: 'Derivado',
+      recibido: 'Recibido'
     };
     
     return labels[status as keyof typeof labels] || 'Borrador';
@@ -427,52 +474,90 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
             )}
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <CardContent className="space-y-6">
+          {/* Nuevos campos obligatorios */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="expedient-number">Número de Expediente</Label>
+              <Label htmlFor="oficina" className="text-sm font-semibold">OFICINA *</Label>
+              <select
+                id="oficina"
+                value={assignedOffice}
+                onChange={(e) => setAssignedOffice(e.target.value)}
+                required
+                disabled={!canEditBasicInfo || status !== 'draft'}
+                className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${(!canEditBasicInfo || status !== 'draft') ? 'bg-muted cursor-not-allowed' : ''}`}
+              >
+                <option value="">Seleccionar oficina...</option>
+                <option value="defensoria-1">Defensoría Civil Nº 1</option>
+                <option value="defensoria-2">Defensoría Civil Nº 2</option>
+                <option value="defensoria-penal">Defensoría Penal</option>
+                <option value="secretaria-administrativa">Secretaría Administrativa</option>
+                <option value="secretaria-tecnica">Secretaría Técnica</option>
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="tipo-proceso" className="text-sm font-semibold">TIPO DE PROCESO *</Label>
+              <select
+                id="tipo-proceso"
+                value={tipoProceso}
+                onChange={(e) => setTipoProceso(e.target.value as 'administrativo' | 'compra')}
+                required
+                disabled={!canEditBasicInfo || status !== 'draft'}
+                className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${(!canEditBasicInfo || status !== 'draft') ? 'bg-muted cursor-not-allowed' : ''}`}
+              >
+                <option value="administrativo">Administrativo</option>
+                <option value="compra">Compra</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="referencia" className="text-sm font-semibold">REFERENCIA *</Label>
+            <textarea
+              id="referencia"
+              value={referencia}
+              onChange={(e) => setReferencia(e.target.value)}
+              required
+              disabled={!canEditBasicInfo || status !== 'draft'}
+              placeholder="Describa la referencia del expediente..."
+              rows={3}
+              className={`flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${(!canEditBasicInfo || status !== 'draft') ? 'bg-muted cursor-not-allowed' : ''}`}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
+            <div className="space-y-2">
+              <Label htmlFor="expedient-number" className="text-sm font-medium text-muted-foreground">Número de Expediente</Label>
               <Input
                 id="expedient-number"
                 value={expedientNumber}
                 readOnly
                 disabled
-                className="bg-muted cursor-not-allowed font-mono"
+                className="bg-muted cursor-not-allowed font-mono text-sm"
                 title="Número autogenerado - No modificable"
               />
             </div>
+            
             <div className="space-y-2">
-              <Label htmlFor="status">Estado del Expediente</Label>
-              <select
-                id="status"
-                value={status}
-                onChange={(e) => setStatus(e.target.value as any)}
-                disabled={!canEditBasicInfo}
-                className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${!canEditBasicInfo ? 'bg-muted cursor-not-allowed' : ''}`}
-              >
-                <option value="draft">Borrador</option>
-                <option value="en_tramite">En Trámite (Oficina recibe expediente)</option>
-                <option value="pausado">Pausado (Oficina recibe trabajo)</option>
-              </select>
+              <Label htmlFor="fecha-creacion" className="text-sm font-medium text-muted-foreground">FECHA DE CREACIÓN</Label>
+              <Input
+                id="fecha-creacion"
+                value={new Date().toLocaleDateString('es-ES')}
+                readOnly
+                disabled
+                className="bg-muted cursor-not-allowed text-sm"
+              />
             </div>
-            {canEditBasicInfo && (
-              <div className="space-y-2">
-                <Label htmlFor="assigned-office">Oficina Asignada</Label>
-                <select
-                  id="assigned-office"
-                  value={assignedOffice}
-                  onChange={(e) => setAssignedOffice(e.target.value)}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  <option value="">Sin asignar</option>
-                  <option value="defensoria-1">Defensoría Civil Nº 1</option>
-                  <option value="defensoria-2">Defensoría Civil Nº 2</option>
-                  <option value="defensoria-penal">Defensoría Penal</option>
-                  <option value="secretaria-administrativa">Secretaría Administrativa</option>
-                  <option value="secretaria-tecnica">Secretaría Técnica</option>
-                </select>
-              </div>
-            )}
           </div>
+
+          {status !== 'draft' && (
+            <div className="p-4 bg-muted/30 rounded-lg border">
+              <p className="text-sm text-muted-foreground">
+                Los campos básicos solo se pueden editar cuando el expediente está en estado "Borrador".
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -728,19 +813,35 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
       {/* Actions */}
       <div className="flex items-center justify-between pt-4">        
         <div className="flex items-center space-x-3">
-          <Button variant="outline" onClick={handlePrint}>
-            Imprimir
-          </Button>
-          <Button variant="outline" onClick={handleExportPDF}>
-            <Download className="w-4 h-4 mr-2" />
-            Exportar PDF
-          </Button>
-          <Button onClick={handleSave} className="bg-primary hover:bg-primary/90">
-            <Save className="w-4 h-4 mr-2" />
-            {canOnlyAddActuaciones ? 'Guardar Actuación' : 'Guardar Expediente'}
-          </Button>
+          {status === 'draft' && canEditBasicInfo && (
+            <Button 
+              onClick={handleDerivation}
+              disabled={!assignedOffice || !title.trim() || !referencia.trim()}
+              className="bg-amber-600 hover:bg-amber-700 text-white px-6 py-2"
+            >
+              DERIVAR A{assignedOffice ? ` ${assignedOffice.toUpperCase().replace('-', ' ')}` : ' [SELECCIONAR OFICINA]'}
+            </Button>
+          )}
+          
+          {status !== 'draft' && (
+            <div className="text-sm text-muted-foreground">
+              {status === 'derivado' && 'Expediente derivado - Esperando recepción'}
+              {status === 'recibido' && 'Expediente recibido - Puede trabajarse'}
+              {status === 'en_tramite' && 'Expediente en trámite'}
+              {status === 'pausado' && 'Expediente pausado'}
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      <ConfirmDerivationDialog
+        open={showDerivationDialog}
+        onOpenChange={setShowDerivationDialog}
+        oficina={assignedOffice}
+        expedientNumber={expedientNumber}
+        onConfirm={confirmDerivation}
+      />
     </div>
   );
 }
