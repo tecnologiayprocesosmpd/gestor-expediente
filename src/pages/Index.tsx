@@ -27,7 +27,10 @@ const mockExpedients: ExpedientSummary[] = [
     tipoTramite: 'Amparo',
     solicitante: 'García, Juan Carlos',
     confidencial: false,
-    urgente: true
+    urgente: true,
+    content: '<p>Solicitud de amparo por vulneración de derechos constitucionales en proceso administrativo sancionador iniciado por la Municipalidad...</p>',
+    referencia: 'Amparo contra municipalidad por proceso sancionador irregular',
+    tipoProceso: 'administrativo'
   },
   {
     id: '2', 
@@ -41,7 +44,10 @@ const mockExpedients: ExpedientSummary[] = [
     tipoTramite: 'Defensa Penal',
     solicitante: 'Tribunal Penal Nº 3',
     confidencial: true,
-    urgente: false
+    urgente: false,
+    content: '<p>Designación de defensor oficial para el imputado Rodríguez en causa penal por presunto delito contra la integridad sexual...</p>',
+    referencia: 'Defensa oficial en causa penal - delito sexual',
+    tipoProceso: 'administrativo'
   },
   {
     id: '3',
@@ -55,7 +61,10 @@ const mockExpedients: ExpedientSummary[] = [
     tipoTramite: 'Consulta Legal',
     solicitante: 'Sindicato de Trabajadores',
     confidencial: false,
-    urgente: false
+    urgente: false,
+    content: '<p>Consulta sobre aplicación de convenio colectivo de trabajo y derechos de trabajadores en situación de despido sin justa causa...</p>',
+    referencia: 'Asesoramiento sobre convenio colectivo y despidos',
+    tipoProceso: 'administrativo'
   },
   {
     id: '4',
@@ -69,7 +78,10 @@ const mockExpedients: ExpedientSummary[] = [
     tipoTramite: 'Recurso Inconstitucionalidad',
     solicitante: 'Defensor General',
     confidencial: false,
-    urgente: false
+    urgente: false,
+    content: '<p>Recurso de inconstitucionalidad contra artículos de la Ley Provincial de Procedimientos Administrativos que vulneran el derecho de defensa...</p>',
+    referencia: 'Recurso contra ley provincial por vulnerar debido proceso',
+    tipoProceso: 'administrativo'
   },
   {
     id: '5',
@@ -83,7 +95,10 @@ const mockExpedients: ExpedientSummary[] = [
     tipoTramite: 'Asesoramiento Civil',
     solicitante: 'Pérez, María Elena',
     confidencial: true,
-    urgente: false
+    urgente: false,
+    content: '<p>Asesoramiento legal para divorcio por presentación conjunta y régimen de tenencia compartida de menores de edad...</p>',
+    referencia: 'Divorcio por mutuo acuerdo con hijos menores',
+    tipoProceso: 'administrativo'
   },
   {
     id: '6',
@@ -97,7 +112,10 @@ const mockExpedients: ExpedientSummary[] = [
     tipoTramite: 'Amparo Colectivo',
     solicitante: 'Asociación Ecologista',
     confidencial: false,
-    urgente: true
+    urgente: true,
+    content: '<p>Amparo colectivo por daño ambiental causado por empresa minera que contamina fuentes de agua potable en comunidades rurales...</p>',
+    referencia: 'Amparo colectivo contra contaminación minera',
+    tipoProceso: 'administrativo'
   }
 ];
 
@@ -171,7 +189,10 @@ function AppContent() {
         tipoTramite: data.tipoTramite || 'General',
         solicitante: data.solicitante || 'No especificado',
         confidencial: data.confidencial || false,
-        urgente: data.urgente || false
+        urgente: data.urgente || false,
+        content: data.content || '<p>Contenido del expediente...</p>',
+        referencia: data.referencia || 'Sin referencia especificada',
+        tipoProceso: data.tipoProceso || 'administrativo'
       };
       
       setExpedients(prev => [newExpedient, ...prev]);

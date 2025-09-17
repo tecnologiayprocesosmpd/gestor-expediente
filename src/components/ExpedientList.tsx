@@ -53,7 +53,9 @@ export function ExpedientList({
     const matchesSearch = searchTerm === '' || 
       expedient.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       expedient.number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      expedient.createdBy.toLowerCase().includes(searchTerm.toLowerCase());
+      expedient.createdBy.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      expedient.referencia.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      expedient.content.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus = selectedStatus === 'all' || expedient.status === selectedStatus;
 
@@ -154,8 +156,8 @@ export function ExpedientList({
             {/* Search Bar */}
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar por título, número o creador..."
+                <Input
+                placeholder="Buscar por título, número, creador, referencia o contenido..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 h-9"
@@ -234,7 +236,7 @@ export function ExpedientList({
                 <thead className="border-b">
                   <tr className="bg-muted/30">
                     <th className="text-left p-4 font-medium">Número</th>
-                    <th className="text-left p-4 font-medium">Título</th>
+                    <th className="text-left p-4 font-medium">Expediente</th>
                     <th className="text-left p-4 font-medium">Estado</th>
                     <th className="text-left p-4 font-medium">Creado por</th>
                     <th className="text-left p-4 font-medium">Fecha</th>
@@ -252,12 +254,21 @@ export function ExpedientList({
                           {expedient.number}
                         </span>
                       </td>
-                      <td className="p-4">
-                        <div className="font-medium text-foreground line-clamp-1">
-                          {expedient.title}
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          {expedient.department}
+                      <td className="p-4 max-w-md">
+                        <div className="space-y-1">
+                          <div className="font-medium text-foreground line-clamp-1">
+                            {expedient.title}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            <span className="font-medium">Ref:</span> {expedient.referencia}
+                          </div>
+                          <div className="text-xs text-muted-foreground/80 line-clamp-2">
+                            {expedient.content.replace(/<[^>]*>/g, '').substring(0, 120)}
+                            {expedient.content.length > 120 && '...'}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            <span className="capitalize">{expedient.tipoProceso}</span> • {expedient.department}
+                          </div>
                         </div>
                       </td>
                       <td className="p-4">

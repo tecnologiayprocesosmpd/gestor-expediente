@@ -516,6 +516,51 @@ export function ExpedientView({
         </div>
       </div>
 
+      {/* Resumen del Expediente */}
+      <Card className="border-l-4 border-l-primary/60">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <FileText className="w-5 h-5" />
+            <span>Resumen del Expediente</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-3">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Referencia</p>
+                <p className="text-sm">{expedient.referencia || 'Sin referencia especificada'}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Tipo de Proceso</p>
+                <Badge variant="secondary" className="capitalize">
+                  {expedient.tipoProceso || 'administrativo'}
+                </Badge>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Solicitante</p>
+                <p className="text-sm">{expedient.solicitante || 'No especificado'}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Tipo de Trámite</p>
+                <p className="text-sm">{expedient.tipoTramite || 'General'}</p>
+              </div>
+            </div>
+          </div>
+          <Separator />
+          <div>
+            <p className="text-sm font-medium text-muted-foreground mb-2">Descripción del Expediente</p>
+            <div className="prose prose-sm max-w-none p-3 border rounded-lg bg-muted/30">
+              <div dangerouslySetInnerHTML={{ 
+                __html: expedient.content || '<p>Sin contenido especificado</p>' 
+              }} />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Información del expediente y actuaciones unificadas */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         

@@ -65,6 +65,9 @@ export interface ExpedientSummary {
   solicitante: string;
   confidencial: boolean;
   urgente: boolean;
+  content: string;        // Contenido del expediente para mostrar extracto
+  referencia: string;     // Descripción de referencia
+  tipoProceso: 'administrativo' | 'compra'; // Tipo de proceso
   actuacionesCount?: number;
   derivacionesCount?: number;
   adjuntosCount?: number;
