@@ -157,7 +157,7 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
               Navegación Principal
             </h3>
           </div>
-          <nav className="grid grid-cols-3 gap-4 px-4">
+          <nav className="flex flex-col gap-3 px-4">
             {navigationItems.map((item) => {
               const colors = getItemColors(item.id);
               const isActive = currentView === item.id;
