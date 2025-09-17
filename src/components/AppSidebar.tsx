@@ -102,7 +102,7 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
   return (
     <div 
       className="h-full min-h-screen bg-background border-r flex-shrink-0"
-      style={{ width: '100px' }}
+      style={{ width: '225px' }}
     >
       <div className="flex flex-col h-full min-h-screen">
         {/* User Profile Section */}
@@ -115,14 +115,14 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
               <h2 className="text-sm font-semibold text-foreground">
                 Bienvenido
               </h2>
-              <h3 className="text-xs text-muted-foreground">
-                {user.name}
-              </h3>
               <div className="mt-2">
                 <Badge variant="secondary" className="text-xs">
                   {user.profile === 'mesa-entrada' ? 'Mesa de Entrada' : 'Oficina'}
                 </Badge>
               </div>
+              <h3 className="text-xs text-muted-foreground mt-2">
+                {user.name}
+              </h3>
             </div>
           </div>
         </div>
