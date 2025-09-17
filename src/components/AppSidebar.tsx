@@ -157,7 +157,7 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
               Navegación Principal
             </h3>
           </div>
-          <nav className="flex flex-col gap-3 px-4">
+          <nav className="grid grid-cols-3 gap-4 px-4">
             {navigationItems.map((item) => {
               const colors = getItemColors(item.id);
               const isActive = currentView === item.id;
@@ -166,7 +166,7 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
                 <button
                   key={item.id}
                   onClick={item.onClick}
-                  className={`flex flex-col items-center justify-center p-2 rounded-xl border-2 transition-all duration-200 ${
+                  className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${
                     isActive 
                       ? `${colors.activeBg} ${colors.activeText} border-transparent shadow-lg` 
                       : `${colors.bg} ${colors.border} ${colors.text}`

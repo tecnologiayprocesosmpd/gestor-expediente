@@ -181,16 +181,16 @@ export function Dashboard({
           </Card>
 
           <Card 
-            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-[#687218] bg-gradient-to-br from-[#687218]/10 to-[#687218]/20"
+            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-green-200 bg-gradient-to-br from-green-50 to-green-100"
             onClick={() => onCreateActuacion?.()}
           >
             <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-[#687218] rounded-lg flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <Plus className="w-6 h-6 text-white" />
               </div>
-              <h3 className="font-semibold text-sm text-[#687218] mb-1">ACTUACIONES</h3>
-              <p className="text-xs text-[#687218]/80">Para agregar</p>
-              <Badge className="mt-2 bg-[#687218] text-white text-xs">Crear nueva</Badge>
+              <h3 className="font-semibold text-sm text-green-900 mb-1">ACTUACIONES</h3>
+              <p className="text-xs text-green-700">Para agregar</p>
+              <Badge className="mt-2 bg-green-600 text-white text-xs">Crear nueva</Badge>
             </CardContent>
           </Card>
         </div>
