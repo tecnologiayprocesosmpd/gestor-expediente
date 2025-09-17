@@ -153,44 +153,44 @@ export function Dashboard({
           </Card>
 
           <Card 
-            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-purple-100"
+            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100"
             onClick={() => {/* TODO: Navegación a oficios */}}
           >
             <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <FileText className="w-6 h-6 text-white" />
               </div>
-              <h3 className="font-semibold text-sm text-purple-900 mb-1">OFICIOS</h3>
-              <p className="text-xs text-purple-700">Gestión de oficios</p>
-              <Badge className="mt-2 bg-purple-600 text-white text-xs">Disponible</Badge>
+              <h3 className="font-semibold text-sm text-blue-900 mb-1">OFICIOS</h3>
+              <p className="text-xs text-blue-700">Gestión de oficios</p>
+              <Badge className="mt-2 bg-blue-600 text-white text-xs">Disponible</Badge>
             </CardContent>
           </Card>
 
           <Card 
-            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-orange-100"
+            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100"
             onClick={() => onNavigateToActuaciones?.()}
           >
             <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-orange-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <Edit className="w-6 h-6 text-white" />
               </div>
-              <h3 className="font-semibold text-sm text-orange-900 mb-1">ACTUACIONES</h3>
-              <p className="text-xs text-orange-700">Para firmar</p>
-              <Badge className="mt-2 bg-orange-600 text-white text-xs">Pendientes</Badge>
+              <h3 className="font-semibold text-sm text-blue-900 mb-1">ACTUACIONES</h3>
+              <p className="text-xs text-blue-700">Para firmar</p>
+              <Badge className="mt-2 bg-blue-600 text-white text-xs">Pendientes</Badge>
             </CardContent>
           </Card>
 
           <Card 
-            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-green-200 bg-gradient-to-br from-green-50 to-green-100"
+            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100"
             onClick={() => onCreateActuacion?.()}
           >
             <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-3">
                 <Plus className="w-6 h-6 text-white" />
               </div>
-              <h3 className="font-semibold text-sm text-green-900 mb-1">ACTUACIONES</h3>
-              <p className="text-xs text-green-700">Para agregar</p>
-              <Badge className="mt-2 bg-green-600 text-white text-xs">Crear nueva</Badge>
+              <h3 className="font-semibold text-sm text-blue-900 mb-1">ACTUACIONES</h3>
+              <p className="text-xs text-blue-700">Para agregar</p>
+              <Badge className="mt-2 bg-blue-600 text-white text-xs">Crear nueva</Badge>
             </CardContent>
           </Card>
         </div>
