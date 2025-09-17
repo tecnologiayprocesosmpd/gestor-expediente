@@ -333,7 +333,7 @@ export function ActuacionEditor({
           </Button>
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
-              {actuacionId ? 'Editar Actuación' : 'Agregar Actuación'}
+              {actuacionId ? 'Editar Actuación' : 'Nueva Actuación'}
             </h1>
             <p className="text-muted-foreground">
               Expediente: {expedientId}

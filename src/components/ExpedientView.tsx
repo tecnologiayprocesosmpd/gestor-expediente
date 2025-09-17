@@ -50,9 +50,6 @@ export function ExpedientView({
   const [selectedActuacion, setSelectedActuacion] = useState<Actuacion | null>(null);
   const [fechasCitacion, setFechasCitacion] = useState<any[]>([]);
   
-  const { user } = useUser();
-  const canEditBasicInfo = user?.role === 'mesa';
-  
   // Use passed expedient data or fallback to default
   const expedient = propExpedient || {
     id: expedientId || 'unknown',
@@ -117,7 +114,7 @@ export function ExpedientView({
   };
 
   const handleAddActuacion = () => {
-    setShowActuacionEditor(true);
+    setShowEditor(true);
   };
 
   const handleViewActuacion = (actuacionId: string) => {
@@ -366,7 +363,6 @@ export function ExpedientView({
     return (
       <ExpedientEditor 
         expedientId={expedientId}
-        expedient={expedient}
         onBack={() => setShowEditor(false)}
         onSave={handleSaveActuacion}
       />
@@ -517,15 +513,6 @@ export function ExpedientView({
             <Download className="w-4 h-4 mr-2" />
             Exportar PDF
           </Button>
-          
-          {expedient.status === 'draft' && canEditBasicInfo && (
-            <Button 
-              onClick={() => setShowEditor(true)}
-              className="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 h-auto"
-            >
-              DERIVAR EXPEDIENTE
-            </Button>
-          )}
         </div>
       </div>
 
