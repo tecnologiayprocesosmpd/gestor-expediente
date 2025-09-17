@@ -517,7 +517,7 @@ export function ExpedientView({
       </div>
 
       {/* Resumen del Expediente */}
-      <Card className="border-l-4 border-l-primary/60">
+      <Card className={`border-l-4 ${statusColors.border}`}>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <FileText className="w-5 h-5" />
