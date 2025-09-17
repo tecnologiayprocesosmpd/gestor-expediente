@@ -49,13 +49,11 @@ export function Layout({ children, currentView = 'dashboard', onNavigate, onCrea
       <header className="bg-card border-b shadow-soft h-20 flex items-center justify-between px-6 w-full">
         <div className="flex items-center space-x-6">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-              <ProfileIcon className="w-4 h-4 text-white" />
-            </div>
-            <div className="text-sm">
-              <span className="text-muted-foreground">Bienvenido</span>
-              <span className="ml-1 font-medium text-foreground">{user.name}</span>
-            </div>
+            <img 
+              src="/assets/logo-mpd.png" 
+              alt="Logo MPD Tucumán" 
+              className="h-10 w-auto object-contain"
+            />
           </div>
           <div className="h-6 w-px bg-border"></div>
           <h1 className="text-xl font-bold text-foreground">
