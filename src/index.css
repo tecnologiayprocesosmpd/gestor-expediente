@@ -44,8 +44,8 @@ All colors MUST be HSL.
     --radius: 0.5rem;
     
     /* Gradientes del sistema */
-    --gradient-primary: linear-gradient(135deg, hsl(223 25% 43%), hsl(223 25% 50%));
-    --gradient-secondary: linear-gradient(135deg, hsl(223 25% 38%), hsl(223 25% 45%));
+    --gradient-primary: linear-gradient(135deg, hsl(223 30% 29%), hsl(223 30% 35%));
+    --gradient-secondary: linear-gradient(135deg, hsl(223 30% 25%), hsl(223 30% 32%));
     --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
     
     /* Sombras elegantes */
