@@ -105,25 +105,8 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
       style={{ width: '100px' }}
     >
       <div className="flex flex-col h-full min-h-screen">
-        {/* User Profile Section */}
-        <div className="p-4 border-b">
-          <div className="flex flex-col items-center space-y-3">
-            <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center">
-              <ProfileIcon className="w-6 h-6 text-white" />
-            </div>
-            <div className="text-center">
-              <h2 className="text-sm font-semibold text-foreground">
-                Bienvenido
-              </h2>
-              <h3 className="text-xs text-muted-foreground">
-                {user.name}
-              </h3>
-            </div>
-          </div>
-        </div>
-
         {/* Navigation */}
-        <div className="flex-1 py-4 flex flex-col h-full min-h-full">
+        <div className="flex-1 pt-6 flex flex-col h-full min-h-full">
           <div className="px-2 mb-4">
             <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider text-center">
               Navegación

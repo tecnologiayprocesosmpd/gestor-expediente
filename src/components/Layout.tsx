@@ -3,7 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { 
-  LogOut
+  LogOut,
+  FileText,
+  Building2,
+  Shield
 } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
 import { useSecurity } from "@/contexts/SecurityContext";
@@ -26,38 +29,65 @@ export function Layout({ children, currentView = 'dashboard', onNavigate, onCrea
 
   if (!user) return null;
 
+  const getProfileIcon = () => {
+    switch (user.profile) {
+      case 'mesa-entrada':
+        return 'FileText';
+      case 'oficina':
+        return 'Building2';
+      default:
+        return 'Shield';
+    }
+  };
+
+  const ProfileIcon = getProfileIcon() === 'FileText' ? FileText : 
+                     getProfileIcon() === 'Building2' ? Building2 : Shield;
+
   return (
-    <div className="min-h-screen flex w-full">
-      <AppSidebar 
-        currentView={currentView}
-        onNavigate={onNavigate}
-        onCreateExpedient={onCreateExpedient}
-      />
-      
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Header */}
-        <header className="bg-card border-b shadow-soft h-20 flex items-center justify-between px-6">
-          <div className="flex items-center space-x-4">
-            <h1 className="text-xl font-bold text-foreground">
-              MPD - Sistema de Expedientes
-            </h1>
+    <div className="min-h-screen flex flex-col w-full">
+      {/* Full Width Header */}
+      <header className="bg-card border-b shadow-soft h-20 flex items-center justify-between px-6 w-full">
+        <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
+              <ProfileIcon className="w-4 h-4 text-white" />
+            </div>
+            <div className="text-sm">
+              <span className="text-muted-foreground">Bienvenido</span>
+              <span className="ml-1 font-medium text-foreground">{user.name}</span>
+            </div>
           </div>
+          <div className="h-6 w-px bg-border"></div>
+          <h1 className="text-xl font-bold text-foreground">
+            MPD - Sistema de Expedientes
+          </h1>
+        </div>
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleLogout}
-            className="flex items-center space-x-2"
-          >
-            <LogOut className="w-4 h-4" />
-            <span>Salir</span>
-          </Button>
-        </header>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleLogout}
+          className="flex items-center space-x-2"
+        >
+          <LogOut className="w-4 h-4" />
+          <span>Salir</span>
+        </Button>
+      </header>
 
-        {/* Main Content */}
-        <main className="flex-1 p-6 overflow-auto">
-          {children}
-        </main>
+      {/* Sidebar + Main Content */}
+      <div className="flex flex-1 w-full">
+        <AppSidebar 
+          currentView={currentView}
+          onNavigate={onNavigate}
+          onCreateExpedient={onCreateExpedient}
+        />
+        
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Main Content */}
+          <main className="flex-1 p-6 overflow-auto">
+            {children}
+          </main>
+        </div>
       </div>
     </div>
   );
