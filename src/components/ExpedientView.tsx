@@ -31,7 +31,7 @@ interface ExpedientViewProps {
   expedient?: any;
   actuaciones?: any[];
   onBack?: () => void;
-  onSaveActuacion?: (data: any, autoSave?: boolean) => void;
+  onSaveActuacion?: (data: any) => void;
   onUpdateActuaciones?: (actuaciones: any[]) => void;
 }
 
@@ -153,7 +153,7 @@ export function ExpedientView({
       onUpdateActuaciones?.(updatedActuaciones);
     } else {
       // Creating new actuacion - Let parent handle creation to avoid duplication
-      onSaveActuacion?.(actuacionData, autoSave);
+      onSaveActuacion?.(actuacionData);
     }
     
     // Only close editor for manual saves, not auto-saves

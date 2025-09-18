@@ -205,11 +205,11 @@ function AppContent() {
     }
   };
 
-  const handleSaveActuacion = (data: any, autoSave = false) => {
+  const handleSaveActuacion = (data: any) => {
     if (!currentExpedientId) return;
     
-    // Only create if it's not an auto-save or if it has sufficient content
-    if (!autoSave || (data.title?.trim() && data.content?.length > 20)) {
+    // Only create if it has sufficient content
+    if (data.title?.trim() && data.content?.length > 20) {
       const newActuacion = {
         id: `act-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         expedientId: currentExpedientId,
@@ -231,12 +231,10 @@ function AppContent() {
         [currentExpedientId]: [...(prev[currentExpedientId] || []), newActuacion]
       }));
       
-      if (!autoSave) {
-        toast({
-          title: "Actuación agregada",
-          description: "La nueva actuación ha sido guardada correctamente",
-        });
-      }
+      toast({
+        title: "Actuación agregada",
+        description: "La nueva actuación ha sido guardada correctamente",
+      });
     }
   };
 

@@ -21,7 +21,7 @@ import { LineHeightExtension } from '@/extensions/LineHeightExtension';
 import { IndentExtension } from '@/extensions/IndentExtension';
 import { useState, useEffect, useMemo } from 'react';
 import { useUser } from "@/contexts/UserContext";
-import { useAutoSave } from "@/hooks/useAutoSave";
+
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -74,7 +74,7 @@ interface ActuacionEditorProps {
   actuacionId?: string;
   actuacion?: Partial<Actuacion>;
   onBack?: () => void;
-  onSave?: (actuacion: Partial<Actuacion>, autoSave?: boolean) => void;
+  onSave?: (actuacion: Partial<Actuacion>) => void;
   onStatusChange?: (actuacionId: string, status: Actuacion['status']) => void;
 }
 
@@ -109,34 +109,22 @@ export function ActuacionEditor({
     }
   };
 
-  // Auto-save data structure
-  const autoSaveData = useMemo(() => ({
-    id: actuacionId,
-    expedientId,
-    title,
-    content,
-    tipo,
-    status,
-    confidencial,
-    urgente,
-    updatedAt: new Date(),
-    createdBy: user?.name || 'Usuario'
-  }), [actuacionId, expedientId, title, content, tipo, status, confidencial, urgente, user?.name]);
-
-  // Auto-save functionality
-  const { forceSave, isSaving } = useAutoSave({
-    data: autoSaveData,
-    onSave: (data) => {
-      if (onSave) {
-        onSave(data, true); // Pass true to indicate this is an auto-save
-      }
-    },
-    delay: 3000, // Auto-save after 3 seconds of inactivity
-    enabled: canEdit && (title.trim().length > 0 || content.length > 20) // Only auto-save if there's meaningful content
-  });
-
   const handleSave = () => {
-    forceSave();
+    if (onSave) {
+      const saveData = {
+        id: actuacionId,
+        expedientId,
+        title,
+        content,
+        tipo,
+        status,
+        confidencial,
+        urgente,
+        updatedAt: new Date(),
+        createdBy: user?.name || 'Usuario'
+      };
+      onSave(saveData);
+    }
   };
   
   const editor = useEditor({
@@ -371,12 +359,6 @@ export function ActuacionEditor({
           </div>
           
           <div className="flex items-center space-x-2">
-            {isSaving && (
-              <div className="flex items-center text-sm text-muted-foreground">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
-                Guardando...
-              </div>
-            )}
           </div>
         </div>
       </div>
