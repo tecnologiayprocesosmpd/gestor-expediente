@@ -57,6 +57,11 @@ All colors MUST be HSL.
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-fast: all 0.15s ease-in-out;
     
+    /* Color específico para tarjetas de inicio */
+    --card-inicio: 223 28% 29%; /* #324159 */
+    --card-inicio-light: 223 28% 94%; /* Versión muy clara */
+    --card-inicio-border: 223 28% 85%; /* Para bordes */
+    
     /* Estados de expedientes - colores vivos pero formales */
     --status-draft: 35 91% 51%; /* Ámbar vibrante para borrador */
     --status-draft-foreground: 0 0% 100%;
