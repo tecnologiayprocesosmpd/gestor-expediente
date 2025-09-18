@@ -7,9 +7,6 @@ import { ExpedientList } from '@/components/ExpedientList';
 import { ExpedientView } from '@/components/ExpedientView';
 import { ExpedientEditor } from '@/components/ExpedientEditor';
 import { AgendaView } from '@/components/AgendaView';
-import { CasosPendientes } from '@/components/CasosPendientes';
-import { AuditoriaView } from '@/components/AuditoriaView';
-import { CuatrimestreView } from '@/components/CuatrimestreView';
 import { ExpedientSummary, Expedient } from '@/types/expedient';
 import { useToast } from '@/hooks/use-toast';
 
@@ -122,7 +119,7 @@ const mockExpedients: ExpedientSummary[] = [
 function AppContent() {
   const { user } = useUser();
   const { toast } = useToast();
-  const [currentView, setCurrentView] = useState<'dashboard' | 'expedientes' | 'view' | 'editor' | 'agenda' | 'casos-pendientes' | 'auditoria' | 'cuatrimestre'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'expedientes' | 'view' | 'editor' | 'agenda'>('dashboard');
   const [expedients, setExpedients] = useState<ExpedientSummary[]>(mockExpedients);
   const [currentExpedientId, setCurrentExpedientId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('');
@@ -272,7 +269,7 @@ function AppContent() {
   };
 
   const handleNavigateToActuaciones = () => {
-    setCurrentView('casos-pendientes');
+    // No action needed - removed casos-pendientes
   };
 
   const handleCreateActuacion = () => {
@@ -295,7 +292,6 @@ function AppContent() {
             onViewExpedient={handleViewExpedient}
             onEditExpedient={handleEditExpedient}
             onNavigateToExpedients={handleNavigateToExpedients}
-            onNavigateToActuaciones={handleNavigateToActuaciones}
             onCreateActuacion={handleCreateActuacion}
             onFilterExpedients={handleFilterExpedients}
           />
@@ -346,21 +342,6 @@ function AppContent() {
             }}
           />
         );
-      case 'casos-pendientes':
-        return (
-          <CasosPendientes
-            onViewItem={(id, type) => {
-              if (type === 'expediente') {
-                setCurrentExpedientId(id);
-                setCurrentView('view');
-              }
-            }}
-          />
-        );
-      case 'auditoria':
-        return <AuditoriaView />;
-      case 'cuatrimestre':
-        return <CuatrimestreView />;
       default:
         return null;
     }

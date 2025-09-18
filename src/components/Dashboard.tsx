@@ -25,7 +25,6 @@ interface DashboardProps {
   onViewExpedient?: (id: string) => void;
   onEditExpedient?: (id: string) => void;
   onNavigateToExpedients?: () => void;
-  onNavigateToActuaciones?: () => void;
   onCreateActuacion?: () => void;
   onFilterExpedients?: (status: string) => void;
   onRecibirExpediente?: (expedientId: string) => void;
@@ -37,7 +36,6 @@ export function Dashboard({
   onViewExpedient, 
   onEditExpedient,
   onNavigateToExpedients,
-  onNavigateToActuaciones,
   onCreateActuacion,
   onFilterExpedients,
   onRecibirExpediente
@@ -159,29 +157,15 @@ export function Dashboard({
 
         <Card 
           className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-[hsl(var(--card-inicio-border))] bg-gradient-to-br from-[hsl(var(--card-inicio-light))] to-[hsl(var(--card-inicio-light))]"
-          onClick={() => onNavigateToActuaciones?.()}
+          onClick={() => onCreateActuacion?.()}
         >
           <CardContent className="p-6 text-center">
             <div className="w-12 h-12 bg-[hsl(var(--card-inicio))] rounded-lg flex items-center justify-center mx-auto mb-3">
               <Edit className="w-6 h-6 text-white" />
             </div>
             <h3 className="font-semibold text-sm text-[hsl(var(--card-inicio))] mb-1">ACTUACIONES</h3>
-            <p className="text-xs text-[hsl(var(--card-inicio))] opacity-80">Para firmar</p>
-            <Badge className="mt-2 bg-[hsl(var(--card-inicio))] text-white text-xs">Pendientes</Badge>
-          </CardContent>
-        </Card>
-
-        <Card 
-          className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-[hsl(var(--card-inicio-border))] bg-gradient-to-br from-[hsl(var(--card-inicio-light))] to-[hsl(var(--card-inicio-light))]"
-          onClick={() => onCreateActuacion?.()}
-        >
-          <CardContent className="p-6 text-center">
-            <div className="w-12 h-12 bg-[hsl(var(--card-inicio))] rounded-lg flex items-center justify-center mx-auto mb-3">
-              <Plus className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="font-semibold text-sm text-[hsl(var(--card-inicio))] mb-1">ACTUACIONES</h3>
-            <p className="text-xs text-[hsl(var(--card-inicio))] opacity-80">Para agregar</p>
-            <Badge className="mt-2 bg-[hsl(var(--card-inicio))] text-white text-xs">Crear nueva</Badge>
+            <p className="text-xs text-[hsl(var(--card-inicio))] opacity-80">Para crear</p>
+            <Badge className="mt-2 bg-[hsl(var(--card-inicio))] text-white text-xs">Disponible</Badge>
           </CardContent>
         </Card>
       </div>
