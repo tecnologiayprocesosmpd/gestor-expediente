@@ -114,7 +114,7 @@ export function ExpedientView({
   };
 
   const handleAddActuacion = () => {
-    setShowEditor(true);
+    setShowActuacionEditor(true);
   };
 
   const handleViewActuacion = (actuacionId: string) => {
