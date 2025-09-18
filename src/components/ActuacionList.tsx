@@ -134,7 +134,14 @@ export function ActuacionList({
                         value={actuacion.status}
                         onValueChange={(value) => onChangeStatus?.(actuacion.id, value as Actuacion['status'])}
                       >
-                        <SelectTrigger className="!w-auto !h-6 !px-2 !text-xs !bg-amber-500 !text-white !border-amber-500 hover:!bg-amber-600 !important">
+                        <SelectTrigger 
+                          className="w-auto h-6 px-2 text-xs bg-warning text-warning-foreground border-warning hover:opacity-90 transition-opacity"
+                          style={{ 
+                            backgroundColor: 'hsl(var(--warning))', 
+                            color: 'hsl(var(--warning-foreground))', 
+                            borderColor: 'hsl(var(--warning))' 
+                          }}
+                        >
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent className="bg-background border shadow-lg z-50">
