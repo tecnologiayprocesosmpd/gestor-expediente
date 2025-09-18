@@ -9,9 +9,9 @@ export function DocumentStats({ editor }: DocumentStatsProps) {
   if (!editor) return null;
 
   const characterCount = editor.storage.characterCount || {};
-  const words = characterCount.words || 0;
-  const characters = characterCount.characters || 0;
-  const charactersNoSpaces = characterCount.charactersNoSpaces || 0;
+  const words = typeof characterCount.words === 'function' ? 0 : (characterCount.words || 0);
+  const characters = typeof characterCount.characters === 'function' ? 0 : (characterCount.characters || 0);
+  const charactersNoSpaces = typeof characterCount.charactersNoSpaces === 'function' ? 0 : (characterCount.charactersNoSpaces || 0);
 
   return (
     <div className="flex items-center gap-3 text-xs text-muted-foreground">

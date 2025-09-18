@@ -205,30 +205,39 @@ function AppContent() {
     }
   };
 
-  const handleSaveActuacion = (data: any) => {
+  const handleSaveActuacion = (data: any, autoSave = false) => {
     if (!currentExpedientId) return;
     
-    const newActuacion = {
-      id: String(Date.now()),
-      expedientId: currentExpedientId,
-      number: (expedientActuaciones[currentExpedientId]?.length || 0) + 1,
-      title: data.title || 'Nueva Actuación',
-      content: data.content || '<p>Contenido de la actuación...</p>',
-      status: 'borrador' as const,
-      createdBy: user?.name || 'Usuario',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
+    // Only create if it's not an auto-save or if it has sufficient content
+    if (!autoSave || (data.title?.trim() && data.content?.length > 20)) {
+      const newActuacion = {
+        id: `act-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        expedientId: currentExpedientId,
+        number: (expedientActuaciones[currentExpedientId]?.length || 0) + 1,
+        title: data.title || 'Nueva Actuación',
+        content: data.content || '<p>Contenido de la actuación...</p>',
+        status: 'borrador' as const,
+        createdBy: user?.name || 'Usuario',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        tipo: data.tipo || 'nota',
+        confidencial: data.confidencial || false,
+        urgente: data.urgente || false,
+        version: 1
+      };
 
-    setExpedientActuaciones(prev => ({
-      ...prev,
-      [currentExpedientId]: [newActuacion, ...(prev[currentExpedientId] || [])]
-    }));
-    
-    toast({
-      title: "Actuación agregada",
-      description: "La nueva actuación ha sido guardada correctamente",
-    });
+      setExpedientActuaciones(prev => ({
+        ...prev,
+        [currentExpedientId]: [...(prev[currentExpedientId] || []), newActuacion]
+      }));
+      
+      if (!autoSave) {
+        toast({
+          title: "Actuación agregada",
+          description: "La nueva actuación ha sido guardada correctamente",
+        });
+      }
+    }
   };
 
   const handleBackFromEditor = () => {
