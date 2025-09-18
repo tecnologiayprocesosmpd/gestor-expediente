@@ -290,13 +290,30 @@ export function ActuacionEditor({
     onStatusChange(actuacionId, nextStatus);
   };
 
-  const getStatusBadge = (currentStatus: Actuacion['status']) => {
+  const getStatusColors = (currentStatus: Actuacion['status']) => {
     const colors = {
-      borrador: 'bg-[hsl(var(--status-draft))] text-[hsl(var(--status-draft-foreground))]',
-      'para-firmar': 'bg-[hsl(var(--status-pausado))] text-[hsl(var(--status-pausado-foreground))]',
-      firmado: 'bg-[hsl(var(--status-archivado))] text-[hsl(var(--status-archivado-foreground))]'
+      borrador: {
+        bg: 'bg-[hsl(var(--status-draft))]',
+        border: 'border-[hsl(var(--status-draft))]',
+        text: 'text-[hsl(var(--status-draft-foreground))]'
+      },
+      'para-firmar': {
+        bg: 'bg-[hsl(var(--status-pausado))]',
+        border: 'border-[hsl(var(--status-pausado))]',
+        text: 'text-[hsl(var(--status-pausado-foreground))]'
+      },
+      firmado: {
+        bg: 'bg-[hsl(var(--status-archivado))]',
+        border: 'border-[hsl(var(--status-archivado))]',
+        text: 'text-[hsl(var(--status-archivado-foreground))]'
+      }
     };
     
+    return colors[currentStatus] || colors.borrador;
+  };
+
+  const getStatusBadge = (currentStatus: Actuacion['status']) => {
+    const statusColors = getStatusColors(currentStatus);
     const labels = {
       borrador: 'Borrador',
       'para-firmar': 'Para Firmar',
@@ -304,7 +321,7 @@ export function ActuacionEditor({
     };
 
     return (
-      <Badge className={colors[currentStatus]}>
+      <Badge className={`${statusColors.bg} ${statusColors.text} border-0`}>
         {labels[currentStatus]}
       </Badge>
     );
@@ -322,33 +339,45 @@ export function ActuacionEditor({
     return labels[tipoActuacion];
   };
 
+  const statusColors = getStatusColors(status);
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button variant="ghost" onClick={onBack}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Volver
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              {actuacionId ? 'Editar Actuación' : 'Nueva Actuación'}
-            </h1>
-            <p className="text-muted-foreground">
-              Expediente: {expedientId}
-            </p>
-          </div>
-        </div>
-        
-        <div className="flex items-center space-x-2">
-          {isSaving && (
-            <div className="flex items-center text-sm text-muted-foreground">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
-              Guardando...
+      {/* Header con estado prominente */}
+      <div className="bg-card rounded-lg border shadow-sm">
+        <div className={`flex items-start justify-between p-6 border-l-4 ${statusColors.border}`}>
+          <div className="flex items-start space-x-6">
+            <Button variant="ghost" onClick={onBack}>
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Volver
+            </Button>
+            <div className="flex items-center space-x-4">
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight">
+                  {actuacionId ? 'Editar Actuación' : 'Nueva Actuación'}
+                </h1>
+                <p className="text-muted-foreground">
+                  Expediente: {expedientId}
+                </p>
+              </div>
+              
+              <div className={`${statusColors.bg} rounded-md px-4 py-2 flex items-center space-x-2 shadow-sm border border-white/20 ml-2.5`}>
+                <div className={`w-2.5 h-2.5 rounded-full bg-white animate-pulse`}></div>
+                <span className={`text-sm font-semibold ${statusColors.text}`}>
+                  {status === 'borrador' ? 'BORRADOR' : status === 'para-firmar' ? 'PARA FIRMAR' : 'FIRMADO'}
+                </span>
+              </div>
             </div>
-          )}
-          {getStatusBadge(status)}
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            {isSaving && (
+              <div className="flex items-center text-sm text-muted-foreground">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
+                Guardando...
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
