@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   FileText, 
   Edit3, 
@@ -171,23 +172,39 @@ export function ActuacionList({
                     </Button>
                   )}
 
-                  {canEdit && actuacion.status !== 'firmado' && (
+                  {canEdit && actuacion.status === 'borrador' && (
+                    <Select
+                      value={actuacion.status}
+                      onValueChange={(value) => onChangeStatus?.(actuacion.id, value as Actuacion['status'])}
+                    >
+                      <SelectTrigger className="w-32">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="borrador">
+                          <div className="flex items-center gap-2">
+                            <Edit3 className="w-3 h-3" />
+                            Borrador
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="para-firmar">
+                          <div className="flex items-center gap-2">
+                            <AlertTriangle className="w-3 h-3" />
+                            Para Firmar
+                          </div>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+
+                  {canEdit && actuacion.status === 'para-firmar' && (
                     <Button
                       variant="secondary"
                       size="sm"
                       onClick={() => handleStatusChange(actuacion.id, actuacion.status)}
                     >
-                      {actuacion.status === 'borrador' ? (
-                        <>
-                          <Clock className="w-4 h-4 mr-1" />
-                          Enviar a Firmar
-                        </>
-                      ) : (
-                        <>
-                          <CheckCircle className="w-4 h-4 mr-1" />
-                          Firmar
-                        </>
-                      )}
+                      <CheckCircle className="w-4 h-4 mr-1" />
+                      Firmar
                     </Button>
                   )}
                 </div>
