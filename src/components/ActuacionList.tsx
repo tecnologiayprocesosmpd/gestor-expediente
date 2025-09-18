@@ -134,10 +134,10 @@ export function ActuacionList({
                         value={actuacion.status}
                         onValueChange={(value) => onChangeStatus?.(actuacion.id, value as Actuacion['status'])}
                       >
-                        <SelectTrigger className="w-auto h-6 px-2 text-xs">
+                        <SelectTrigger className="w-auto h-6 px-2 text-xs bg-[hsl(var(--status-draft))] text-[hsl(var(--status-draft-foreground))] border-[hsl(var(--status-draft))] hover:bg-[hsl(var(--status-draft))]/90">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-background border shadow-lg z-50">
                           <SelectItem value="borrador">
                             <div className="flex items-center gap-1">
                               <Edit3 className="w-3 h-3" />
