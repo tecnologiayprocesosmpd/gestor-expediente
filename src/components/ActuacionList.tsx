@@ -186,7 +186,7 @@ export function ActuacionList({
                     onCitacionCreated={onCitacionCreated}
                   />
                   
-                  {canEdit && actuacion.status !== 'firmado' && (
+                  {canEdit && actuacion.status === 'borrador' && (
                     <Button
                       variant="default"
                       size="sm"
@@ -195,31 +195,6 @@ export function ActuacionList({
                       <Edit3 className="w-4 h-4 mr-1" />
                       Editar
                     </Button>
-                  )}
-
-                  {canEdit && actuacion.status === 'borrador' && (
-                    <Select
-                      value={actuacion.status}
-                      onValueChange={(value) => onChangeStatus?.(actuacion.id, value as Actuacion['status'])}
-                    >
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="borrador">
-                          <div className="flex items-center gap-2">
-                            <Edit3 className="w-3 h-3" />
-                            Borrador
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="para-firmar">
-                          <div className="flex items-center gap-2">
-                            <AlertTriangle className="w-3 h-3" />
-                            Para Firmar
-                          </div>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
                   )}
 
                   {canEdit && actuacion.status === 'para-firmar' && (
