@@ -138,57 +138,55 @@ export function Dashboard({
 
   return (
     <div className="space-y-6">
-      {/* Funciones Principales - Solo para Mesa de Entrada */}
-      {user.role === 'mesa' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
-          <ExpedientesParaRecibir 
-            expedients={filteredExpedients}
-            onRecibirExpediente={onRecibirExpediente}
-          />
+      {/* Funciones Principales */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+        <ExpedientesParaRecibir 
+          expedients={filteredExpedients}
+          onRecibirExpediente={onRecibirExpediente}
+        />
 
-          <Card 
-            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-[hsl(var(--card-inicio-border))] bg-gradient-to-br from-[hsl(var(--card-inicio-light))] to-[hsl(var(--card-inicio-light))]"
-            onClick={() => {/* TODO: Navegación a oficios */}}
-          >
-            <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-[hsl(var(--card-inicio))] rounded-lg flex items-center justify-center mx-auto mb-3">
-                <FileText className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="font-semibold text-sm text-[hsl(var(--card-inicio))] mb-1">OFICIOS</h3>
-              <p className="text-xs text-[hsl(var(--card-inicio))] opacity-80">Gestión de oficios</p>
-              <Badge className="mt-2 bg-[hsl(var(--card-inicio))] text-white text-xs">Disponible</Badge>
-            </CardContent>
-          </Card>
+        <Card 
+          className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-[hsl(var(--card-inicio-border))] bg-gradient-to-br from-[hsl(var(--card-inicio-light))] to-[hsl(var(--card-inicio-light))]"
+          onClick={() => {/* TODO: Navegación a oficios */}}
+        >
+          <CardContent className="p-6 text-center">
+            <div className="w-12 h-12 bg-[hsl(var(--card-inicio))] rounded-lg flex items-center justify-center mx-auto mb-3">
+              <FileText className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="font-semibold text-sm text-[hsl(var(--card-inicio))] mb-1">OFICIOS</h3>
+            <p className="text-xs text-[hsl(var(--card-inicio))] opacity-80">Gestión de oficios</p>
+            <Badge className="mt-2 bg-[hsl(var(--card-inicio))] text-white text-xs">Disponible</Badge>
+          </CardContent>
+        </Card>
 
-          <Card 
-            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-[hsl(var(--card-inicio-border))] bg-gradient-to-br from-[hsl(var(--card-inicio-light))] to-[hsl(var(--card-inicio-light))]"
-            onClick={() => onNavigateToActuaciones?.()}
-          >
-            <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-[hsl(var(--card-inicio))] rounded-lg flex items-center justify-center mx-auto mb-3">
-                <Edit className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="font-semibold text-sm text-[hsl(var(--card-inicio))] mb-1">ACTUACIONES</h3>
-              <p className="text-xs text-[hsl(var(--card-inicio))] opacity-80">Para firmar</p>
-              <Badge className="mt-2 bg-[hsl(var(--card-inicio))] text-white text-xs">Pendientes</Badge>
-            </CardContent>
-          </Card>
+        <Card 
+          className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-[hsl(var(--card-inicio-border))] bg-gradient-to-br from-[hsl(var(--card-inicio-light))] to-[hsl(var(--card-inicio-light))]"
+          onClick={() => onNavigateToActuaciones?.()}
+        >
+          <CardContent className="p-6 text-center">
+            <div className="w-12 h-12 bg-[hsl(var(--card-inicio))] rounded-lg flex items-center justify-center mx-auto mb-3">
+              <Edit className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="font-semibold text-sm text-[hsl(var(--card-inicio))] mb-1">ACTUACIONES</h3>
+            <p className="text-xs text-[hsl(var(--card-inicio))] opacity-80">{user.role === 'oficina' ? 'Asignadas' : 'Para firmar'}</p>
+            <Badge className="mt-2 bg-[hsl(var(--card-inicio))] text-white text-xs">Pendientes</Badge>
+          </CardContent>
+        </Card>
 
-          <Card 
-            className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-[hsl(var(--card-inicio-border))] bg-gradient-to-br from-[hsl(var(--card-inicio-light))] to-[hsl(var(--card-inicio-light))]"
-            onClick={() => onCreateActuacion?.()}
-          >
-            <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-[hsl(var(--card-inicio))] rounded-lg flex items-center justify-center mx-auto mb-3">
-                <Plus className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="font-semibold text-sm text-[hsl(var(--card-inicio))] mb-1">ACTUACIONES</h3>
-              <p className="text-xs text-[hsl(var(--card-inicio))] opacity-80">Para agregar</p>
-              <Badge className="mt-2 bg-[hsl(var(--card-inicio))] text-white text-xs">Crear nueva</Badge>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+        <Card 
+          className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-[hsl(var(--card-inicio-border))] bg-gradient-to-br from-[hsl(var(--card-inicio-light))] to-[hsl(var(--card-inicio-light))]"
+          onClick={() => onCreateActuacion?.()}
+        >
+          <CardContent className="p-6 text-center">
+            <div className="w-12 h-12 bg-[hsl(var(--card-inicio))] rounded-lg flex items-center justify-center mx-auto mb-3">
+              <Plus className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="font-semibold text-sm text-[hsl(var(--card-inicio))] mb-1">ACTUACIONES</h3>
+            <p className="text-xs text-[hsl(var(--card-inicio))] opacity-80">Para agregar</p>
+            <Badge className="mt-2 bg-[hsl(var(--card-inicio))] text-white text-xs">Crear nueva</Badge>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* NOVEDADES */}
       <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
