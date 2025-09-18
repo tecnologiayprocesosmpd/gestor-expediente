@@ -215,15 +215,15 @@ function AppContent() {
         return;
       }
       
-      // Only create if it has sufficient content
-      if (data.title?.trim() && data.content?.length > 20) {
+      // Create actuacion - Allow minimal content for drafts
+      if (data.title?.trim() && (data.status === 'borrador' || data.content?.length > 20)) {
         const newActuacion = {
           id: `act-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           expedientId: currentExpedientId,
           number: (expedientActuaciones[currentExpedientId]?.length || 0) + 1,
           title: data.title || 'Nueva Actuación',
           content: data.content || '<p>Contenido de la actuación...</p>',
-          status: 'borrador' as const,
+          status: data.status || 'borrador',
           createdBy: user?.name || 'Usuario',
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -255,8 +255,8 @@ function AppContent() {
           resolve(newActuacion);
         }, 100);
       } else {
-        console.log('[Index.handleSaveActuacion] Error: Contenido insuficiente');
-        reject(new Error('Contenido insuficiente'));
+        console.log('[Index.handleSaveActuacion] Error: Título requerido o contenido insuficiente para actuaciones no borrador');
+        reject(new Error('Para guardar una actuación se requiere título. Para actuaciones que no sean borradores, se requiere contenido mínimo.'));
       }
     });
   };
