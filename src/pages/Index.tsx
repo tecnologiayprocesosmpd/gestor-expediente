@@ -291,9 +291,9 @@ function AppContent() {
         return (
           <Dashboard
             expedients={expedients}
-            onCreateExpedient={user.role === 'mesa' ? handleCreateExpedient : undefined}
+            onCreateExpedient={handleCreateExpedient}
             onViewExpedient={handleViewExpedient}
-            onEditExpedient={user.role === 'mesa' ? handleEditExpedient : undefined}
+            onEditExpedient={handleEditExpedient}
             onNavigateToExpedients={handleNavigateToExpedients}
             onNavigateToActuaciones={handleNavigateToActuaciones}
             onCreateActuacion={handleCreateActuacion}
@@ -305,8 +305,8 @@ function AppContent() {
           <ExpedientList
             expedients={expedients}
             onViewExpedient={handleViewExpedient}
-            onEditExpedient={user.role === 'mesa' ? handleEditExpedient : undefined}
-            onCreateExpedient={user.role === 'mesa' ? handleCreateExpedient : undefined}
+            onEditExpedient={handleEditExpedient}
+            onCreateExpedient={handleCreateExpedient}
             initialStatusFilter={statusFilter}
           />
         );
@@ -334,7 +334,7 @@ function AppContent() {
             expedientId={currentExpedientId || undefined}
             expedient={getCurrentExpedient()}
             onBack={handleBackFromEditor}
-            onSave={user?.role === 'oficina' ? handleSaveActuacion : handleSaveExpedient}
+            onSave={handleSaveExpedient}
           />
         );
       case 'agenda':
@@ -370,7 +370,7 @@ function AppContent() {
     <Layout
       currentView={currentView}
       onNavigate={setCurrentView}
-      onCreateExpedient={user.role === 'mesa' ? handleCreateExpedient : undefined}
+      onCreateExpedient={handleCreateExpedient}
     >
       {renderCurrentView()}
     </Layout>

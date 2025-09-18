@@ -90,12 +90,10 @@ export function Dashboard({
     return () => clearInterval(interval);
   }, []);
 
-  const canEdit = user.role === 'mesa';
+  const canEdit = true; // Ambos perfiles pueden editar
   
-  // Para oficinas, solo mostrar expedientes asignados (mock - aquí filtrarías por oficina asignada)
-  const filteredExpedients = user.role === 'oficina' 
-    ? expedients.filter(e => e.status === 'en_tramite' || e.status === 'pausado') // Mock: asumimos que estos están asignados
-    : expedients;
+  // Mostrar todos los expedientes para ambos perfiles
+  const filteredExpedients = expedients;
     
   const recentExpedients = filteredExpedients.slice(0, 5);
   
@@ -168,7 +166,7 @@ export function Dashboard({
               <Edit className="w-6 h-6 text-white" />
             </div>
             <h3 className="font-semibold text-sm text-[hsl(var(--card-inicio))] mb-1">ACTUACIONES</h3>
-            <p className="text-xs text-[hsl(var(--card-inicio))] opacity-80">{user.role === 'oficina' ? 'Asignadas' : 'Para firmar'}</p>
+            <p className="text-xs text-[hsl(var(--card-inicio))] opacity-80">Para firmar</p>
             <Badge className="mt-2 bg-[hsl(var(--card-inicio))] text-white text-xs">Pendientes</Badge>
           </CardContent>
         </Card>

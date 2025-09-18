@@ -95,7 +95,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
 
   const { user } = useUser();
   const canEditBasicInfo = user?.role === 'mesa';
-  const canOnlyAddActuaciones = user?.role === 'oficina';
+  const canOnlyAddActuaciones = false; // Ambos perfiles pueden editar expedientes completos
 
   const editor = useEditor({
     extensions: [
