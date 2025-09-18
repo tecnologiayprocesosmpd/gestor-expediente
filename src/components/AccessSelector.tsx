@@ -263,26 +263,18 @@ export function AccessSelector({ onSelectAccess }: AccessSelectorProps) {
             Acciones rápidas disponibles para su perfil
           </p>
           <div className="flex flex-wrap gap-2 justify-center">
-            {user.role === 'mesa' && (
-              <>
-                <Badge variant="secondary" className="text-xs">
-                  Crear Expedientes
-                </Badge>
-                <Badge variant="secondary" className="text-xs">
-                  Registrar Trámites
-                </Badge>
-              </>
-            )}
-            {user.role === 'oficina' && (
-              <>
-                <Badge variant="secondary" className="text-xs">
-                  Consultar Expedientes
-                </Badge>
-                <Badge variant="secondary" className="text-xs">
-                  Crear Actuaciones
-                </Badge>
-              </>
-            )}
+            <Badge variant="secondary" className="text-xs">
+              Crear Expedientes
+            </Badge>
+            <Badge variant="secondary" className="text-xs">
+              Registrar Trámites
+            </Badge>
+            <Badge variant="secondary" className="text-xs">
+              Consultar Expedientes
+            </Badge>
+            <Badge variant="secondary" className="text-xs">
+              Crear Actuaciones
+            </Badge>
             <Badge variant="secondary" className="text-xs">
               Generar Reportes
             </Badge>

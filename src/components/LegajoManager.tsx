@@ -73,7 +73,7 @@ export function LegajoManager({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedEstado, setSelectedEstado] = useState<string>('todos');
 
-  const canEdit = user?.role === 'mesa';
+  const canEdit = true; // Ambos perfiles pueden editar
 
   const filteredEmpleados = empleados.filter(empleado => {
     const matchesSearch = 

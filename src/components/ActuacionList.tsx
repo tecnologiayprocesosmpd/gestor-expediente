@@ -38,8 +38,8 @@ export function ActuacionList({
   onCitacionCreated
 }: ActuacionListProps) {
   const { user } = useUser();
-  const canEdit = user?.role === 'mesa';
-  const canCreate = user?.role === 'mesa' || user?.role === 'oficina';
+  const canEdit = true; // Ambos perfiles pueden editar
+  const canCreate = true; // Ambos perfiles pueden crear
 
   const getStatusBadge = (status: Actuacion['status']) => {
     const config = {

@@ -46,7 +46,7 @@ export function ExpedientList({
   const [sortField, setSortField] = useState<SortField>('createdAt');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
-  const canEdit = user?.role === 'mesa';
+  const canEdit = true; // Ambos perfiles pueden editar
 
   // Filter expedients based on search term and status
   const filteredExpedients = expedients.filter(expedient => {

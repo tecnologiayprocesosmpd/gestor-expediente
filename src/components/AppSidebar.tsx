@@ -49,7 +49,7 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
   };
 
   const ProfileIcon = getProfileIcon();
-  const canCreateExpedients = user.role === 'mesa';
+  const canCreateExpedients = true; // Ambos perfiles pueden crear expedientes
 
   const navigationItems = [
     { 
@@ -70,19 +70,15 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
       icon: Calendar,
       onClick: () => onNavigate?.('agenda')
     },
-  ];
-
-  // Navegación específica para Mesa de Entrada
-  const mesaEntradaItems = user.role === 'mesa' ? [
     {
       id: 'casos-pendientes',
       title: 'Casos Pendientes',
       icon: Inbox,
       onClick: () => onNavigate?.('casos-pendientes')
     }
-  ] : [];
+  ];
 
-  // Navegación para reportes y auditoría
+  // Navegación para reportes y auditoría - disponible para ambos perfiles
   const reportesItems = [
     {
       id: 'auditoria',
@@ -131,59 +127,30 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
             ))}
           </nav>
 
-          {/* Mesa de Entrada specific navigation - HIDDEN */}
-          {/* {mesaEntradaItems.length > 0 && (
-            <>
-              <div className="px-2 mb-2 mt-6">
-                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-all duration-300 overflow-hidden whitespace-nowrap">
-                  Gestión
-                </h3>
-              </div>
-              <nav className="space-y-1 px-2">
-                {mesaEntradaItems.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={item.onClick}
-                    className={`w-full flex items-center justify-center group-hover:justify-start p-3 rounded-lg transition-all duration-300 ${
-                      currentView === item.id 
-                        ? "bg-muted text-primary font-medium" 
-                        : "hover:bg-muted/50 text-foreground"
-                    }`}
-                  >
-                    <item.icon className="w-5 h-5 flex-shrink-0" />
-                    <span className="ml-3 opacity-0 group-hover:opacity-100 transition-all duration-300 overflow-hidden whitespace-nowrap">
-                      {item.title}
-                    </span>
-                  </button>
-                ))}
-              </nav>
-            </>
-          )} */}
-
-          {/* Reportes navigation - HIDDEN */}
-          {/* <div className="px-2 mb-2 mt-6">
-            <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-all duration-300 overflow-hidden whitespace-nowrap">
+          {/* Reportes navigation */}
+          <div className="px-2 mb-4 mt-6">
+            <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider text-center">
               Reportes
             </h3>
           </div>
-          <nav className="space-y-1 px-2">
+          <nav className="space-y-3 px-2">
             {reportesItems.map((item) => (
               <button
                 key={item.id}
                 onClick={item.onClick}
-                className={`w-full flex items-center justify-center group-hover:justify-start p-3 rounded-lg transition-all duration-300 ${
+                className={`w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 ${
                   currentView === item.id 
                     ? "bg-muted text-primary font-medium" 
                     : "hover:bg-muted/50 text-foreground"
                 }`}
               >
-                <item.icon className="w-5 h-5 flex-shrink-0" />
-                <span className="ml-3 opacity-0 group-hover:opacity-100 transition-all duration-300 overflow-hidden whitespace-nowrap">
+                <item.icon className="w-6 h-6 mb-2" />
+                <span className="text-xs text-center">
                   {item.title}
                 </span>
               </button>
             ))}
-          </nav> */}
+          </nav>
 
           {/* Quick Actions */}
           {canCreateExpedients && (
