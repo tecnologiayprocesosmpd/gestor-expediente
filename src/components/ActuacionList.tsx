@@ -16,6 +16,7 @@ import {
 import { Actuacion } from "@/types/actuacion";
 import { useUser } from "@/contexts/UserContext";
 import { CitacionDialog } from "./CitacionDialog";
+import { StatusChangeConfirmDialog } from "./StatusChangeConfirmDialog";
 
 interface ActuacionListProps {
   expedientId: string;
@@ -129,51 +130,7 @@ export function ActuacionList({
                     <span className="font-medium text-sm text-muted-foreground">
                       Actuación #{actuacion.number}
                     </span>
-                    {canEdit && (actuacion.status === 'borrador' || actuacion.status === 'para-firmar') ? (
-                      <Select
-                        value={actuacion.status}
-                        onValueChange={(value) => onChangeStatus?.(actuacion.id, value as Actuacion['status'])}
-                      >
-                        <SelectTrigger 
-                          className={`w-auto h-6 px-2 text-xs transition-all ${
-                            actuacion.status === 'borrador' 
-                              ? 'bg-warning text-warning-foreground border-warning hover:bg-warning/90' 
-                              : 'bg-orange-500 text-white border-orange-500 hover:bg-orange-600'
-                          }`}
-                          style={{ 
-                            backgroundColor: actuacion.status === 'borrador' ? 'hsl(var(--warning))' : 'hsl(24 95% 53%)', 
-                            color: 'hsl(var(--warning-foreground))', 
-                            borderColor: actuacion.status === 'borrador' ? 'hsl(var(--warning))' : 'hsl(24 95% 53%)' 
-                          }}
-                        >
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-background border shadow-lg z-50">
-                          <SelectItem value="borrador">
-                            <div className="flex items-center gap-1">
-                              <Edit3 className="w-3 h-3" />
-                              Borrador
-                            </div>
-                          </SelectItem>
-                          <SelectItem value="para-firmar">
-                            <div className="flex items-center gap-1">
-                              <AlertTriangle className="w-3 h-3" />
-                              Para Firmar
-                            </div>
-                          </SelectItem>
-                          {actuacion.status === 'para-firmar' && (
-                            <SelectItem value="firmado">
-                              <div className="flex items-center gap-1">
-                                <CheckCircle className="w-3 h-3" />
-                                Firmar
-                              </div>
-                            </SelectItem>
-                          )}
-                        </SelectContent>
-                      </Select>
-                    ) : (
-                      getStatusBadge(actuacion.status)
-                    )}
+                    {getStatusBadge(actuacion.status)}
                   </div>
                   <h4 className="font-medium text-foreground mb-1">
                     {actuacion.title}
@@ -199,11 +156,21 @@ export function ActuacionList({
                     Ver
                   </Button>
                   
-                  <CitacionDialog
-                    expedientId={expedientId}
-                    actuacionId={actuacion.id}
-                    onCitacionCreated={onCitacionCreated}
-                  />
+                  {actuacion.status === 'borrador' && canEdit && (
+                    <StatusChangeConfirmDialog
+                      onConfirm={() => handleStatusChange(actuacion.id, actuacion.status)}
+                      message="¿Está seguro de enviar la actuación para firma?"
+                    >
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className="bg-orange-500 hover:bg-orange-600 text-white"
+                      >
+                        <AlertTriangle className="w-4 h-4 mr-1" />
+                        PARA FIRMA
+                      </Button>
+                    </StatusChangeConfirmDialog>
+                  )}
                   
                   {canEdit && actuacion.status === 'borrador' && (
                     <Button
