@@ -216,7 +216,7 @@ function AppContent() {
       }
       
       // Create actuacion - Allow minimal content for drafts
-      if (data.title?.trim() && (data.status === 'borrador' || data.content?.length > 20)) {
+      if (data.status === 'borrador' || (data.title?.trim() && data.content?.length > 20)) {
         const newActuacion = {
           id: `act-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           expedientId: currentExpedientId,
