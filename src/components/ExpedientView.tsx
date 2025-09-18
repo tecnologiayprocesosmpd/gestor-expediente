@@ -15,7 +15,9 @@ import {
   Calendar,
   User,
   Clock,
-  Building2
+  Building2,
+  AlertTriangle,
+  CheckCircle
 } from "lucide-react";
 import { ActuacionList } from "./ActuacionList";
 import { ActuacionEditor } from "./ActuacionEditor";
@@ -411,8 +413,32 @@ export function ExpedientView({
           <div className="flex items-center space-x-3">
             <Badge variant={selectedActuacion.status === 'firmado' ? 'default' : 'secondary'} className="px-4 py-2">
               {selectedActuacion.status === 'firmado' ? 'Firmado' : 
-               selectedActuacion.status === 'para-firmar' ? 'Para Firmar' : 'Borrador'}
+               selectedActuacion.status === 'para-firmar' ? 'Para Firma' : 'Borrador'}
             </Badge>
+            
+            {/* Status change button */}
+            {selectedActuacion.status === 'borrador' && (
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => handleStatusChange(selectedActuacion.id, 'para-firmar')}
+                className="bg-orange-500 hover:bg-orange-600 text-white"
+              >
+                <AlertTriangle className="w-4 h-4 mr-1" />
+                PARA FIRMA
+              </Button>
+            )}
+            
+            {selectedActuacion.status === 'para-firmar' && (
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => handleStatusChange(selectedActuacion.id, 'firmado')}
+              >
+                <CheckCircle className="w-4 h-4 mr-1" />
+                Firmar
+              </Button>
+            )}
           </div>
         </div>
 
