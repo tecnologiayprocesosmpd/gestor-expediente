@@ -532,9 +532,7 @@ export function ExpedientView({
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">Tipo de Proceso</p>
-              <Badge variant="secondary" className="capitalize">
-                {expedient.tipoProceso || 'administrativo'}
-              </Badge>
+              <p className="text-sm capitalize">{expedient.tipoProceso || 'administrativo'}</p>
             </div>
           </div>
           <Separator />
