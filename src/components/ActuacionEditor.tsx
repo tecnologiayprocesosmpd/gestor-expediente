@@ -74,7 +74,7 @@ interface ActuacionEditorProps {
   actuacionId?: string;
   actuacion?: Partial<Actuacion>;
   onBack?: () => void;
-  onSave?: (actuacion: Partial<Actuacion>) => void;
+  onSave?: (actuacion: Partial<Actuacion>, autoSave?: boolean) => void;
   onStatusChange?: (actuacionId: string, status: Actuacion['status']) => void;
 }
 
@@ -128,7 +128,7 @@ export function ActuacionEditor({
     data: autoSaveData,
     onSave: (data) => {
       if (onSave) {
-        onSave(data);
+        onSave(data, true); // Pass true to indicate this is an auto-save
       }
     },
     delay: 3000, // Auto-save after 3 seconds of inactivity

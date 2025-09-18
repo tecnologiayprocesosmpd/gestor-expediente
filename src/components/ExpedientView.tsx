@@ -143,7 +143,7 @@ export function ExpedientView({
     onUpdateActuaciones?.(updatedActuaciones);
   };
 
-  const handleSaveActuacion = (actuacionData: any) => {
+  const handleSaveActuacion = (actuacionData: any, autoSave = false) => {
     if (editingActuacionId) {
       // Editing existing actuacion
       const updatedActuaciones = actuaciones.map(act => 
@@ -166,10 +166,13 @@ export function ExpedientView({
       onSaveActuacion?.(newActuacion);
     }
     
-    setShowEditor(false);
-    setShowActuacionEditor(false);
-    setEditingActuacionId(null);
-    setSelectedActuacion(null);
+    // Only close editor for manual saves, not auto-saves
+    if (!autoSave) {
+      setShowEditor(false);
+      setShowActuacionEditor(false);
+      setEditingActuacionId(null);
+      setSelectedActuacion(null);
+    }
   };
 
   const handleExportPDF = () => {
@@ -598,47 +601,6 @@ export function ExpedientView({
         {/* Panel derecho: Última actuación y lista */}
         <div className="lg:col-span-2 space-y-4">
           
-          {/* Última actuación destacada */}
-          {latestActuacion && (
-            <Card className="border-l-4 border-l-primary">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Última Actuación</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <h3 className="font-medium">{latestActuacion.title}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        ACT-{latestActuacion.number.toString().padStart(3, '0')} • {latestActuacion.createdBy}
-                      </p>
-                    </div>
-                    <Badge 
-                      variant={latestActuacion.status === 'firmado' ? 'default' : 'secondary'}
-                      className="ml-2"
-                    >
-                      {latestActuacion.status === 'firmado' ? 'Firmado' : 
-                       latestActuacion.status === 'para-firmar' ? 'Para Firmar' : 'Borrador'}
-                    </Badge>
-                  </div>
-                  
-                  <div className="bg-muted/30 rounded-md p-3">
-                    <div 
-                      className="prose prose-sm max-w-none text-sm"
-                      dangerouslySetInnerHTML={{ __html: latestActuacion.content }}
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>Creado: {latestActuacion.createdAt.toLocaleString('es-ES')}</span>
-                    {latestActuacion.signedAt && (
-                      <span>Firmado: {latestActuacion.signedAt.toLocaleString('es-ES')}</span>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
 
           {/* Lista completa de actuaciones */}
           <ActuacionList

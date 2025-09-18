@@ -129,7 +129,32 @@ export function ActuacionList({
                     <span className="font-medium text-sm text-muted-foreground">
                       Actuación #{actuacion.number}
                     </span>
-                    {getStatusBadge(actuacion.status)}
+                    {canEdit && actuacion.status === 'borrador' ? (
+                      <Select
+                        value={actuacion.status}
+                        onValueChange={(value) => onChangeStatus?.(actuacion.id, value as Actuacion['status'])}
+                      >
+                        <SelectTrigger className="w-auto h-6 px-2 text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="borrador">
+                            <div className="flex items-center gap-1">
+                              <Edit3 className="w-3 h-3" />
+                              Borrador
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="para-firmar">
+                            <div className="flex items-center gap-1">
+                              <AlertTriangle className="w-3 h-3" />
+                              Para Firmar
+                            </div>
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      getStatusBadge(actuacion.status)
+                    )}
                   </div>
                   <h4 className="font-medium text-foreground mb-1">
                     {actuacion.title}
