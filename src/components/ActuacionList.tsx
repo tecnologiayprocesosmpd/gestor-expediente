@@ -50,7 +50,7 @@ export function ActuacionList({
       },
       'para-firmar': { 
         variant: 'default' as const, 
-        label: 'Para Firma', 
+        label: 'Para Firmar', 
         icon: AlertTriangle 
       },
       'firmado': { 
