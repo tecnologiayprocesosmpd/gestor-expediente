@@ -645,15 +645,6 @@ export function ActuacionEditor({
               Guardar Actuación
             </Button>
           )}
-          
-          {canEdit && (status === 'borrador' || status === 'para-firmar') && actuacionId && (
-            <Button 
-              variant="secondary"
-              onClick={handleStatusChange}
-            >
-              {status === 'borrador' ? 'Enviar a Firmar' : 'Firmar Actuación'}
-            </Button>
-          )}
         </div>
 
         {(confidencial || urgente) && (
