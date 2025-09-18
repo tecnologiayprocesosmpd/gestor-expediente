@@ -51,23 +51,23 @@ export function ExpedientesParaRecibir({
   };
 
   return (
-    <Card className="hover:shadow-lg transition-shadow border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100">
+    <Card className="hover:shadow-lg transition-shadow border-2 border-[hsl(var(--card-inicio-border))] bg-gradient-to-br from-[hsl(var(--card-inicio-light))] to-[hsl(var(--card-inicio-light))]">
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger asChild>
           <CardContent className="p-6 text-center cursor-pointer">
-            <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+            <div className="w-12 h-12 bg-[hsl(var(--card-inicio))] rounded-lg flex items-center justify-center mx-auto mb-3">
               <FileText className="w-6 h-6 text-white" />
             </div>
-            <h3 className="font-semibold text-sm text-blue-900 mb-1">EXPEDIENTES</h3>
-            <p className="text-xs text-blue-700">Para recibir</p>
+            <h3 className="font-semibold text-sm text-[hsl(var(--card-inicio))] mb-1">EXPEDIENTES</h3>
+            <p className="text-xs text-[hsl(var(--card-inicio))] opacity-80">Para recibir</p>
             <div className="mt-2 flex items-center justify-center gap-2">
-              <Badge className="bg-blue-600 text-white text-xs">
+              <Badge className="bg-[hsl(var(--card-inicio))] text-white text-xs">
                 {expedientesParaRecibir.length} Pendientes
               </Badge>
               {isOpen ? (
-                <ChevronUp className="w-4 h-4 text-blue-600" />
+                <ChevronUp className="w-4 h-4 text-[hsl(var(--card-inicio))]" />
               ) : (
-                <ChevronDown className="w-4 h-4 text-blue-600" />
+                <ChevronDown className="w-4 h-4 text-[hsl(var(--card-inicio))]" />
               )}
             </div>
           </CardContent>
@@ -75,23 +75,23 @@ export function ExpedientesParaRecibir({
         
         <CollapsibleContent>
           <CardContent className="px-4 pb-4">
-            <div className="border-t border-blue-200 pt-4">
+            <div className="border-t border-[hsl(var(--card-inicio-border))] pt-4">
               {expedientesParaRecibir.length === 0 ? (
                 <div className="text-center py-4">
                   <CheckCircle className="w-8 h-8 mx-auto mb-2 text-green-600" />
-                  <p className="text-sm text-blue-700">No hay expedientes pendientes de recibir</p>
+                  <p className="text-sm text-[hsl(var(--card-inicio))] opacity-80">No hay expedientes pendientes de recibir</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {expedientesParaRecibir.map((expedient) => (
                     <div 
                       key={expedient.id}
-                      className="bg-white rounded-lg border border-blue-200 p-3"
+                      className="bg-white rounded-lg border border-[hsl(var(--card-inicio-border))] p-3"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1 space-y-2">
                           <div className="flex items-center gap-2">
-                            <span className="text-xs font-mono text-blue-600 bg-blue-100 px-2 py-1 rounded">
+                            <span className="text-xs font-mono text-[hsl(var(--card-inicio))] bg-[hsl(var(--card-inicio-light))] px-2 py-1 rounded">
                               {expedient.number}
                             </span>
                             <Badge className="bg-amber-100 text-amber-700 text-xs">
