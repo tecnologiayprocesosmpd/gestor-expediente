@@ -129,17 +129,21 @@ export function ActuacionList({
                     <span className="font-medium text-sm text-muted-foreground">
                       Actuación #{actuacion.number}
                     </span>
-                    {canEdit && actuacion.status === 'borrador' ? (
+                    {canEdit && (actuacion.status === 'borrador' || actuacion.status === 'para-firmar') ? (
                       <Select
                         value={actuacion.status}
                         onValueChange={(value) => onChangeStatus?.(actuacion.id, value as Actuacion['status'])}
                       >
                         <SelectTrigger 
-                          className="w-auto h-6 px-2 text-xs bg-warning text-warning-foreground border-warning hover:opacity-90 transition-opacity"
+                          className={`w-auto h-6 px-2 text-xs transition-all ${
+                            actuacion.status === 'borrador' 
+                              ? 'bg-warning text-warning-foreground border-warning hover:bg-warning/90' 
+                              : 'bg-orange-500 text-white border-orange-500 hover:bg-orange-600'
+                          }`}
                           style={{ 
-                            backgroundColor: 'hsl(var(--warning))', 
+                            backgroundColor: actuacion.status === 'borrador' ? 'hsl(var(--warning))' : 'hsl(24 95% 53%)', 
                             color: 'hsl(var(--warning-foreground))', 
-                            borderColor: 'hsl(var(--warning))' 
+                            borderColor: actuacion.status === 'borrador' ? 'hsl(var(--warning))' : 'hsl(24 95% 53%)' 
                           }}
                         >
                           <SelectValue />
@@ -157,6 +161,14 @@ export function ActuacionList({
                               Para Firmar
                             </div>
                           </SelectItem>
+                          {actuacion.status === 'para-firmar' && (
+                            <SelectItem value="firmado">
+                              <div className="flex items-center gap-1">
+                                <CheckCircle className="w-3 h-3" />
+                                Firmar
+                              </div>
+                            </SelectItem>
+                          )}
                         </SelectContent>
                       </Select>
                     ) : (
