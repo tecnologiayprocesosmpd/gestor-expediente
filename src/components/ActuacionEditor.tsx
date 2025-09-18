@@ -74,7 +74,7 @@ interface ActuacionEditorProps {
   actuacionId?: string;
   actuacion?: Partial<Actuacion>;
   onBack?: () => void;
-  onSave?: (actuacion: Partial<Actuacion>) => void;
+  onSave?: (actuacion: Partial<Actuacion>) => Promise<any> | void;
   onStatusChange?: (actuacionId: string, status: Actuacion['status']) => void;
 }
 
@@ -109,7 +109,8 @@ export function ActuacionEditor({
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    console.log('[ActuacionEditor.handleSave] Iniciando guardado');
     if (onSave) {
       const saveData = {
         id: actuacionId,
@@ -123,7 +124,13 @@ export function ActuacionEditor({
         updatedAt: new Date(),
         createdBy: user?.name || 'Usuario'
       };
-      onSave(saveData);
+      console.log('[ActuacionEditor.handleSave] Datos a guardar:', saveData);
+      try {
+        await onSave(saveData);
+        console.log('[ActuacionEditor.handleSave] Guardado completado');
+      } catch (error) {
+        console.error('[ActuacionEditor.handleSave] Error en guardado:', error);
+      }
     }
   };
   

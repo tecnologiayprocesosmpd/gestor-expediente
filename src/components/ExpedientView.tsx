@@ -31,7 +31,7 @@ interface ExpedientViewProps {
   expedient?: any;
   actuaciones?: any[];
   onBack?: () => void;
-  onSaveActuacion?: (data: any) => void;
+  onSaveActuacion?: (data: any) => Promise<any>;
   onUpdateActuaciones?: (actuaciones: any[]) => void;
 }
 
@@ -143,25 +143,46 @@ export function ExpedientView({
     onUpdateActuaciones?.(updatedActuaciones);
   };
 
-  const handleSaveActuacion = (actuacionData: any, autoSave = false) => {
+  const handleSaveActuacion = async (actuacionData: any, autoSave = false) => {
+    console.log('[ExpedientView.handleSaveActuacion] Iniciando guardado:', { actuacionData, editingActuacionId, autoSave });
+    
     if (editingActuacionId) {
       // Editing existing actuacion
+      console.log('[ExpedientView.handleSaveActuacion] Editando actuación existente');
       const updatedActuaciones = actuaciones.map(act => 
         act.id === editingActuacionId ? { ...act, ...actuacionData } : act
       );
       setActuaciones(updatedActuaciones);
       onUpdateActuaciones?.(updatedActuaciones);
+      
+      // Close editor for manual saves
+      if (!autoSave) {
+        setShowEditor(false);
+        setShowActuacionEditor(false);
+        setEditingActuacionId(null);
+        setSelectedActuacion(null);
+      }
     } else {
-      // Creating new actuacion - Let parent handle creation to avoid duplication
-      onSaveActuacion?.(actuacionData);
-    }
-    
-    // Only close editor for manual saves, not auto-saves
-    if (!autoSave) {
-      setShowEditor(false);
-      setShowActuacionEditor(false);
-      setEditingActuacionId(null);
-      setSelectedActuacion(null);
+      // Creating new actuacion - Wait for parent to complete
+      console.log('[ExpedientView.handleSaveActuacion] Creando nueva actuación');
+      try {
+        if (onSaveActuacion) {
+          const result = await onSaveActuacion(actuacionData);
+          console.log('[ExpedientView.handleSaveActuacion] Actuación guardada exitosamente:', result);
+          
+          // Only close editor for manual saves after successful save
+          if (!autoSave) {
+            console.log('[ExpedientView.handleSaveActuacion] Cerrando editor');
+            setShowEditor(false);
+            setShowActuacionEditor(false);
+            setEditingActuacionId(null);
+            setSelectedActuacion(null);
+          }
+        }
+      } catch (error) {
+        console.error('[ExpedientView.handleSaveActuacion] Error al guardar:', error);
+        // Don't close editor if save failed
+      }
     }
   };
 

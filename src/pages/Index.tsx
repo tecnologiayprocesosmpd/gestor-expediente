@@ -206,36 +206,59 @@ function AppContent() {
   };
 
   const handleSaveActuacion = (data: any) => {
-    if (!currentExpedientId) return;
-    
-    // Only create if it has sufficient content
-    if (data.title?.trim() && data.content?.length > 20) {
-      const newActuacion = {
-        id: `act-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        expedientId: currentExpedientId,
-        number: (expedientActuaciones[currentExpedientId]?.length || 0) + 1,
-        title: data.title || 'Nueva Actuación',
-        content: data.content || '<p>Contenido de la actuación...</p>',
-        status: 'borrador' as const,
-        createdBy: user?.name || 'Usuario',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        tipo: data.tipo || 'nota',
-        confidencial: data.confidencial || false,
-        urgente: data.urgente || false,
-        version: 1
-      };
-
-      setExpedientActuaciones(prev => ({
-        ...prev,
-        [currentExpedientId]: [...(prev[currentExpedientId] || []), newActuacion]
-      }));
+    return new Promise((resolve, reject) => {
+      console.log('[Index.handleSaveActuacion] Iniciando guardado de actuación:', data);
       
-      toast({
-        title: "Actuación agregada",
-        description: "La nueva actuación ha sido guardada correctamente",
-      });
-    }
+      if (!currentExpedientId) {
+        console.log('[Index.handleSaveActuacion] Error: No hay expediente actual');
+        reject(new Error('No hay expediente actual'));
+        return;
+      }
+      
+      // Only create if it has sufficient content
+      if (data.title?.trim() && data.content?.length > 20) {
+        const newActuacion = {
+          id: `act-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          expedientId: currentExpedientId,
+          number: (expedientActuaciones[currentExpedientId]?.length || 0) + 1,
+          title: data.title || 'Nueva Actuación',
+          content: data.content || '<p>Contenido de la actuación...</p>',
+          status: 'borrador' as const,
+          createdBy: user?.name || 'Usuario',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          tipo: data.tipo || 'nota',
+          confidencial: data.confidencial || false,
+          urgente: data.urgente || false,
+          version: 1
+        };
+
+        console.log('[Index.handleSaveActuacion] Nueva actuación creada:', newActuacion);
+
+        setExpedientActuaciones(prev => {
+          const updated = {
+            ...prev,
+            [currentExpedientId]: [...(prev[currentExpedientId] || []), newActuacion]
+          };
+          console.log('[Index.handleSaveActuacion] Estado actualizado:', updated);
+          return updated;
+        });
+        
+        toast({
+          title: "Actuación agregada",
+          description: "La nueva actuación ha sido guardada correctamente",
+        });
+
+        // Use setTimeout to ensure state update is processed
+        setTimeout(() => {
+          console.log('[Index.handleSaveActuacion] Resolviendo promesa');
+          resolve(newActuacion);
+        }, 100);
+      } else {
+        console.log('[Index.handleSaveActuacion] Error: Contenido insuficiente');
+        reject(new Error('Contenido insuficiente'));
+      }
+    });
   };
 
   const handleBackFromEditor = () => {
