@@ -120,7 +120,13 @@ export function ExpedientView({
   const handleViewActuacion = (actuacionId: string) => {
     const actuacion = actuaciones.find(act => act.id === actuacionId);
     if (actuacion) {
-      setSelectedActuacion(actuacion);
+      // Si la actuación es borrador, abrir directamente en modo edición
+      if (actuacion.status === 'borrador') {
+        handleEditActuacion(actuacionId);
+      } else {
+        // Para otras actuaciones, mostrar vista de solo lectura
+        setSelectedActuacion(actuacion);
+      }
     }
   };
 
