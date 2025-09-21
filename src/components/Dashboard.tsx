@@ -9,11 +9,14 @@ import {
   Plus,
   Eye,
   Edit,
-  Calendar
+  Calendar,
+  PenTool,
+  Bell
 } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
 import { ExpedientSummary } from "@/types/expedient";
 import { agendaStorage, fechasCitacionStorage } from "@/utils/agendaStorage";
+import { actuacionStorage } from "@/utils/actuacionStorage";
 import { useState, useEffect } from "react";
 import { ExpedientesParaRecibir } from "./ExpedientesParaRecibir";
 import { format } from "date-fns";
@@ -28,6 +31,7 @@ interface DashboardProps {
   onCreateActuacion?: () => void;
   onFilterExpedients?: (status: string) => void;
   onRecibirExpediente?: (expedientId: string) => void;
+  onNavigateToActuacionesParaFirma?: () => void;
 }
 
 export function Dashboard({ 
@@ -38,18 +42,26 @@ export function Dashboard({
   onNavigateToExpedients,
   onCreateActuacion,
   onFilterExpedients,
-  onRecibirExpediente
+  onRecibirExpediente,
+  onNavigateToActuacionesParaFirma
 }: DashboardProps) {
   const { user } = useUser();
   const [novedades, setNovedades] = useState<any[]>([]);
+  const [actuacionesParaFirma, setActuacionesParaFirma] = useState<number>(0);
+  const [notificacionesActuaciones, setNotificacionesActuaciones] = useState<any[]>([]);
 
   if (!user) return null;
 
-  // Cargar novedades de agenda
+  // Cargar novedades de agenda y actuaciones
   useEffect(() => {
     const cargarNovedades = () => {
       const citas = agendaStorage.getCitas();
       const fechasCitacion = fechasCitacionStorage.getFechasCitacion();
+      const notificacionesActuaciones = actuacionStorage.getNotifications();
+      
+      // Actualizar contador de actuaciones para firma
+      const paraFirma = actuacionStorage.getActuacionesParaFirma();
+      setActuacionesParaFirma(paraFirma.length);
       
       // Combinar y ordenar por fecha más reciente
       const todasNovedades = [
@@ -70,6 +82,15 @@ export function Dashboard({
           fecha: fecha.createdAt,
           estado: fecha.completada ? 'completada' : 'programada',
           expedientId: fecha.expedientId
+        })),
+        ...notificacionesActuaciones.map(notif => ({
+          id: notif.id,
+          tipo: 'actuacion',
+          titulo: notif.title,
+          descripcion: `Cambió de ${notif.previousStatus} a ${notif.newStatus}`,
+          fecha: notif.createdAt,
+          estado: notif.read ? 'leida' : 'nueva',
+          expedientId: notif.expedientId
         }))
       ];
       
@@ -79,6 +100,7 @@ export function Dashboard({
         .slice(0, 5);
       
       setNovedades(novedadesOrdenadas);
+      setNotificacionesActuaciones(notificacionesActuaciones);
     };
 
     cargarNovedades();
@@ -168,6 +190,29 @@ export function Dashboard({
             <Badge className="mt-2 bg-[hsl(var(--card-inicio))] text-white text-xs">Disponible</Badge>
           </CardContent>
         </Card>
+
+        <Card 
+          className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-[hsl(var(--card-inicio-border))] bg-gradient-to-br from-[hsl(var(--card-inicio-light))] to-[hsl(var(--card-inicio-light))] relative"
+          onClick={() => onNavigateToActuacionesParaFirma?.()}
+        >
+          <CardContent className="p-6 text-center">
+            <div className="w-12 h-12 bg-[hsl(var(--card-inicio))] rounded-lg flex items-center justify-center mx-auto mb-3">
+              <PenTool className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="font-semibold text-sm text-[hsl(var(--card-inicio))] mb-1">ACTUACIONES</h3>
+            <p className="text-xs text-[hsl(var(--card-inicio))] opacity-80">Para firma</p>
+            <div className="flex items-center justify-center gap-2 mt-2">
+              <Badge className="bg-[hsl(var(--card-inicio))] text-white text-xs">
+                {actuacionesParaFirma} pendiente{actuacionesParaFirma !== 1 ? 's' : ''}
+              </Badge>
+              {actuacionesParaFirma > 0 && (
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center">
+                  <Bell className="w-2 h-2 text-white" />
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* NOVEDADES */}
@@ -195,6 +240,8 @@ export function Dashboard({
                       case 'cancelada': return 'border-red-100';
                       default: return 'border-gray-100';
                     }
+                  } else if (tipo === 'actuacion') {
+                    return estado === 'leida' ? 'border-purple-100' : 'border-orange-100';
                   } else {
                     return estado === 'completada' ? 'border-purple-100' : 'border-orange-100';
                   }
@@ -208,6 +255,8 @@ export function Dashboard({
                       case 'cancelada': return 'text-red-900';
                       default: return 'text-gray-900';
                     }
+                  } else if (tipo === 'actuacion') {
+                    return estado === 'leida' ? 'text-purple-900' : 'text-orange-900';
                   } else {
                     return estado === 'completada' ? 'text-purple-900' : 'text-orange-900';
                   }
@@ -221,6 +270,8 @@ export function Dashboard({
                       case 'cancelada': return 'text-red-700';
                       default: return 'text-gray-700';
                     }
+                  } else if (tipo === 'actuacion') {
+                    return estado === 'leida' ? 'text-purple-700' : 'text-orange-700';
                   } else {
                     return estado === 'completada' ? 'text-purple-700' : 'text-orange-700';
                   }
@@ -234,6 +285,8 @@ export function Dashboard({
                       case 'cancelada': return 'border-red-300 text-red-700';
                       default: return 'border-gray-300 text-gray-700';
                     }
+                  } else if (tipo === 'actuacion') {
+                    return estado === 'leida' ? 'border-purple-300 text-purple-700' : 'border-orange-300 text-orange-700';
                   } else {
                     return estado === 'completada' ? 'border-purple-300 text-purple-700' : 'border-orange-300 text-orange-700';
                   }
@@ -247,6 +300,8 @@ export function Dashboard({
                       case 'cancelada': return 'Cancelada';
                       default: return 'Pendiente';
                     }
+                  } else if (tipo === 'actuacion') {
+                    return estado === 'leida' ? 'Leída' : 'Nueva';
                   } else {
                     return estado === 'completada' ? 'Completada' : 'Programada';
                   }
