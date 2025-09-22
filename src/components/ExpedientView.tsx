@@ -26,6 +26,7 @@ import { ExpedientEditor } from "./ExpedientEditor";
 import { DiligenciaDialog } from "./DiligenciaDialog";
 import { RegresarDiligenciaDialog } from "./RegresarDiligenciaDialog";
 import type { Actuacion } from "@/types/actuacion";
+import { actuacionStorage } from "@/utils/actuacionStorage";
 
 interface ExpedientViewProps {
   expedientId?: string;
@@ -169,11 +170,23 @@ export function ExpedientView({
   };
 
   const handleStatusChange = (actuacionId: string, newStatus: Actuacion['status']) => {
-    const updatedActuaciones = actuaciones.map(act => 
-      act.id === actuacionId 
-        ? { ...act, status: newStatus, signedAt: newStatus === 'firmado' ? new Date() : undefined }
-        : act
-    );
+    const updatedActuaciones = actuaciones.map(act => {
+      if (act.id === actuacionId) {
+        const updatedActuacion = { 
+          ...act, 
+          status: newStatus, 
+          signedAt: newStatus === 'firmado' ? new Date() : undefined,
+          updatedAt: new Date()
+        };
+        
+        // Guardar la actuación individual en localStorage
+        actuacionStorage.saveActuacion(updatedActuacion);
+        
+        return updatedActuacion;
+      }
+      return act;
+    });
+    
     setActuaciones(updatedActuaciones);
     onUpdateActuaciones?.(updatedActuaciones);
   };

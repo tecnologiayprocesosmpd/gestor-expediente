@@ -110,11 +110,23 @@ export function Dashboard({
       setNotificacionesActuaciones(notificacionesActuaciones);
     };
 
+    // Cargar datos inicialmente
     cargarNovedades();
+
+    // Event listener para actualizaciones en tiempo real
+    const handleActuacionChange = () => {
+      cargarNovedades();
+    };
+
+    window.addEventListener('actuacionStatusChanged', handleActuacionChange);
     
-    // Actualizar cada 30 segundos
+    // Actualizar cada 30 segundos como respaldo
     const interval = setInterval(cargarNovedades, 30000);
-    return () => clearInterval(interval);
+    
+    return () => {
+      window.removeEventListener('actuacionStatusChanged', handleActuacionChange);
+      clearInterval(interval);
+    };
   }, []);
 
   const canEdit = true; // Ambos perfiles pueden editar

@@ -42,10 +42,13 @@ class ActuacionStorage {
     try {
       const actuaciones = this.getActuaciones();
       const existingIndex = actuaciones.findIndex(a => a.id === actuacion.id);
+      let statusChanged = false;
+      let oldStatus = '';
       
       if (existingIndex >= 0) {
-        const oldStatus = actuaciones[existingIndex].status;
+        oldStatus = actuaciones[existingIndex].status;
         actuaciones[existingIndex] = actuacion;
+        statusChanged = oldStatus !== actuacion.status;
         
         // Crear notificación si cambió de borrador a para-firmar
         if (oldStatus === 'borrador' && actuacion.status === 'para-firmar') {
@@ -53,12 +56,30 @@ class ActuacionStorage {
         }
       } else {
         actuaciones.push(actuacion);
+        statusChanged = true;
       }
       
       localStorage.setItem(ACTUACIONES_KEY, JSON.stringify(actuaciones));
+      
+      // Emitir evento personalizado para notificar cambios
+      if (statusChanged) {
+        this.emitActuacionChangeEvent(actuacion, oldStatus);
+      }
     } catch (error) {
       console.error('Error saving actuacion:', error);
     }
+  }
+
+  private emitActuacionChangeEvent(actuacion: Actuacion, oldStatus: string): void {
+    const event = new CustomEvent('actuacionStatusChanged', {
+      detail: {
+        actuacion,
+        oldStatus,
+        newStatus: actuacion.status,
+        timestamp: new Date()
+      }
+    });
+    window.dispatchEvent(event);
   }
 
   deleteActuacion(id: string): void {
