@@ -184,14 +184,19 @@ export function ActuacionList({
                   )}
 
                   {canEdit && actuacion.status === 'para-firmar' && (
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => handleStatusChange(actuacion.id, actuacion.status)}
+                    <StatusChangeConfirmDialog
+                      onConfirm={() => handleStatusChange(actuacion.id, actuacion.status)}
+                      title="Confirmar firma"
+                      message="¿Está seguro de firmar esta actuación? Una vez firmada no podrá ser modificada."
                     >
-                      <CheckCircle className="w-4 h-4 mr-1" />
-                      Firmar
-                    </Button>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                      >
+                        <CheckCircle className="w-4 h-4 mr-1" />
+                        Firmar
+                      </Button>
+                    </StatusChangeConfirmDialog>
                   )}
                 </div>
               </div>
