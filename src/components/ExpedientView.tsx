@@ -24,6 +24,7 @@ import { ActuacionList } from "./ActuacionList";
 import { ActuacionEditor } from "./ActuacionEditor";
 import { ExpedientEditor } from "./ExpedientEditor";
 import { DiligenciaDialog } from "./DiligenciaDialog";
+import { RegresarDiligenciaDialog } from "./RegresarDiligenciaDialog";
 import type { Actuacion } from "@/types/actuacion";
 
 interface ExpedientViewProps {
@@ -49,6 +50,7 @@ export function ExpedientView({
   const [actuaciones, setActuaciones] = useState<Actuacion[]>(propActuaciones);
   const [selectedActuacion, setSelectedActuacion] = useState<Actuacion | null>(null);
   const [showDiligenciaDialog, setShowDiligenciaDialog] = useState(false);
+  const [showRegresarDiligenciaDialog, setShowRegresarDiligenciaDialog] = useState(false);
   
   
   // Use passed expedient data or fallback to default
@@ -355,7 +357,7 @@ export function ExpedientView({
     // Por ahora solo mostramos un mensaje de confirmación
     
     const oficinaLabel = data.oficina.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-    const fechaRegreso = new Date(data.fechaRegreso).toLocaleDateString('es-ES');
+    const fechaRegreso = data.fechaRegreso ? new Date(data.fechaRegreso).toLocaleString('es-ES') : 'No especificada';
     const cantidadActuaciones = data.actuacionesSeleccionadas.length;
     
     alert(`Diligencia enviada exitosamente:
@@ -363,6 +365,20 @@ export function ExpedientView({
 - Oficina destino: ${oficinaLabel}
 - Fecha de regreso: ${fechaRegreso}
 - Actuaciones enviadas: ${cantidadActuaciones}`);
+  };
+
+  const handleRegresarDiligencia = async (data: {
+    fechaRegreso: string;
+  }) => {
+    console.log('Procesando regreso de diligencia:', data);
+    
+    // Aquí se implementaría la lógica para registrar el regreso de la diligencia
+    // Por ahora solo mostramos un mensaje de confirmación
+    
+    alert(`Diligencia devuelta exitosamente:
+- Expediente: ${expedient.number}
+- Fecha de regreso: ${data.fechaRegreso}
+- La diligencia ha sido devuelta a la oficina remitente`);
   };
 
   const statusColors = getStatusColors(expedient.status);
@@ -568,6 +584,15 @@ export function ExpedientView({
             </Button>
             
             <Button 
+              variant="default" 
+              className="px-4 py-2 h-auto bg-green-600 hover:bg-green-700 text-white" 
+              onClick={() => setShowRegresarDiligenciaDialog(true)}
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Regresar DILIGENCIA
+            </Button>
+            
+            <Button 
               variant="outline" 
               className="px-4 py-2 h-auto" 
               onClick={handleExportPDF}
@@ -682,6 +707,15 @@ export function ExpedientView({
         expedientNumber={expedient.number}
         actuaciones={actuaciones}
         onConfirm={handleDiligencia}
+      />
+
+      {/* Diálogo de Regresar Diligencia */}
+      <RegresarDiligenciaDialog
+        open={showRegresarDiligenciaDialog}
+        onOpenChange={setShowRegresarDiligenciaDialog}
+        expedientNumber={expedient.number}
+        oficinaRemitente="Mesa de Entrada" // Esto debería venir de los datos del expediente
+        onConfirm={handleRegresarDiligencia}
       />
     </div>
   );

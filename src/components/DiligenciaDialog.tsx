@@ -51,7 +51,13 @@ export function DiligenciaDialog({
     { value: 'tesoreria', label: 'Tesorería' }
   ];
 
-  const fechaEmision = new Date().toLocaleDateString('es-ES');
+  const fechaEmision = new Date().toLocaleString('es-ES', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
 
   const handleActuacionToggle = (actuacionId: string, checked: boolean) => {
     if (checked) {
@@ -70,7 +76,7 @@ export function DiligenciaDialog({
   };
 
   const handleConfirm = async () => {
-    if (!oficina || !fechaRegreso) {
+    if (!oficina) {
       alert('Por favor complete todos los campos obligatorios');
       return;
     }
@@ -158,13 +164,13 @@ export function DiligenciaDialog({
 
               {/* Fecha de regreso */}
               <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="fechaRegreso">Fecha de Regreso *</Label>
+                <Label htmlFor="fechaRegreso">Fecha de Regreso (Opcional)</Label>
                 <Input
                   id="fechaRegreso"
-                  type="date"
+                  type="datetime-local"
                   value={fechaRegreso}
                   onChange={(e) => setFechaRegreso(e.target.value)}
-                  min={new Date().toISOString().split('T')[0]}
+                  min={new Date().toISOString().slice(0, -8)}
                 />
               </div>
             </div>
@@ -239,7 +245,7 @@ export function DiligenciaDialog({
           </Button>
           <Button
             onClick={handleConfirm}
-            disabled={loading || !oficina || !fechaRegreso || actuacionesSeleccionadas.length === 0}
+            disabled={loading || !oficina || actuacionesSeleccionadas.length === 0}
           >
             {loading ? (
               <>
