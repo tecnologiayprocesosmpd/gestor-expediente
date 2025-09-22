@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { 
   FileText, 
   TrendingUp, 
@@ -51,6 +52,7 @@ export function Dashboard({
   const [novedades, setNovedades] = useState<any[]>([]);
   const [actuacionesParaFirma, setActuacionesParaFirma] = useState<number>(0);
   const [notificacionesActuaciones, setNotificacionesActuaciones] = useState<any[]>([]);
+  const [showExpedientSelector, setShowExpedientSelector] = useState(false);
 
   if (!user) return null;
 
@@ -126,15 +128,19 @@ export function Dashboard({
     pausados: filteredExpedients.filter(e => e.status === 'pausado').length,
   };
 
-  const getStatusBadge = (status: 'draft' | 'en_tramite' | 'pausado') => {
+  const getStatusBadge = (status: 'draft' | 'derivado' | 'recibido' | 'en_tramite' | 'pausado') => {
     const colors = {
       draft: 'bg-[hsl(var(--status-draft))] text-[hsl(var(--status-draft-foreground))] border-[hsl(var(--status-draft))]',
+      derivado: 'bg-[hsl(var(--status-derivado))] text-[hsl(var(--status-derivado-foreground))] border-[hsl(var(--status-derivado))]',
+      recibido: 'bg-[hsl(var(--status-recibido))] text-[hsl(var(--status-recibido-foreground))] border-[hsl(var(--status-recibido))]',
       en_tramite: 'bg-[hsl(var(--status-en-tramite))] text-[hsl(var(--status-en-tramite-foreground))] border-[hsl(var(--status-en-tramite))]',
       pausado: 'bg-[hsl(var(--status-pausado))] text-[hsl(var(--status-pausado-foreground))] border-[hsl(var(--status-pausado))]'
     };
     
     const labels = {
       draft: 'Borrador',
+      derivado: 'Derivado',
+      recibido: 'Recibido',
       en_tramite: 'En Trámite',
       pausado: 'Pausado'
     };
@@ -146,9 +152,11 @@ export function Dashboard({
     );
   };
 
-  const getStatusBorderClass = (status: 'draft' | 'en_tramite' | 'pausado') => {
+  const getStatusBorderClass = (status: 'draft' | 'derivado' | 'recibido' | 'en_tramite' | 'pausado') => {
     const borderColors = {
       draft: 'border-[hsl(var(--status-draft))]',
+      derivado: 'border-[hsl(var(--status-derivado))]',
+      recibido: 'border-[hsl(var(--status-recibido))]',
       en_tramite: 'border-[hsl(var(--status-en-tramite))]',
       pausado: 'border-[hsl(var(--status-pausado))]'
     };
@@ -181,7 +189,7 @@ export function Dashboard({
 
         <Card 
           className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-[hsl(var(--card-inicio-border))] bg-gradient-to-br from-[hsl(var(--card-inicio-light))] to-[hsl(var(--card-inicio-light))]"
-          onClick={() => onCreateActuacion?.()}
+          onClick={() => setShowExpedientSelector(true)}
         >
           <CardContent className="p-6 text-center">
             <div className="w-12 h-12 bg-[hsl(var(--card-inicio))] rounded-lg flex items-center justify-center mx-auto mb-3">
@@ -348,6 +356,55 @@ export function Dashboard({
           )}
         </CardContent>
       </Card>
+
+      {/* Modal para seleccionar expediente */}
+      <Dialog open={showExpedientSelector} onOpenChange={setShowExpedientSelector}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Seleccionar Expediente para Crear Actuación</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            {filteredExpedients.length === 0 ? (
+              <div className="text-center py-8">
+                <FileText className="w-12 h-12 mx-auto mb-3 text-muted-foreground/30" />
+                <p className="text-muted-foreground">No hay expedientes disponibles</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {filteredExpedients.map((expedient) => (
+                  <div
+                    key={expedient.id}
+                    className={`p-4 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors ${getStatusBorderClass(expedient.status)}`}
+                    onClick={() => {
+                      setShowExpedientSelector(false);
+                      onViewExpedient?.(expedient.id);
+                      // Trigger creation mode after navigation
+                      setTimeout(() => {
+                        onCreateActuacion?.();
+                      }, 100);
+                    }}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <h3 className="font-medium text-sm">{expedient.title}</h3>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Creado: {format(new Date(expedient.createdAt), "dd/MM/yyyy", { locale: es })}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Actualizado: {format(new Date(expedient.updatedAt), "dd/MM/yyyy", { locale: es })}
+                        </p>
+                      </div>
+                      <div className="ml-4">
+                        {getStatusBadge(expedient.status)}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
