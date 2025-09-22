@@ -214,58 +214,23 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
         </Dialog>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* Calendario - Minimalista sin espacios */}
-        <div className="xl:col-span-1">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        {/* Calendario */}
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight mb-4">Calendario</h2>
           <div className="border rounded-lg bg-card">
-            <div className="px-3 py-1 border-b bg-muted/50">
-              <h3 className="text-sm font-medium">Calendario</h3>
-            </div>
-            <div className="group relative">
-              {/* Vista compacta - Inline */}
-              <div className="group-hover:opacity-0 group-hover:absolute group-hover:pointer-events-none transition-all duration-300 px-3 py-2 bg-background">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="font-medium text-primary">{selectedDate.getDate()}</span>
-                  <span className="text-muted-foreground">{format(selectedDate, 'MMM yyyy', { locale: es })}</span>
-                  <span className="text-xs text-muted-foreground opacity-60">Hover</span>
-                </div>
-              </div>
-              
-              {/* Vista expandida - Calendario comprimido */}
-              <div className="opacity-0 group-hover:opacity-100 absolute inset-0 group-hover:relative group-hover:pointer-events-auto transition-all duration-300 animate-fade-in bg-background">
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={(date) => date && setSelectedDate(date)}
-                  locale={es}
-                  className="w-full pointer-events-auto p-1"
-                  classNames={{
-                    months: "space-y-0",
-                    month: "space-y-0",
-                    caption: "relative flex items-center justify-center py-0.5",
-                    caption_label: "text-xs font-medium",
-                    nav: "space-x-0.5 flex items-center",
-                    nav_button: "h-4 w-4 bg-transparent p-0 text-muted-foreground hover:text-foreground",
-                    nav_button_previous: "absolute left-0.5",
-                    nav_button_next: "absolute right-0.5",
-                    table: "w-full border-collapse",
-                    head_row: "flex mb-0.5",
-                    head_cell: "text-muted-foreground w-5 font-normal text-xs p-0",
-                    row: "flex w-full",
-                    cell: "text-center text-xs relative p-0",
-                    day: "h-5 w-5 p-0 font-normal text-xs hover:bg-accent hover:text-accent-foreground rounded-sm",
-                    day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
-                    day_today: "bg-accent text-accent-foreground",
-                    day_outside: "text-muted-foreground opacity-25"
-                  }}
-                />
-              </div>
-            </div>
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={(date) => date && setSelectedDate(date)}
+              locale={es}
+              className="w-full pointer-events-auto p-3"
+            />
           </div>
         </div>
 
         {/* Lista de Citas */}
-        <div className="xl:col-span-2">
+        <div>
           <h2 className="text-2xl font-bold tracking-tight mb-4">Citas</h2>
           <div className="space-y-2">
             {citasFiltradas.length === 0 ? (
