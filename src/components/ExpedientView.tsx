@@ -51,6 +51,9 @@ export function ExpedientView({
   const [selectedActuacion, setSelectedActuacion] = useState<Actuacion | null>(null);
   const [showDiligenciaDialog, setShowDiligenciaDialog] = useState(false);
   const [showRegresarDiligenciaDialog, setShowRegresarDiligenciaDialog] = useState(false);
+  const [diligenciasPendientes, setDiligenciasPendientes] = useState<any[]>([]);
+  
+  const { user } = useUser();
   
   
   // Use passed expedient data or fallback to default
@@ -68,6 +71,41 @@ export function ExpedientView({
   useEffect(() => {
     setActuaciones(propActuaciones);
   }, [propActuaciones]);
+
+  // Cargar diligencias pendientes desde localStorage
+  useEffect(() => {
+    const loadDiligenciasPendientes = () => {
+      try {
+        const savedDiligencias = localStorage.getItem('diligenciasPendientes');
+        if (savedDiligencias) {
+          const diligencias = JSON.parse(savedDiligencias);
+          // Filtrar diligencias para este expediente que no han sido devueltas
+          const diligenciasExpediente = diligencias.filter(
+            (d: any) => d.expedientId === expedientId && !d.devuelta
+          );
+          setDiligenciasPendientes(diligenciasExpediente);
+        }
+      } catch (error) {
+        console.error('Error loading diligencias:', error);
+      }
+    };
+
+    if (expedientId) {
+      loadDiligenciasPendientes();
+    }
+  }, [expedientId]);
+
+  // Verificar si hay diligencia pendiente para la oficina actual
+  const hayDiligenciaPendiente = () => {
+    if (!user?.department && !user?.name) return false;
+    
+    // Usar department o name como identificador de oficina
+    const oficinaActual = user.department || user.name;
+    
+    return diligenciasPendientes.some(
+      (d: any) => d.oficinaDestino === oficinaActual
+    );
+  };
 
   
   const getStatusColors = (status: string) => {
@@ -353,8 +391,34 @@ export function ExpedientView({
   }) => {
     console.log('Procesando diligencia:', data);
     
-    // Aquí se implementaría la lógica para enviar la diligencia
-    // Por ahora solo mostramos un mensaje de confirmación
+    // Crear nueva diligencia
+    const nuevaDiligencia = {
+      id: crypto.randomUUID(),
+      expedientId: expedientId || expedient.id,
+      expedientNumber: expedient.number,
+      oficinaOrigen: user?.department || user?.name || 'Mesa de Entrada',
+      oficinaDestino: data.oficina,
+      fechaEnvio: new Date().toISOString(),
+      fechaRegreso: data.fechaRegreso,
+      actuacionesSeleccionadas: data.actuacionesSeleccionadas,
+      devuelta: false
+    };
+
+    // Guardar en localStorage
+    try {
+      const savedDiligencias = localStorage.getItem('diligenciasPendientes');
+      const diligencias = savedDiligencias ? JSON.parse(savedDiligencias) : [];
+      diligencias.push(nuevaDiligencia);
+      localStorage.setItem('diligenciasPendientes', JSON.stringify(diligencias));
+      
+      // Actualizar estado local
+      const diligenciasExpediente = diligencias.filter(
+        (d: any) => d.expedientId === expedientId && !d.devuelta
+      );
+      setDiligenciasPendientes(diligenciasExpediente);
+    } catch (error) {
+      console.error('Error saving diligencia:', error);
+    }
     
     const oficinaLabel = data.oficina.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     const fechaRegreso = data.fechaRegreso ? new Date(data.fechaRegreso).toLocaleString('es-ES') : 'No especificada';
@@ -372,8 +436,35 @@ export function ExpedientView({
   }) => {
     console.log('Procesando regreso de diligencia:', data);
     
-    // Aquí se implementaría la lógica para registrar el regreso de la diligencia
-    // Por ahora solo mostramos un mensaje de confirmación
+    // Marcar diligencia como devuelta
+    try {
+      const savedDiligencias = localStorage.getItem('diligenciasPendientes');
+      if (savedDiligencias) {
+        const diligencias = JSON.parse(savedDiligencias);
+        const oficinaActual = user?.department || user?.name;
+        
+        // Encontrar y actualizar la diligencia correspondiente
+        const diligenciaIndex = diligencias.findIndex(
+          (d: any) => d.expedientId === expedientId && 
+                      d.oficinaDestino === oficinaActual && 
+                      !d.devuelta
+        );
+        
+        if (diligenciaIndex !== -1) {
+          diligencias[diligenciaIndex].devuelta = true;
+          diligencias[diligenciaIndex].fechaDevolucion = data.fechaRegreso;
+          localStorage.setItem('diligenciasPendientes', JSON.stringify(diligencias));
+          
+          // Actualizar estado local
+          const diligenciasExpediente = diligencias.filter(
+            (d: any) => d.expedientId === expedientId && !d.devuelta
+          );
+          setDiligenciasPendientes(diligenciasExpediente);
+        }
+      }
+    } catch (error) {
+      console.error('Error updating diligencia:', error);
+    }
     
     alert(`Diligencia devuelta exitosamente:
 - Expediente: ${expedient.number}
@@ -583,14 +674,17 @@ export function ExpedientView({
               DILIGENCIA
             </Button>
             
-            <Button 
-              variant="default" 
-              className="px-4 py-2 h-auto bg-green-600 hover:bg-green-700 text-white" 
-              onClick={() => setShowRegresarDiligenciaDialog(true)}
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Regresar DILIGENCIA
-            </Button>
+            {/* Solo mostrar botón de regresar si hay diligencia pendiente para esta oficina */}
+            {hayDiligenciaPendiente() && (
+              <Button 
+                variant="default" 
+                className="px-4 py-2 h-auto bg-green-600 hover:bg-green-700 text-white" 
+                onClick={() => setShowRegresarDiligenciaDialog(true)}
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Regresar DILIGENCIA
+              </Button>
+            )}
             
             <Button 
               variant="outline" 
