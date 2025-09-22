@@ -53,6 +53,8 @@ export function Dashboard({
   const [actuacionesParaFirma, setActuacionesParaFirma] = useState<number>(0);
   const [notificacionesActuaciones, setNotificacionesActuaciones] = useState<any[]>([]);
   const [showExpedientSelector, setShowExpedientSelector] = useState(false);
+  const [showActuacionesParaFirma, setShowActuacionesParaFirma] = useState(false);
+  const [actuacionesParaFirmaList, setActuacionesParaFirmaList] = useState<any[]>([]);
 
   if (!user) return null;
 
@@ -66,6 +68,7 @@ export function Dashboard({
       // Actualizar contador de actuaciones para firma
       const paraFirma = actuacionStorage.getActuacionesParaFirma();
       setActuacionesParaFirma(paraFirma.length);
+      setActuacionesParaFirmaList(paraFirma);
       
       // Combinar y ordenar por fecha más reciente
       const todasNovedades = [
@@ -203,7 +206,7 @@ export function Dashboard({
 
         <Card 
           className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-[hsl(var(--card-inicio-border))] bg-gradient-to-br from-[hsl(var(--card-inicio-light))] to-[hsl(var(--card-inicio-light))] relative"
-          onClick={() => onNavigateToActuacionesParaFirma?.()}
+          onClick={() => setShowActuacionesParaFirma(true)}
         >
           <CardContent className="p-6 text-center">
             <div className="w-12 h-12 bg-[hsl(var(--card-inicio))] rounded-lg flex items-center justify-center mx-auto mb-3">
@@ -392,6 +395,74 @@ export function Dashboard({
                       </div>
                       <div className="ml-4">
                         {getStatusBadge(expedient.status)}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal para firmar actuaciones */}
+      <Dialog open={showActuacionesParaFirma} onOpenChange={setShowActuacionesParaFirma}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Actuaciones Para Firmar</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            {actuacionesParaFirmaList.length === 0 ? (
+              <div className="text-center py-8">
+                <PenTool className="w-12 h-12 mx-auto mb-3 text-muted-foreground/30" />
+                <p className="text-muted-foreground">No hay actuaciones pendientes de firma</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {actuacionesParaFirmaList.map((actuacion) => (
+                  <div
+                    key={actuacion.id}
+                    className="p-4 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors border-orange-200 bg-orange-50/50"
+                    onClick={() => {
+                      // Cambiar estado a firmado
+                      const updatedActuacion = {
+                        ...actuacion,
+                        status: 'firmado' as const,
+                        signedAt: new Date(),
+                        signedBy: user?.name || 'Usuario',
+                        updatedAt: new Date()
+                      };
+                      
+                      actuacionStorage.saveActuacion(updatedActuacion);
+                      
+                      // Actualizar la lista
+                      const newList = actuacionesParaFirmaList.filter(a => a.id !== actuacion.id);
+                      setActuacionesParaFirmaList(newList);
+                      setActuacionesParaFirma(newList.length);
+                      
+                      setShowActuacionesParaFirma(false);
+                    }}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <h3 className="font-medium text-sm">{actuacion.title}</h3>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Tipo: {actuacion.tipo}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Creado: {format(new Date(actuacion.createdAt), "dd/MM/yyyy HH:mm", { locale: es })}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Expediente ID: {actuacion.expedientId}
+                        </p>
+                      </div>
+                      <div className="ml-4 flex flex-col items-end gap-2">
+                        <Badge className="bg-orange-100 text-orange-800 border-orange-200">
+                          Para Firmar
+                        </Badge>
+                        <Button size="sm" variant="outline" className="text-xs">
+                          Firmar
+                        </Button>
                       </div>
                     </div>
                   </div>
