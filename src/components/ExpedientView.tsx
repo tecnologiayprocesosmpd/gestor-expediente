@@ -17,11 +17,13 @@ import {
   Clock,
   Building2,
   AlertTriangle,
-  CheckCircle
+  CheckCircle,
+  Send
 } from "lucide-react";
 import { ActuacionList } from "./ActuacionList";
 import { ActuacionEditor } from "./ActuacionEditor";
 import { ExpedientEditor } from "./ExpedientEditor";
+import { DiligenciaDialog } from "./DiligenciaDialog";
 import type { Actuacion } from "@/types/actuacion";
 
 interface ExpedientViewProps {
@@ -46,6 +48,7 @@ export function ExpedientView({
   const [editingActuacionId, setEditingActuacionId] = useState<string | null>(null);
   const [actuaciones, setActuaciones] = useState<Actuacion[]>(propActuaciones);
   const [selectedActuacion, setSelectedActuacion] = useState<Actuacion | null>(null);
+  const [showDiligenciaDialog, setShowDiligenciaDialog] = useState(false);
   
   
   // Use passed expedient data or fallback to default
@@ -341,6 +344,27 @@ export function ExpedientView({
     });
   };
 
+  const handleDiligencia = async (data: {
+    oficina: string;
+    fechaRegreso: string;
+    actuacionesSeleccionadas: string[];
+  }) => {
+    console.log('Procesando diligencia:', data);
+    
+    // Aquí se implementaría la lógica para enviar la diligencia
+    // Por ahora solo mostramos un mensaje de confirmación
+    
+    const oficinaLabel = data.oficina.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    const fechaRegreso = new Date(data.fechaRegreso).toLocaleDateString('es-ES');
+    const cantidadActuaciones = data.actuacionesSeleccionadas.length;
+    
+    alert(`Diligencia enviada exitosamente:
+- Expediente: ${expedient.number}
+- Oficina destino: ${oficinaLabel}
+- Fecha de regreso: ${fechaRegreso}
+- Actuaciones enviadas: ${cantidadActuaciones}`);
+  };
+
   const statusColors = getStatusColors(expedient.status);
   const latestActuacion = actuaciones.sort((a, b) => 
     new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -533,14 +557,25 @@ export function ExpedientView({
             </div>
           </div>
           
-          <Button 
-            variant="outline" 
-            className="px-4 py-2 h-auto" 
-            onClick={handleExportPDF}
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Exportar PDF
-          </Button>
+          <div className="flex items-center space-x-2">
+            <Button 
+              variant="default" 
+              className="px-4 py-2 h-auto bg-blue-600 hover:bg-blue-700 text-white" 
+              onClick={() => setShowDiligenciaDialog(true)}
+            >
+              <Send className="w-4 h-4 mr-2" />
+              DILIGENCIA
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="px-4 py-2 h-auto" 
+              onClick={handleExportPDF}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Exportar PDF
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -639,6 +674,15 @@ export function ExpedientView({
 
         </div>
       </div>
+
+      {/* Diálogo de Diligencia */}
+      <DiligenciaDialog
+        open={showDiligenciaDialog}
+        onOpenChange={setShowDiligenciaDialog}
+        expedientNumber={expedient.number}
+        actuaciones={actuaciones}
+        onConfirm={handleDiligencia}
+      />
     </div>
   );
 }
