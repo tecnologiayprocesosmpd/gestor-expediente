@@ -26,7 +26,7 @@ import { es } from "date-fns/locale";
 interface DashboardProps {
   expedients: ExpedientSummary[];
   onCreateExpedient?: () => void;
-  onViewExpedient?: (id: string) => void;
+  onViewExpedient?: (id: string, createActuacion?: boolean) => void;
   onEditExpedient?: (id: string) => void;
   onNavigateToExpedients?: () => void;
   onCreateActuacion?: () => void;
@@ -377,11 +377,7 @@ export function Dashboard({
                     className={`p-4 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors ${getStatusBorderClass(expedient.status)}`}
                     onClick={() => {
                       setShowExpedientSelector(false);
-                      onViewExpedient?.(expedient.id);
-                      // Trigger creation mode after navigation
-                      setTimeout(() => {
-                        onCreateActuacion?.();
-                      }, 100);
+                      onViewExpedient?.(expedient.id, true); // Pass true to indicate we want to create actuación
                     }}
                   >
                     <div className="flex justify-between items-start">

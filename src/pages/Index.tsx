@@ -124,6 +124,7 @@ function AppContent() {
   const [expedients, setExpedients] = useState<ExpedientSummary[]>(mockExpedients);
   const [currentExpedientId, setCurrentExpedientId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('');
+  const [autoCreateActuacion, setAutoCreateActuacion] = useState(false);
   
   // State for managing actuaciones per expedient
   const [expedientActuaciones, setExpedientActuaciones] = useState<Record<string, any[]>>({});
@@ -144,8 +145,9 @@ function AppContent() {
     setCurrentView('editor');
   };
 
-  const handleViewExpedient = (id: string) => {
+  const handleViewExpedient = (id: string, createActuacion: boolean = false) => {
     setCurrentExpedientId(id);
+    setAutoCreateActuacion(createActuacion);
     setCurrentView('view');
   };
 
@@ -261,6 +263,7 @@ function AppContent() {
 
   const handleBackFromEditor = () => {
     setCurrentExpedientId(null);
+    setAutoCreateActuacion(false);
     setCurrentView('dashboard');
   };
 
@@ -328,6 +331,7 @@ function AppContent() {
                 }));
               }
             }}
+            autoCreateActuacion={autoCreateActuacion}
           />
         );
       case 'editor':

@@ -34,6 +34,7 @@ interface ExpedientViewProps {
   onBack?: () => void;
   onSaveActuacion?: (data: any) => Promise<any>;
   onUpdateActuaciones?: (actuaciones: any[]) => void;
+  autoCreateActuacion?: boolean; // New prop to automatically show actuación creation
 }
 
 export function ExpedientView({ 
@@ -42,10 +43,11 @@ export function ExpedientView({
   actuaciones: propActuaciones = [], 
   onBack, 
   onSaveActuacion,
-  onUpdateActuaciones 
+  onUpdateActuaciones,
+  autoCreateActuacion = false
 }: ExpedientViewProps) {
   const [showEditor, setShowEditor] = useState(false);
-  const [showActuacionEditor, setShowActuacionEditor] = useState(false);
+  const [showActuacionEditor, setShowActuacionEditor] = useState(autoCreateActuacion);
   const [editingActuacionId, setEditingActuacionId] = useState<string | null>(null);
   const [actuaciones, setActuaciones] = useState<Actuacion[]>(propActuaciones);
   const [selectedActuacion, setSelectedActuacion] = useState<Actuacion | null>(null);
