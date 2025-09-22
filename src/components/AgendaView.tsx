@@ -218,13 +218,25 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
         {/* Calendario */}
         <div>
           <h2 className="text-2xl font-bold tracking-tight mb-4">Calendario</h2>
-          <div className="border rounded-lg bg-card">
+          <div className="border rounded-lg bg-card w-fit">
             <Calendar
               mode="single"
               selected={selectedDate}
               onSelect={(date) => date && setSelectedDate(date)}
               locale={es}
-              className="w-full pointer-events-auto p-3"
+              className="pointer-events-auto p-3"
+              classNames={{
+                months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+                month: "space-y-4 w-fit",
+                caption: "flex justify-center pt-1 relative items-center",
+                caption_label: "text-sm font-medium",
+                nav: "space-x-1 flex items-center",
+                table: "w-fit border-collapse space-y-1",
+                head_row: "flex",
+                head_cell: "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
+                row: "flex w-fit mt-2",
+                cell: "h-9 w-9 text-center text-sm p-0 relative"
+              }}
             />
           </div>
         </div>
