@@ -32,6 +32,7 @@ interface DashboardProps {
   onFilterExpedients?: (status: string) => void;
   onRecibirExpediente?: (expedientId: string) => void;
   onNavigateToActuacionesParaFirma?: () => void;
+  onNavigateToOficios?: () => void;
 }
 
 export function Dashboard({ 
@@ -43,7 +44,8 @@ export function Dashboard({
   onCreateActuacion,
   onFilterExpedients,
   onRecibirExpediente,
-  onNavigateToActuacionesParaFirma
+  onNavigateToActuacionesParaFirma,
+  onNavigateToOficios
 }: DashboardProps) {
   const { user } = useUser();
   const [novedades, setNovedades] = useState<any[]>([]);
@@ -165,7 +167,7 @@ export function Dashboard({
 
         <Card 
           className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-[hsl(var(--card-inicio-border))] bg-gradient-to-br from-[hsl(var(--card-inicio-light))] to-[hsl(var(--card-inicio-light))]"
-          onClick={() => {/* TODO: Navegación a oficios */}}
+          onClick={() => onNavigateToOficios?.()}
         >
           <CardContent className="p-6 text-center">
             <div className="w-12 h-12 bg-[hsl(var(--card-inicio))] rounded-lg flex items-center justify-center mx-auto mb-3">

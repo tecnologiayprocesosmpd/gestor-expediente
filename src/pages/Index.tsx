@@ -7,6 +7,7 @@ import { ExpedientList } from '@/components/ExpedientList';
 import { ExpedientView } from '@/components/ExpedientView';
 import { ExpedientEditor } from '@/components/ExpedientEditor';
 import { AgendaView } from '@/components/AgendaView';
+import { OficioManager } from '@/components/OficioManager';
 import { ExpedientSummary, Expedient } from '@/types/expedient';
 import { useToast } from '@/hooks/use-toast';
 
@@ -119,7 +120,7 @@ const mockExpedients: ExpedientSummary[] = [
 function AppContent() {
   const { user } = useUser();
   const { toast } = useToast();
-  const [currentView, setCurrentView] = useState<'dashboard' | 'expedientes' | 'view' | 'editor' | 'agenda'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'expedientes' | 'view' | 'editor' | 'agenda' | 'oficios'>('dashboard');
   const [expedients, setExpedients] = useState<ExpedientSummary[]>(mockExpedients);
   const [currentExpedientId, setCurrentExpedientId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('');
@@ -282,6 +283,10 @@ function AppContent() {
     setStatusFilter(status);
   };
 
+  const handleNavigateToOficios = () => {
+    setCurrentView('oficios');
+  };
+
   const renderCurrentView = () => {
     switch (currentView) {
       case 'dashboard':
@@ -294,6 +299,7 @@ function AppContent() {
             onNavigateToExpedients={handleNavigateToExpedients}
             onCreateActuacion={handleCreateActuacion}
             onFilterExpedients={handleFilterExpedients}
+            onNavigateToOficios={handleNavigateToOficios}
           />
         );
       case 'expedientes':
@@ -340,6 +346,13 @@ function AppContent() {
               setCurrentExpedientId(expedientId);
               setCurrentView('view');
             }}
+          />
+        );
+      case 'oficios':
+        return (
+          <OficioManager
+            expedients={expedients}
+            onBack={() => setCurrentView('dashboard')}
           />
         );
       default:
