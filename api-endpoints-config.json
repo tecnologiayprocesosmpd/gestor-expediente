@@ -1,0 +1,880 @@
+{
+  "apiConfig": {
+    "name": "Sistema Mesa de Entrada API",
+    "version": "1.0.0",
+    "baseUrl": "https://your-genexus-kb.com/api/v1",
+    "description": "API para sistema de mesa de entrada y gestión de expedientes",
+    "authentication": {
+      "type": "GAM",
+      "loginUrl": "/auth/login",
+      "tokenRefreshUrl": "/auth/refresh",
+      "logoutUrl": "/auth/logout",
+      "tokenValidationUrl": "/auth/validate"
+    },
+    "security": {
+      "gamIntegration": true,
+      "roleBasedAccess": true,
+      "permissionLevel": "granular",
+      "auditEnabled": true
+    }
+  },
+  "endpoints": {
+    "authentication": {
+      "/auth/login": {
+        "method": "POST",
+        "description": "Autenticación de usuario con GAM",
+        "requestBody": {
+          "username": "string",
+          "password": "string",
+          "profile": "string (optional: mesa-entrada|oficina)"
+        },
+        "responses": {
+          "200": {
+            "token": "string",
+            "refreshToken": "string",
+            "user": {
+              "id": "string",
+              "username": "string",
+              "name": "string",
+              "roles": ["string"],
+              "permissions": ["string"],
+              "profile": "string",
+              "department": "string"
+            },
+            "expiresIn": "number"
+          },
+          "401": { "error": "Credenciales inválidas" },
+          "403": { "error": "Acceso denegado" }
+        }
+      },
+      "/auth/refresh": {
+        "method": "POST",
+        "description": "Renovar token de acceso",
+        "headers": { "Authorization": "Bearer {refreshToken}" },
+        "responses": {
+          "200": { "token": "string", "expiresIn": "number" },
+          "401": { "error": "Token inválido" }
+        }
+      },
+      "/auth/logout": {
+        "method": "POST",
+        "description": "Cerrar sesión",
+        "headers": { "Authorization": "Bearer {token}" },
+        "responses": {
+          "200": { "message": "Sesión cerrada exitosamente" }
+        }
+      },
+      "/auth/validate": {
+        "method": "GET",
+        "description": "Validar token actual",
+        "headers": { "Authorization": "Bearer {token}" },
+        "responses": {
+          "200": { "valid": true, "user": "object" },
+          "401": { "valid": false, "error": "string" }
+        }
+      }
+    },
+    "expedientes": {
+      "/expedientes": {
+        "GET": {
+          "description": "Listar expedientes con filtros y paginación",
+          "queryParams": {
+            "page": "number (default: 1)",
+            "limit": "number (default: 20)",
+            "estado": "string (enum: draft|active|archived|transferred)",
+            "departamento": "string",
+            "fechaDesde": "date (ISO 8601)",
+            "fechaHasta": "date (ISO 8601)",
+            "search": "string",
+            "asignado": "string (user ID)"
+          },
+          "permissions": ["expedientes:read"],
+          "responses": {
+            "200": {
+              "data": ["expedient_object"],
+              "pagination": {
+                "total": "number",
+                "page": "number",
+                "limit": "number",
+                "totalPages": "number"
+              }
+            }
+          }
+        },
+        "POST": {
+          "description": "Crear nuevo expediente",
+          "requestBody": {
+            "numero": "string (auto-generated if empty)",
+            "caratula": "string (required)",
+            "iniciador": "string (required)",
+            "tipoTramite": "string (required)",
+            "departamento": "string (required)",
+            "observaciones": "string (optional)",
+            "documentos": ["string"] // IDs de documentos adjuntos
+          },
+          "permissions": ["expedientes:create"],
+          "responses": {
+            "201": { "id": "string", "numero": "string", "message": "Expediente creado exitosamente" },
+            "400": { "error": "Datos inválidos", "details": ["string"] }
+          }
+        }
+      },
+      "/expedientes/{id}": {
+        "GET": {
+          "description": "Obtener expediente por ID",
+          "pathParams": { "id": "string (required)" },
+          "permissions": ["expedientes:read"],
+          "responses": {
+            "200": "expedient_object",
+            "404": { "error": "Expediente no encontrado" }
+          }
+        },
+        "PUT": {
+          "description": "Actualizar expediente",
+          "pathParams": { "id": "string (required)" },
+          "requestBody": "expedient_update_object",
+          "permissions": ["expedientes:update"],
+          "responses": {
+            "200": { "message": "Expediente actualizado exitosamente" },
+            "404": { "error": "Expediente no encontrado" }
+          }
+        },
+        "DELETE": {
+          "description": "Eliminar expediente (soft delete)",
+          "pathParams": { "id": "string (required)" },
+          "permissions": ["expedientes:delete"],
+          "responses": {
+            "200": { "message": "Expediente eliminado exitosamente" }
+          }
+        }
+      },
+      "/expedientes/{id}/derivar": {
+        "POST": {
+          "description": "Derivar expediente a otro departamento",
+          "pathParams": { "id": "string (required)" },
+          "requestBody": {
+            "destinatario": "string (required)",
+            "observaciones": "string (optional)",
+            "urgente": "boolean (default: false)"
+          },
+          "permissions": ["expedientes:derive"],
+          "responses": {
+            "200": { "message": "Expediente derivado exitosamente", "derivacionId": "string" }
+          }
+        }
+      },
+      "/expedientes/{id}/recibir": {
+        "POST": {
+          "description": "Recibir expediente derivado",
+          "pathParams": { "id": "string (required)" },
+          "requestBody": {
+            "observaciones": "string (optional)"
+          },
+          "permissions": ["expedientes:receive"],
+          "responses": {
+            "200": { "message": "Expediente recibido exitosamente" }
+          }
+        }
+      },
+      "/expedientes/{id}/archivar": {
+        "POST": {
+          "description": "Archivar expediente",
+          "pathParams": { "id": "string (required)" },
+          "requestBody": {
+            "motivo": "string (required)",
+            "observaciones": "string (optional)"
+          },
+          "permissions": ["expedientes:archive"],
+          "responses": {
+            "200": { "message": "Expediente archivado exitosamente" }
+          }
+        }
+      },
+      "/expedientes/para-recibir": {
+        "GET": {
+          "description": "Obtener expedientes pendientes de recepción",
+          "queryParams": {
+            "page": "number",
+            "limit": "number"
+          },
+          "permissions": ["expedientes:receive"],
+          "responses": {
+            "200": {
+              "data": ["expedient_object"],
+              "pagination": "pagination_object"
+            }
+          }
+        }
+      }
+    },
+    "actuaciones": {
+      "/actuaciones": {
+        "GET": {
+          "description": "Listar actuaciones con filtros",
+          "queryParams": {
+            "expedientId": "string",
+            "status": "string (enum: borrador|para-firmar|firmado|observado)",
+            "page": "number",
+            "limit": "number",
+            "fechaDesde": "date",
+            "fechaHasta": "date"
+          },
+          "permissions": ["actuaciones:read"],
+          "responses": {
+            "200": {
+              "data": ["actuacion_object"],
+              "pagination": "pagination_object"
+            }
+          }
+        },
+        "POST": {
+          "description": "Crear nueva actuación",
+          "requestBody": {
+            "expedientId": "string (required)",
+            "tipo": "string (required)",
+            "contenido": "string (required)",
+            "observaciones": "string (optional)"
+          },
+          "permissions": ["actuaciones:create"],
+          "responses": {
+            "201": { "id": "string", "message": "Actuación creada exitosamente" }
+          }
+        }
+      },
+      "/actuaciones/{id}": {
+        "GET": {
+          "description": "Obtener actuación por ID",
+          "pathParams": { "id": "string (required)" },
+          "permissions": ["actuaciones:read"],
+          "responses": {
+            "200": "actuacion_object",
+            "404": { "error": "Actuación no encontrada" }
+          }
+        },
+        "PUT": {
+          "description": "Actualizar actuación",
+          "pathParams": { "id": "string (required)" },
+          "requestBody": "actuacion_update_object",
+          "permissions": ["actuaciones:update"],
+          "responses": {
+            "200": { "message": "Actuación actualizada exitosamente" }
+          }
+        },
+        "DELETE": {
+          "description": "Eliminar actuación",
+          "pathParams": { "id": "string (required)" },
+          "permissions": ["actuaciones:delete"],
+          "responses": {
+            "200": { "message": "Actuación eliminada exitosamente" }
+          }
+        }
+      },
+      "/actuaciones/{id}/firmar": {
+        "POST": {
+          "description": "Firmar actuación digitalmente",
+          "pathParams": { "id": "string (required)" },
+          "requestBody": {
+            "certificadoDigital": "string (required)",
+            "observaciones": "string (optional)"
+          },
+          "permissions": ["actuaciones:sign"],
+          "responses": {
+            "200": { 
+              "message": "Actuación firmada exitosamente",
+              "firmadoPor": "string",
+              "fechaFirma": "datetime"
+            }
+          }
+        }
+      },
+      "/actuaciones/{id}/observar": {
+        "POST": {
+          "description": "Observar actuación (rechazar)",
+          "pathParams": { "id": "string (required)" },
+          "requestBody": {
+            "observaciones": "string (required)",
+            "motivoObservacion": "string (required)"
+          },
+          "permissions": ["actuaciones:observe"],
+          "responses": {
+            "200": { "message": "Actuación observada exitosamente" }
+          }
+        }
+      },
+      "/actuaciones/para-firmar": {
+        "GET": {
+          "description": "Obtener actuaciones pendientes de firma",
+          "queryParams": {
+            "departamento": "string",
+            "page": "number",
+            "limit": "number"
+          },
+          "permissions": ["actuaciones:sign"],
+          "responses": {
+            "200": {
+              "data": ["actuacion_object"],
+              "pagination": "pagination_object"
+            }
+          }
+        }
+      }
+    },
+    "usuarios": {
+      "/usuarios": {
+        "GET": {
+          "description": "Listar usuarios del sistema",
+          "queryParams": {
+            "role": "string",
+            "department": "string",
+            "active": "boolean",
+            "page": "number",
+            "limit": "number"
+          },
+          "permissions": ["usuarios:read"],
+          "responses": {
+            "200": {
+              "data": ["user_object"],
+              "pagination": "pagination_object"
+            }
+          }
+        },
+        "POST": {
+          "description": "Crear nuevo usuario",
+          "requestBody": {
+            "username": "string (required)",
+            "email": "string (required)",
+            "name": "string (required)",
+            "roles": ["string"],
+            "department": "string",
+            "permissions": ["string"]
+          },
+          "permissions": ["usuarios:create"],
+          "responses": {
+            "201": { "id": "string", "message": "Usuario creado exitosamente" }
+          }
+        }
+      },
+      "/usuarios/{id}": {
+        "GET": {
+          "description": "Obtener usuario por ID",
+          "pathParams": { "id": "string (required)" },
+          "permissions": ["usuarios:read"],
+          "responses": {
+            "200": "user_object"
+          }
+        },
+        "PUT": {
+          "description": "Actualizar usuario",
+          "pathParams": { "id": "string (required)" },
+          "requestBody": "user_update_object",
+          "permissions": ["usuarios:update"],
+          "responses": {
+            "200": { "message": "Usuario actualizado exitosamente" }
+          }
+        }
+      },
+      "/usuarios/{id}/permissions": {
+        "PUT": {
+          "description": "Actualizar permisos de usuario",
+          "pathParams": { "id": "string (required)" },
+          "requestBody": {
+            "permissions": ["string"],
+            "roles": ["string"]
+          },
+          "permissions": ["usuarios:manage_permissions"],
+          "responses": {
+            "200": { "message": "Permisos actualizados exitosamente" }
+          }
+        }
+      }
+    },
+    "legajos": {
+      "/legajos": {
+        "GET": {
+          "description": "Listar legajos de empleados",
+          "queryParams": {
+            "estado": "string (enum: activo|licencia|suspendido|cesante)",
+            "departamento": "string",
+            "search": "string",
+            "page": "number",
+            "limit": "number"
+          },
+          "permissions": ["legajos:read"],
+          "responses": {
+            "200": {
+              "data": ["legajo_object"],
+              "pagination": "pagination_object"
+            }
+          }
+        },
+        "POST": {
+          "description": "Crear nuevo legajo",
+          "requestBody": {
+            "dni": "string (required)",
+            "apellido": "string (required)",
+            "nombre": "string (required)",
+            "email": "string (required)",
+            "cargo": "string (required)",
+            "departamento": "string (required)",
+            "fechaIngreso": "date (required)"
+          },
+          "permissions": ["legajos:create"],
+          "responses": {
+            "201": { "id": "string", "message": "Legajo creado exitosamente" }
+          }
+        }
+      },
+      "/legajos/{id}": {
+        "GET": {
+          "description": "Obtener legajo por ID",
+          "pathParams": { "id": "string (required)" },
+          "permissions": ["legajos:read"],
+          "responses": {
+            "200": "legajo_object"
+          }
+        },
+        "PUT": {
+          "description": "Actualizar legajo",
+          "pathParams": { "id": "string (required)" },
+          "requestBody": "legajo_update_object",
+          "permissions": ["legajos:update"],
+          "responses": {
+            "200": { "message": "Legajo actualizado exitosamente" }
+          }
+        }
+      },
+      "/legajos/{id}/designaciones": {
+        "GET": {
+          "description": "Obtener designaciones del empleado",
+          "pathParams": { "id": "string (required)" },
+          "permissions": ["legajos:read"],
+          "responses": {
+            "200": { "data": ["designacion_object"] }
+          }
+        },
+        "POST": {
+          "description": "Agregar nueva designación",
+          "pathParams": { "id": "string (required)" },
+          "requestBody": {
+            "cargo": "string (required)",
+            "departamento": "string (required)",
+            "fechaInicio": "date (required)",
+            "resolucion": "string (required)"
+          },
+          "permissions": ["legajos:manage"],
+          "responses": {
+            "201": { "message": "Designación agregada exitosamente" }
+          }
+        }
+      },
+      "/legajos/{id}/licencias": {
+        "GET": {
+          "description": "Obtener licencias del empleado",
+          "pathParams": { "id": "string (required)" },
+          "permissions": ["legajos:read"],
+          "responses": {
+            "200": { "data": ["licencia_object"] }
+          }
+        },
+        "POST": {
+          "description": "Registrar nueva licencia",
+          "pathParams": { "id": "string (required)" },
+          "requestBody": {
+            "tipo": "string (enum: medica|administrativa|estudio|maternidad|paternidad|vacaciones)",
+            "fechaInicio": "date (required)",
+            "fechaFin": "date (required)",
+            "diagnostico": "string (optional)",
+            "certificadoMedico": "string (optional)"
+          },
+          "permissions": ["legajos:manage"],
+          "responses": {
+            "201": { "message": "Licencia registrada exitosamente" }
+          }
+        }
+      }
+    },
+    "agenda": {
+      "/agenda": {
+        "GET": {
+          "description": "Obtener eventos de agenda",
+          "queryParams": {
+            "fechaInicio": "date (required)",
+            "fechaFin": "date (required)",
+            "tipo": "string (enum: audiencia|citacion|reunion|vencimiento|otro)",
+            "estado": "string (enum: programada|confirmada|reprogramada|cancelada|completada)",
+            "expedientId": "string"
+          },
+          "permissions": ["agenda:read"],
+          "responses": {
+            "200": { "data": ["cita_object"] }
+          }
+        },
+        "POST": {
+          "description": "Crear nueva cita/evento",
+          "requestBody": {
+            "titulo": "string (required)",
+            "descripcion": "string (optional)",
+            "fechaInicio": "datetime (required)",
+            "fechaFin": "datetime (optional)",
+            "tipo": "string (required)",
+            "expedientId": "string (optional)",
+            "participantes": ["string"],
+            "ubicacion": "string (optional)"
+          },
+          "permissions": ["agenda:create"],
+          "responses": {
+            "201": { "id": "string", "message": "Cita creada exitosamente" }
+          }
+        }
+      },
+      "/agenda/{id}": {
+        "GET": {
+          "description": "Obtener cita por ID",
+          "pathParams": { "id": "string (required)" },
+          "permissions": ["agenda:read"],
+          "responses": {
+            "200": "cita_object"
+          }
+        },
+        "PUT": {
+          "description": "Actualizar cita",
+          "pathParams": { "id": "string (required)" },
+          "requestBody": "cita_update_object",
+          "permissions": ["agenda:update"],
+          "responses": {
+            "200": { "message": "Cita actualizada exitosamente" }
+          }
+        },
+        "DELETE": {
+          "description": "Cancelar cita",
+          "pathParams": { "id": "string (required)" },
+          "permissions": ["agenda:delete"],
+          "responses": {
+            "200": { "message": "Cita cancelada exitosamente" }
+          }
+        }
+      }
+    },
+    "dashboard": {
+      "/dashboard/stats": {
+        "GET": {
+          "description": "Obtener estadísticas para dashboard",
+          "queryParams": {
+            "departamento": "string (optional)",
+            "fechaDesde": "date (optional)",
+            "fechaHasta": "date (optional)"
+          },
+          "permissions": ["dashboard:read"],
+          "responses": {
+            "200": {
+              "expedientes": {
+                "total": "number",
+                "activos": "number",
+                "pendientes": "number",
+                "archivados": "number"
+              },
+              "actuaciones": {
+                "total": "number",
+                "paraFirmar": "number",
+                "firmadas": "number",
+                "observadas": "number"
+              },
+              "agenda": {
+                "citasHoy": "number",
+                "proximasCitas": ["cita_object"]
+              },
+              "notificaciones": {
+                "urgentes": "number",
+                "pendientes": "number"
+              }
+            }
+          }
+        }
+      },
+      "/dashboard/notifications": {
+        "GET": {
+          "description": "Obtener notificaciones del usuario",
+          "queryParams": {
+            "tipo": "string",
+            "leidas": "boolean",
+            "limit": "number"
+          },
+          "permissions": ["notifications:read"],
+          "responses": {
+            "200": { "data": ["notification_object"] }
+          }
+        }
+      }
+    },
+    "reportes": {
+      "/reportes/expedientes": {
+        "GET": {
+          "description": "Generar reporte de expedientes",
+          "queryParams": {
+            "fechaDesde": "date (required)",
+            "fechaHasta": "date (required)",
+            "departamento": "string (optional)",
+            "estado": "string (optional)",
+            "formato": "string (enum: json|pdf|excel, default: json)"
+          },
+          "permissions": ["reportes:expedientes"],
+          "responses": {
+            "200": {
+              "data": ["expedient_summary"],
+              "resumen": {
+                "total": "number",
+                "porEstado": "object",
+                "porDepartamento": "object"
+              }
+            }
+          }
+        }
+      },
+      "/reportes/actuaciones": {
+        "GET": {
+          "description": "Generar reporte de actuaciones",
+          "queryParams": {
+            "fechaDesde": "date (required)",
+            "fechaHasta": "date (required)",
+            "departamento": "string (optional)",
+            "status": "string (optional)",
+            "formato": "string (enum: json|pdf|excel, default: json)"
+          },
+          "permissions": ["reportes:actuaciones"],
+          "responses": {
+            "200": {
+              "data": ["actuacion_summary"],
+              "resumen": {
+                "total": "number",
+                "porStatus": "object",
+                "tiempoPromediofirma": "number"
+              }
+            }
+          }
+        }
+      },
+      "/reportes/productividad": {
+        "GET": {
+          "description": "Reporte de productividad por usuario/departamento",
+          "queryParams": {
+            "fechaDesde": "date (required)",
+            "fechaHasta": "date (required)",
+            "departamento": "string (optional)",
+            "usuario": "string (optional)",
+            "formato": "string (enum: json|pdf|excel, default: json)"
+          },
+          "permissions": ["reportes:productividad"],
+          "responses": {
+            "200": {
+              "data": ["productivity_summary"],
+              "resumen": {
+                "expedientesCreados": "number",
+                "actuacionesFirmadas": "number",
+                "tiempoPromedio": "number"
+              }
+            }
+          }
+        }
+      }
+    },
+    "documentos": {
+      "/documentos/upload": {
+        "POST": {
+          "description": "Subir documento",
+          "requestBody": {
+            "file": "multipart/form-data",
+            "expedientId": "string (optional)",
+            "actuacionId": "string (optional)",
+            "tipo": "string",
+            "descripcion": "string (optional)"
+          },
+          "permissions": ["documentos:upload"],
+          "responses": {
+            "201": {
+              "id": "string",
+              "filename": "string",
+              "url": "string",
+              "size": "number",
+              "mimeType": "string"
+            }
+          }
+        }
+      },
+      "/documentos/{id}": {
+        "GET": {
+          "description": "Descargar documento",
+          "pathParams": { "id": "string (required)" },
+          "permissions": ["documentos:download"],
+          "responses": {
+            "200": "file_stream"
+          }
+        },
+        "DELETE": {
+          "description": "Eliminar documento",
+          "pathParams": { "id": "string (required)" },
+          "permissions": ["documentos:delete"],
+          "responses": {
+            "200": { "message": "Documento eliminado exitosamente" }
+          }
+        }
+      }
+    }
+  },
+  "schemas": {
+    "expedient_object": {
+      "id": "string",
+      "numero": "string",
+      "caratula": "string",
+      "iniciador": "string",
+      "tipoTramite": "string",
+      "departamento": "string",
+      "estado": "string (enum: draft|active|archived|transferred)",
+      "fechaInicio": "datetime",
+      "fechaUltimaActuacion": "datetime",
+      "observaciones": "string",
+      "asignadoA": "string",
+      "prioridad": "string (enum: baja|normal|alta|urgente)",
+      "documentos": ["documento_object"],
+      "actuaciones": ["actuacion_object"],
+      "audit": {
+        "createdBy": "string",
+        "createdAt": "datetime",
+        "updatedBy": "string",
+        "updatedAt": "datetime"
+      }
+    },
+    "actuacion_object": {
+      "id": "string",
+      "expedientId": "string",
+      "tipo": "string",
+      "contenido": "string",
+      "status": "string (enum: borrador|para-firmar|firmado|observado)",
+      "firmadoPor": "string",
+      "fechaFirma": "datetime",
+      "observaciones": "string",
+      "version": "number",
+      "audit": {
+        "createdBy": "string",
+        "createdAt": "datetime",
+        "updatedBy": "string",
+        "updatedAt": "datetime"
+      }
+    },
+    "user_object": {
+      "id": "string",
+      "username": "string",
+      "email": "string",
+      "name": "string",
+      "roles": ["string"],
+      "permissions": ["string"],
+      "profile": "string (enum: mesa-entrada|oficina)",
+      "department": "string",
+      "active": "boolean",
+      "lastLogin": "datetime",
+      "createdAt": "datetime"
+    },
+    "legajo_object": {
+      "id": "string",
+      "dni": "string",
+      "apellido": "string",
+      "nombre": "string",
+      "email": "string",
+      "telefono": "string",
+      "fechaIngreso": "date",
+      "cargo": "string",
+      "departamento": "string",
+      "estado": "string (enum: activo|licencia|suspendido|cesante)",
+      "designaciones": ["designacion_object"],
+      "licencias": ["licencia_object"],
+      "sanciones": ["sancion_object"],
+      "historialClinico": ["historial_clinico_object"]
+    },
+    "cita_object": {
+      "id": "string",
+      "titulo": "string",
+      "descripcion": "string",
+      "fechaInicio": "datetime",
+      "fechaFin": "datetime",
+      "expedientId": "string",
+      "actuacionId": "string",
+      "tipo": "string (enum: audiencia|citacion|reunion|vencimiento|otro)",
+      "estado": "string (enum: programada|confirmada|reprogramada|cancelada|completada)",
+      "participantes": ["string"],
+      "ubicacion": "string",
+      "observaciones": "string",
+      "recordatorio": {
+        "tiempo": "number",
+        "enviado": "boolean"
+      }
+    }
+  },
+  "errorCodes": {
+    "400": "Bad Request - Datos inválidos",
+    "401": "Unauthorized - Token inválido o expirado",
+    "403": "Forbidden - Sin permisos para realizar esta acción",
+    "404": "Not Found - Recurso no encontrado",
+    "409": "Conflict - Conflicto con estado actual del recurso",
+    "422": "Unprocessable Entity - Error de validación",
+    "429": "Too Many Requests - Límite de requests excedido",
+    "500": "Internal Server Error - Error interno del servidor"
+  },
+  "commonHeaders": {
+    "request": {
+      "Authorization": "Bearer {token}",
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "X-Request-ID": "string (optional, for tracking)"
+    },
+    "response": {
+      "Content-Type": "application/json",
+      "X-Request-ID": "string",
+      "X-Rate-Limit-Remaining": "number",
+      "X-Rate-Limit-Reset": "datetime"
+    }
+  },
+  "pagination": {
+    "standardFormat": {
+      "page": "number (current page, 1-based)",
+      "limit": "number (items per page, max 100)",
+      "total": "number (total items)",
+      "totalPages": "number",
+      "hasNext": "boolean",
+      "hasPrev": "boolean"
+    }
+  },
+  "permissions": [
+    "expedientes:read",
+    "expedientes:create",
+    "expedientes:update",
+    "expedientes:delete",
+    "expedientes:derive",
+    "expedientes:receive",
+    "expedientes:archive",
+    "actuaciones:read",
+    "actuaciones:create",
+    "actuaciones:update",
+    "actuaciones:delete",
+    "actuaciones:sign",
+    "actuaciones:observe",
+    "usuarios:read",
+    "usuarios:create",
+    "usuarios:update",
+    "usuarios:manage_permissions",
+    "legajos:read",
+    "legajos:create",
+    "legajos:update",
+    "legajos:manage",
+    "agenda:read",
+    "agenda:create",
+    "agenda:update",
+    "agenda:delete",
+    "dashboard:read",
+    "notifications:read",
+    "reportes:expedientes",
+    "reportes:actuaciones",
+    "reportes:productividad",
+    "documentos:upload",
+    "documentos:download",
+    "documentos:delete"
+  ]
+}
