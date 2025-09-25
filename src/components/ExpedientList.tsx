@@ -242,13 +242,21 @@ export function ExpedientList({
         <Card>
           <CardContent className="p-0">
             <div className="overflow-x-auto">
-              <table className="w-full">
+               <table className="w-full table-fixed">
+                 <colgroup>
+                   <col className="w-32" />
+                   <col className="w-auto" />
+                   <col className="w-32" />
+                   <col className="w-40" />
+                   <col className="w-32" />
+                   <col className="w-24" />
+                 </colgroup>
                 <thead className="border-b">
                   <tr className="bg-muted/30">
                     <th className="text-left p-4 font-medium w-32">Número</th>
                     <th className="text-left p-4 font-medium">Expediente</th>
                     <th className="text-left p-4 font-medium w-32">Estado</th>
-                    <th className="text-left p-4 font-medium w-32">Creado por</th>
+                    <th className="text-left p-4 font-medium w-40">Creado por</th>
                     <th className="text-left p-4 font-medium w-32">Fecha</th>
                     <th className="text-right p-4 font-medium w-24">Acciones</th>
                   </tr>
