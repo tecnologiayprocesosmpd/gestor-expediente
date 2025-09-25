@@ -638,12 +638,12 @@ export function ExpedientView({
             </Button>
             
             <div className="space-y-2">
-              <div className="flex items-start justify-between">
+              <div className="flex items-start">
                 <h1 className="text-2xl font-bold text-foreground">
                   {expedient.title}
                 </h1>
                 
-                <div className={`${statusColors.bg} rounded-md px-4 py-2 flex items-center space-x-2 shadow-sm border border-white/20 ml-2.5`}>
+                <div className={`${statusColors.bg} rounded-md px-4 py-2 flex items-center space-x-2 shadow-sm border border-white/20 ml-8`}>
                   <div className={`w-2.5 h-2.5 rounded-full ${statusColors.text === 'text-[hsl(var(--status-draft-foreground))]' ? 'bg-white' : 'bg-white'} animate-pulse`}></div>
                   <span className={`text-sm font-semibold ${statusColors.text}`}>
                     {getStatusLabel(expedient.status)}
