@@ -85,7 +85,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
     }
     return propExpedient.number;
   });
-  const [status, setStatus] = useState<'draft' | 'derivado' | 'recibido' | 'en_tramite' | 'pausado'>(propExpedient?.status || 'draft');
+  const [status, setStatus] = useState<'draft' | 'en_tramite' | 'archivado'>(propExpedient?.status || 'draft');
   const [assignedOffice, setAssignedOffice] = useState(propExpedient?.oficina || propExpedient?.assignedOffice || '');
   const [referencia, setReferencia] = useState(propExpedient?.referencia || '');
   const [tipoProceso, setTipoProceso] = useState<'administrativo' | 'compra'>(propExpedient?.tipoProceso || 'administrativo');
@@ -285,7 +285,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
       title,
       number: expedientNumber,
       content,
-      status: 'derivado' as const,
+      status: 'en_tramite' as const,
       oficina: assignedOffice,
       referencia,
       tipoProceso,
@@ -368,25 +368,10 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
         border: 'border-[hsl(var(--status-en-tramite))]',
         text: 'text-[hsl(var(--status-en-tramite-foreground))]'
       },
-      pausado: {
-        bg: 'bg-[hsl(var(--status-pausado))]',
-        border: 'border-[hsl(var(--status-pausado))]',
-        text: 'text-[hsl(var(--status-pausado-foreground))]'
-      },
       archivado: {
         bg: 'bg-[hsl(var(--status-archivado))]',
         border: 'border-[hsl(var(--status-archivado))]',
         text: 'text-[hsl(var(--status-archivado-foreground))]'
-      },
-      derivado: {
-        bg: 'bg-[hsl(var(--status-derivado))]',
-        border: 'border-[hsl(var(--status-derivado))]',
-        text: 'text-[hsl(var(--status-derivado-foreground))]'
-      },
-      recibido: {
-        bg: 'bg-[hsl(var(--status-recibido))]',
-        border: 'border-[hsl(var(--status-recibido))]',
-        text: 'text-[hsl(var(--status-recibido-foreground))]'
       }
     };
     
@@ -397,10 +382,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
     const labels = {
       draft: 'Borrador',
       en_tramite: 'En Trámite',
-      pausado: 'Pausado',
-      archivado: 'Archivado',
-      derivado: 'Derivado',
-      recibido: 'Recibido'
+      archivado: 'Archivado'
     };
     
     return labels[status as keyof typeof labels] || 'Borrador';
@@ -825,10 +807,8 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
           
           {status !== 'draft' && (
             <div className="text-sm text-muted-foreground">
-              {status === 'derivado' && 'Expediente derivado - Esperando recepción'}
-              {status === 'recibido' && 'Expediente recibido - Puede trabajarse'}
               {status === 'en_tramite' && 'Expediente en trámite'}
-              {status === 'pausado' && 'Expediente pausado'}
+              {status === 'archivado' && 'Expediente archivado'}
             </div>
           )}
         </div>

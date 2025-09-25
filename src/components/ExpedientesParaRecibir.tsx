@@ -29,9 +29,9 @@ export function ExpedientesParaRecibir({
   const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   
-  // Filtrar expedientes derivados para la oficina del usuario
+  // Filtrar expedientes en trámite para la oficina del usuario
   // Por ahora mock - en producción esto se haría por oficina asignada
-  const expedientesParaRecibir = expedients.filter(exp => exp.status === 'derivado');
+  const expedientesParaRecibir = expedients.filter(exp => exp.status === 'en_tramite');
   
   const handleRecibirExpediente = (expedientId: string) => {
     if (onRecibirExpediente) {
@@ -94,8 +94,8 @@ export function ExpedientesParaRecibir({
                             <span className="text-xs font-mono text-[hsl(var(--card-inicio))] bg-[hsl(var(--card-inicio-light))] px-2 py-1 rounded">
                               {expedient.number}
                             </span>
-                            <Badge className="bg-amber-100 text-amber-700 text-xs">
-                              Derivado
+                            <Badge className="bg-green-100 text-green-700 text-xs">
+                              En Trámite
                             </Badge>
                           </div>
                           

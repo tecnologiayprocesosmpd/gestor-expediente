@@ -69,16 +69,10 @@ All colors MUST be HSL.
     /* Estados de expedientes - colores vivos pero formales */
     --status-draft: 35 91% 51%; /* Ámbar vibrante para borrador */
     --status-draft-foreground: 0 0% 100%;
-    --status-derivado: 262 83% 58%; /* Púrpura vibrante para derivado */
-    --status-derivado-foreground: 0 0% 100%;
-    --status-recibido: 217 100% 95%;
-    --status-recibido-foreground: 217 70% 35%;
-    --status-en-tramite: 142 76% 91%;
-    --status-en-tramite-foreground: 142 40% 30%;
-    --status-pausado: 25 95% 91%;
-    --status-pausado-foreground: 25 95% 30%;
-    --status-archivado: 260 20% 91%;
-    --status-archivado-foreground: 260 20% 30%;
+    --status-en-tramite: 142 76% 36%; /* Verde para en trámite */
+    --status-en-tramite-foreground: 0 0% 100%;
+    --status-archivado: 260 20% 45%; /* Gris púrpura para archivado */
+    --status-archivado-foreground: 0 0% 100%;
 
     --sidebar-background: 0 0% 98%;
 

@@ -93,21 +93,17 @@ export function ExpedientList({
     }
   };
 
-  const getStatusBadge = (status: 'draft' | 'derivado' | 'recibido' | 'en_tramite' | 'pausado') => {
+  const getStatusBadge = (status: 'draft' | 'en_tramite' | 'archivado') => {
     const colors = {
       draft: 'bg-[hsl(var(--status-draft))] text-[hsl(var(--status-draft-foreground))] border-[hsl(var(--status-draft))]',
-      derivado: 'bg-[hsl(var(--status-derivado))] text-[hsl(var(--status-derivado-foreground))] border-[hsl(var(--status-derivado))]',
-      recibido: 'bg-[hsl(var(--status-recibido))] text-[hsl(var(--status-recibido-foreground))] border-[hsl(var(--status-recibido))]',
       en_tramite: 'bg-[hsl(var(--status-en-tramite))] text-[hsl(var(--status-en-tramite-foreground))] border-[hsl(var(--status-en-tramite))]',
-      pausado: 'bg-[hsl(var(--status-pausado))] text-[hsl(var(--status-pausado-foreground))] border-[hsl(var(--status-pausado))]'
+      archivado: 'bg-[hsl(var(--status-archivado))] text-[hsl(var(--status-archivado-foreground))] border-[hsl(var(--status-archivado))]'
     };
     
     const labels = {
       draft: 'Borrador',
-      derivado: 'Derivado',
-      recibido: 'Recibido',
       en_tramite: 'En Trámite',
-      pausado: 'Pausado'
+      archivado: 'Archivado'
     };
 
     return (

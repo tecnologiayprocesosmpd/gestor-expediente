@@ -7,7 +7,7 @@ export interface Expedient {
   updatedAt: Date;
   createdBy: string;
   department: string; // Secretaría responsable
-  status: 'draft' | 'derivado' | 'recibido' | 'en_tramite' | 'pausado';
+  status: 'draft' | 'en_tramite' | 'archivado';
   tags: string[];
   
   // Nuevos campos obligatorios para el flujo simplificado
@@ -60,7 +60,7 @@ export interface ExpedientSummary {
   updatedAt: Date;
   createdBy: string;
   department: string;
-  status: 'draft' | 'derivado' | 'recibido' | 'en_tramite' | 'pausado';
+  status: 'draft' | 'en_tramite' | 'archivado';
   tipoTramite: string;
   solicitante: string;
   confidencial: boolean;
