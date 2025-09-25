@@ -205,6 +205,28 @@ function AppContent() {
     }
   };
 
+  const handleStatusChange = (id: string, newStatus: 'en_tramite' | 'archivado') => {
+    setExpedients(prev => prev.map(exp => 
+      exp.id === id 
+        ? { 
+            ...exp, 
+            status: newStatus,
+            updatedAt: new Date() 
+          }
+        : exp
+    ));
+    
+    const statusLabels = {
+      en_tramite: 'En Trámite',
+      archivado: 'Archivado'
+    };
+    
+    toast({
+      title: "Estado actualizado",
+      description: `El expediente ahora está ${statusLabels[newStatus]}`,
+    });
+  };
+
   const handleSaveActuacion = (data: any) => {
     return new Promise((resolve, reject) => {
       console.log('[Index.handleSaveActuacion] Iniciando guardado de actuación:', data);
@@ -310,8 +332,8 @@ function AppContent() {
           <ExpedientList
             expedients={expedients}
             onViewExpedient={handleViewExpedient}
-            onEditExpedient={handleEditExpedient}
             onCreateExpedient={handleCreateExpedient}
+            onStatusChange={handleStatusChange}
             initialStatusFilter={statusFilter}
           />
         );
