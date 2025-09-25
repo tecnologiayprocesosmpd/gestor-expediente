@@ -460,7 +460,8 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
                         <Badge variant="outline">{expedient.tipoTramite}</Badge>
                         <Badge variant={expedient.status === 'en_tramite' ? 'default' : 'secondary'}>
                           {expedient.status === 'en_tramite' ? 'En Trámite' : 
-                           expedient.status === 'draft' ? 'Borrador' : 'Pausado'}
+                           expedient.status === 'draft' ? 'Borrador' : 
+                           expedient.status === 'archivado' ? 'Archivado' : 'Estado desconocido'}
                         </Badge>
                       </div>
                     </div>

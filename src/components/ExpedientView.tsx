@@ -123,10 +123,10 @@ export function ExpedientView({
         border: 'border-[hsl(var(--status-en-tramite))]',
         text: 'text-[hsl(var(--status-en-tramite-foreground))]'
       },
-      pausado: {
-        bg: 'bg-[hsl(var(--status-pausado))]',
-        border: 'border-[hsl(var(--status-pausado))]',
-        text: 'text-[hsl(var(--status-pausado-foreground))]'
+      archivado: {
+        bg: 'bg-[hsl(var(--status-archivado))]',
+        border: 'border-[hsl(var(--status-archivado))]',
+        text: 'text-[hsl(var(--status-archivado-foreground))]'
       }
     };
     
@@ -137,7 +137,7 @@ export function ExpedientView({
     const labels = {
       draft: 'Borrador',
       en_tramite: 'En Trámite',
-      pausado: 'Pausado'
+      archivado: 'Archivado'
     };
     
     return labels[status as keyof typeof labels] || 'Borrador';

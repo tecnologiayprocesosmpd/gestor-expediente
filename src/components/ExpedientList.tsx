@@ -38,9 +38,9 @@ export function ExpedientList({
 }: ExpedientListProps) {
   const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState<'all' | 'draft' | 'derivado' | 'recibido' | 'en_tramite' | 'pausado'>(
-    initialStatusFilter && ['draft', 'derivado', 'recibido', 'en_tramite', 'pausado'].includes(initialStatusFilter) 
-      ? initialStatusFilter as 'draft' | 'derivado' | 'recibido' | 'en_tramite' | 'pausado'
+  const [selectedStatus, setSelectedStatus] = useState<'all' | 'draft' | 'en_tramite' | 'archivado'>(
+    initialStatusFilter && ['draft', 'en_tramite', 'archivado'].includes(initialStatusFilter) 
+      ? initialStatusFilter as 'draft' | 'en_tramite' | 'archivado'
       : 'all'
   );
   const [sortField, setSortField] = useState<SortField>('createdAt');
@@ -165,7 +165,7 @@ export function ExpedientList({
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-sm text-muted-foreground whitespace-nowrap">Estado:</span>
                 <div className="flex flex-wrap gap-1">
-                  {['all', 'draft', 'derivado', 'recibido', 'en_tramite', 'pausado'].map((status) => (
+                  {['all', 'draft', 'en_tramite', 'archivado'].map((status) => (
                     <Button
                       key={status}
                       variant={selectedStatus === status ? 'default' : 'outline'}
@@ -175,10 +175,8 @@ export function ExpedientList({
                     >
                       {status === 'all' ? 'Todos' : 
                        status === 'draft' ? 'Borradores' :
-                       status === 'derivado' ? 'Derivados' :
-                       status === 'recibido' ? 'Recibidos' :
                        status === 'en_tramite' ? 'En Trámite' :
-                       status === 'pausado' ? 'Pausados' : status}
+                       status === 'archivado' ? 'Archivados' : status}
                     </Button>
                   ))}
                 </div>
