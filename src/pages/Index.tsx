@@ -286,7 +286,7 @@ function AppContent() {
   const handleBackFromEditor = () => {
     setCurrentExpedientId(null);
     setAutoCreateActuacion(false);
-    setCurrentView('dashboard');
+    setCurrentView('expedientes');
   };
 
   // Dashboard button handlers
