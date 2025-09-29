@@ -296,31 +296,39 @@ export function ExpedientList({
                           )}
                         </div>
                       </td>
-                      <td className="p-4">
-                        <div className="flex items-center justify-end space-x-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => onViewExpedient?.(expedient.id)}
-                          >
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                          {canEdit && expedient.status !== 'draft' && (
-                            <StatusChangeConfirmDialog
-                              onConfirm={() => handleStatusChange(expedient.id, expedient.status as 'en_tramite' | 'archivado')}
-                              title={`${getStatusChangeLabel(expedient.status as 'en_tramite' | 'archivado')} expediente`}
-                              message={getStatusChangeMessage(expedient.status as 'en_tramite' | 'archivado')}
-                            >
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                              >
-                                <RefreshCw className="w-4 h-4" />
-                              </Button>
-                            </StatusChangeConfirmDialog>
-                          )}
-                        </div>
-                      </td>
+                       <td className="p-4">
+                         <div className="flex flex-col items-end space-y-2">
+                           <div className="flex items-center space-x-2">
+                             <Button
+                               variant="ghost"
+                               size="sm"
+                               onClick={() => onViewExpedient?.(expedient.id)}
+                             >
+                               <Eye className="w-4 h-4" />
+                             </Button>
+                             {canEdit && expedient.status !== 'draft' && (
+                               <StatusChangeConfirmDialog
+                                 onConfirm={() => handleStatusChange(expedient.id, expedient.status as 'en_tramite' | 'archivado')}
+                                 title={`${getStatusChangeLabel(expedient.status as 'en_tramite' | 'archivado')} expediente`}
+                                 message={getStatusChangeMessage(expedient.status as 'en_tramite' | 'archivado')}
+                               >
+                                 <Button
+                                   variant="ghost"
+                                   size="sm"
+                                 >
+                                   <RefreshCw className="w-4 h-4" />
+                                 </Button>
+                               </StatusChangeConfirmDialog>
+                             )}
+                           </div>
+                           <div className="flex items-center space-x-4 text-xs text-muted-foreground">
+                             <span>Ver expediente</span>
+                             {canEdit && expedient.status !== 'draft' && (
+                               <span>{getStatusChangeLabel(expedient.status as 'en_tramite' | 'archivado')}</span>
+                             )}
+                           </div>
+                         </div>
+                       </td>
                     </tr>
                   ))}
                 </tbody>

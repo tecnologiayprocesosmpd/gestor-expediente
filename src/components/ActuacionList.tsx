@@ -172,16 +172,16 @@ export function ActuacionList({
                     </StatusChangeConfirmDialog>
                   )}
                   
-                  {canEdit && actuacion.status === 'borrador' && (
-                    <Button
-                      variant="default"
-                      size="sm"
-                      onClick={() => onEditActuacion?.(actuacion.id)}
-                    >
-                      <Edit3 className="w-4 h-4 mr-1" />
-                      Editar
-                    </Button>
-                  )}
+                   {canEdit && (actuacion.status === 'borrador' || actuacion.status === 'para-firmar') && (
+                     <Button
+                       variant="default"
+                       size="sm"
+                       onClick={() => onEditActuacion?.(actuacion.id)}
+                     >
+                       <Edit3 className="w-4 h-4 mr-1" />
+                       Editar
+                     </Button>
+                   )}
 
                   {canEdit && actuacion.status === 'para-firmar' && (
                     <StatusChangeConfirmDialog
