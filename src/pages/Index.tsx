@@ -215,7 +215,7 @@ function AppContent() {
     }
   };
 
-  const handleStatusChange = (id: string, newStatus: 'en_tramite' | 'archivado') => {
+  const handleStatusChange = (id: string, newStatus: 'en_tramite' | 'paralizado' | 'archivado') => {
     setExpedients(prev => prev.map(exp => 
       exp.id === id 
         ? { 
@@ -228,6 +228,7 @@ function AppContent() {
     
     const statusLabels = {
       en_tramite: 'En Trámite',
+      paralizado: 'Paralizado',
       archivado: 'Archivado'
     };
     

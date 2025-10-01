@@ -23,7 +23,7 @@ interface ExpedientListProps {
   expedients: ExpedientSummary[];
   onViewExpedient?: (id: string) => void;
   onCreateExpedient?: () => void;
-  onStatusChange?: (id: string, newStatus: 'en_tramite' | 'archivado') => void;
+  onStatusChange?: (id: string, newStatus: 'en_tramite' | 'paralizado' | 'archivado') => void;
   initialStatusFilter?: string;
 }
 
@@ -49,19 +49,31 @@ export function ExpedientList({
 
   const canEdit = true; // Ambos perfiles pueden editar
 
-  const handleStatusChange = (expedientId: string, currentStatus: 'en_tramite' | 'archivado') => {
-    const newStatus = currentStatus === 'en_tramite' ? 'archivado' : 'en_tramite';
+  const handleStatusChange = (expedientId: string, currentStatus: 'en_tramite' | 'paralizado' | 'archivado') => {
+    let newStatus: 'en_tramite' | 'paralizado' | 'archivado';
+    
+    // Ciclo de estados: en_tramite → paralizado → archivado → en_tramite
+    if (currentStatus === 'en_tramite') {
+      newStatus = 'paralizado';
+    } else if (currentStatus === 'paralizado') {
+      newStatus = 'archivado';
+    } else {
+      newStatus = 'en_tramite';
+    }
+    
     onStatusChange?.(expedientId, newStatus);
   };
 
-  const getStatusChangeLabel = (status: 'en_tramite' | 'archivado') => {
-    return status === 'en_tramite' ? 'Archivar' : 'Reactivar';
+  const getStatusChangeLabel = (status: 'en_tramite' | 'paralizado' | 'archivado') => {
+    if (status === 'en_tramite') return 'Paralizar';
+    if (status === 'paralizado') return 'Archivar';
+    return 'Reactivar';
   };
 
-  const getStatusChangeMessage = (status: 'en_tramite' | 'archivado') => {
-    return status === 'en_tramite' 
-      ? '¿Está seguro de que desea archivar este expediente?' 
-      : '¿Está seguro de que desea reactivar este expediente?';
+  const getStatusChangeMessage = (status: 'en_tramite' | 'paralizado' | 'archivado') => {
+    if (status === 'en_tramite') return '¿Está seguro de que desea paralizar este expediente?';
+    if (status === 'paralizado') return '¿Está seguro de que desea archivar este expediente?';
+    return '¿Está seguro de que desea reactivar este expediente?';
   };
 
   // Filter expedients based on search term and status (excluding draft)
@@ -311,26 +323,26 @@ export function ExpedientList({
                              >
                                <Eye className="w-4 h-4" />
                              </Button>
-                             {canEdit && expedient.status !== 'draft' && (
-                               <StatusChangeConfirmDialog
-                                 onConfirm={() => handleStatusChange(expedient.id, expedient.status as 'en_tramite' | 'archivado')}
-                                 title={`${getStatusChangeLabel(expedient.status as 'en_tramite' | 'archivado')} expediente`}
-                                 message={getStatusChangeMessage(expedient.status as 'en_tramite' | 'archivado')}
-                               >
-                                 <Button
-                                   variant="ghost"
-                                   size="sm"
-                                 >
-                                   <RefreshCw className="w-4 h-4" />
-                                 </Button>
-                               </StatusChangeConfirmDialog>
-                             )}
-                           </div>
-                           <div className="flex items-center space-x-4 text-xs text-muted-foreground">
-                             <span>Ver expediente</span>
-                             {canEdit && expedient.status !== 'draft' && (
-                               <span>{getStatusChangeLabel(expedient.status as 'en_tramite' | 'archivado')}</span>
-                             )}
+                              {canEdit && expedient.status !== 'draft' && (
+                                <StatusChangeConfirmDialog
+                                  onConfirm={() => handleStatusChange(expedient.id, expedient.status as 'en_tramite' | 'paralizado' | 'archivado')}
+                                  title={`${getStatusChangeLabel(expedient.status as 'en_tramite' | 'paralizado' | 'archivado')} expediente`}
+                                  message={getStatusChangeMessage(expedient.status as 'en_tramite' | 'paralizado' | 'archivado')}
+                                >
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                  >
+                                    <RefreshCw className="w-4 h-4" />
+                                  </Button>
+                                </StatusChangeConfirmDialog>
+                              )}
+                            </div>
+                            <div className="flex items-center space-x-4 text-xs text-muted-foreground">
+                              <span>Ver expediente</span>
+                              {canEdit && expedient.status !== 'draft' && (
+                                <span>{getStatusChangeLabel(expedient.status as 'en_tramite' | 'paralizado' | 'archivado')}</span>
+                              )}
                            </div>
                          </div>
                        </td>

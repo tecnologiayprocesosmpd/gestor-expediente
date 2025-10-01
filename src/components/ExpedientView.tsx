@@ -183,6 +183,11 @@ export function ExpedientView({
         border: 'border-[hsl(var(--status-en-tramite))]',
         text: 'text-[hsl(var(--status-en-tramite-foreground))]'
       },
+      paralizado: {
+        bg: 'bg-amber-500',
+        border: 'border-amber-500',
+        text: 'text-white'
+      },
       archivado: {
         bg: 'bg-[hsl(var(--status-archivado))]',
         border: 'border-[hsl(var(--status-archivado))]',
@@ -197,6 +202,7 @@ export function ExpedientView({
     const labels = {
       draft: 'Borrador',
       en_tramite: 'En Trámite',
+      paralizado: 'Paralizado',
       archivado: 'Archivado'
     };
     
