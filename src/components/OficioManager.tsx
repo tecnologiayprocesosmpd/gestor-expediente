@@ -17,7 +17,8 @@ import {
   Square,
   ArrowLeft,
   FileCheck,
-  X
+  X,
+  Eye
 } from "lucide-react";
 import { ExpedientSummary } from "@/types/expedient";
 import { Actuacion } from "@/types/actuacion";
@@ -305,7 +306,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
               {activeOficios.map((oficio) => (
                 <div key={oficio.id} className="border rounded-lg p-4 hover:bg-muted/50">
                   <div className="flex justify-between items-start">
-                    <div className="space-y-2 cursor-pointer" onClick={() => handleSelectOficio(oficio)}>
+                    <div className="space-y-2">
                       <h3 className="font-semibold">{oficio.expedientNumber}</h3>
                       <p className="text-sm text-muted-foreground">{oficio.expedientTitle}</p>
                       <div className="flex gap-2 flex-wrap">
@@ -324,24 +325,14 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
                         Creado: {format(oficio.createdAt, "dd/MM/yyyy HH:mm", { locale: es })}
                       </p>
                     </div>
-                    <div className="flex gap-2">
-                      <Button 
-                        onClick={() => handleExportToPdf(oficio)}
-                        size="sm"
-                        variant="outline"
-                      >
-                        <Download className="w-4 h-4 mr-2" />
-                        Exportar PDF
-                      </Button>
-                      <Button 
-                        onClick={() => handlePrintOficio(oficio)}
-                        size="sm"
-                        variant="outline"
-                      >
-                        <Download className="w-4 h-4 mr-2" />
-                        Imprimir
-                      </Button>
-                    </div>
+                    <Button 
+                      onClick={() => handleSelectOficio(oficio)}
+                      size="sm"
+                      variant="default"
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      VER
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -413,7 +404,11 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
           </DialogHeader>
           <ScrollArea className="max-h-96">
             <div className="space-y-2">
-              {expedients.map((expedient) => (
+              {expedients.filter(exp => 
+                exp.status === 'en_tramite' || 
+                exp.status === 'paralizado' || 
+                exp.status === 'archivado'
+              ).map((expedient) => (
                 <div
                   key={expedient.id}
                   className="border rounded-lg p-3 cursor-pointer hover:bg-muted/50"
