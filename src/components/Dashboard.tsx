@@ -140,19 +140,22 @@ export function Dashboard({
     total: filteredExpedients.length,
     draft: filteredExpedients.filter(e => e.status === 'draft').length,
     en_tramite: filteredExpedients.filter(e => e.status === 'en_tramite').length,
+    paralizado: filteredExpedients.filter(e => e.status === 'paralizado').length,
     archivados: filteredExpedients.filter(e => e.status === 'archivado').length,
   };
 
-  const getStatusBadge = (status: 'draft' | 'en_tramite' | 'archivado') => {
+  const getStatusBadge = (status: 'draft' | 'en_tramite' | 'paralizado' | 'archivado') => {
     const colors = {
       draft: 'bg-[hsl(var(--status-draft))] text-[hsl(var(--status-draft-foreground))] border-[hsl(var(--status-draft))]',
       en_tramite: 'bg-[hsl(var(--status-en-tramite))] text-[hsl(var(--status-en-tramite-foreground))] border-[hsl(var(--status-en-tramite))]',
+      paralizado: 'bg-amber-500 text-white border-amber-500',
       archivado: 'bg-[hsl(var(--status-archivado))] text-[hsl(var(--status-archivado-foreground))] border-[hsl(var(--status-archivado))]'
     };
     
     const labels = {
       draft: 'Borrador',
       en_tramite: 'En Trámite',
+      paralizado: 'Paralizado',
       archivado: 'Archivado'
     };
 
@@ -163,10 +166,11 @@ export function Dashboard({
     );
   };
 
-  const getStatusBorderClass = (status: 'draft' | 'en_tramite' | 'archivado') => {
+  const getStatusBorderClass = (status: 'draft' | 'en_tramite' | 'paralizado' | 'archivado') => {
     const borderColors = {
       draft: 'border-[hsl(var(--status-draft))]',
       en_tramite: 'border-[hsl(var(--status-en-tramite))]',
+      paralizado: 'border-amber-500',
       archivado: 'border-[hsl(var(--status-archivado))]'
     };
     

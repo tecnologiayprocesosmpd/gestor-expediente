@@ -1,6 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useUser } from "@/contexts/UserContext";
-import { useAutoSave } from "@/hooks/useAutoSave";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,7 +33,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
     }
     return propExpedient.number;
   });
-  const [status, setStatus] = useState<'draft' | 'en_tramite' | 'archivado'>(propExpedient?.status || 'draft');
+  const [status, setStatus] = useState<'draft' | 'en_tramite' | 'paralizado' | 'archivado'>(propExpedient?.status || 'draft');
   const [assignedOffice, setAssignedOffice] = useState(propExpedient?.oficina || propExpedient?.assignedOffice || '');
   const [referencia, setReferencia] = useState(propExpedient?.referencia || '');
   const [tipoProceso, setTipoProceso] = useState<'administrativo' | 'compra'>(propExpedient?.tipoProceso || 'administrativo');
@@ -44,30 +43,6 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
   const canEditBasicInfo = true; // Ambos perfiles pueden editar info básica
   const canOnlyAddActuaciones = false; // Ambos perfiles pueden editar expedientes completos
 
-  // Auto-save data structure  
-  const autoSaveData = useMemo(() => ({
-    id: expedientId,
-    title,
-    number: expedientNumber,
-    status: status === 'draft' ? 'en_tramite' : status, // Auto-cambio de draft a en_tramite al guardar
-    assignedOffice,
-    referencia,
-    tipoProceso,
-    updatedAt: new Date(),
-    createdBy: user?.name || 'Usuario'
-  }), [expedientId, title, expedientNumber, status, assignedOffice, referencia, tipoProceso, user?.name]);
-
-  // Auto-save functionality
-  const { forceSave, isSaving } = useAutoSave({
-    data: autoSaveData,
-    onSave: (data) => {
-      if (onSave) {
-        onSave(data);
-      }
-    },
-    delay: 3000, // Auto-save after 3 seconds of inactivity
-    enabled: title.trim().length > 0 // Only auto-save if there's meaningful content
-  });
 
   // Update state when expedient prop changes
   useEffect(() => {
@@ -80,10 +55,6 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
       setTipoProceso(propExpedient.tipoProceso || 'administrativo');
     }
   }, [propExpedient]);
-
-  const handleSave = () => {
-    forceSave();
-  };
 
   const handleDerivation = () => {
     if (!assignedOffice) {
@@ -131,6 +102,11 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
         border: 'border-[hsl(var(--status-en-tramite))]',
         text: 'text-[hsl(var(--status-en-tramite-foreground))]'
       },
+      paralizado: {
+        bg: 'bg-amber-500',
+        border: 'border-amber-500',
+        text: 'text-white'
+      },
       archivado: {
         bg: 'bg-[hsl(var(--status-archivado))]',
         border: 'border-[hsl(var(--status-archivado))]',
@@ -145,6 +121,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
     const labels = {
       draft: 'Borrador',
       en_tramite: 'En Trámite',
+      paralizado: 'Paralizado',
       archivado: 'Archivado'
     };
     
@@ -194,14 +171,6 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
           </div>
         </div>
         
-        <div className="flex items-center space-x-2">
-          {isSaving && (
-            <div className="flex items-center text-sm text-muted-foreground">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
-              Guardando...
-            </div>
-          )}
-        </div>
       </div>
 
       {/* Document Info */}
@@ -326,9 +295,9 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
             <Button 
               onClick={handleDerivation}
               disabled={!assignedOffice || !title.trim() || !referencia.trim()}
-              className="bg-amber-600 hover:bg-amber-700 text-white px-6 py-2"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2"
             >
-              DERIVAR A{assignedOffice ? ` ${assignedOffice.toUpperCase().replace('-', ' ')}` : ' [SELECCIONAR OFICINA]'}
+              Enviar a{assignedOffice ? ` ${assignedOffice.toUpperCase().replace('-', ' ')}` : ' [SELECCIONAR OFICINA]'}
             </Button>
           )}
           
@@ -337,16 +306,9 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
               <Badge variant="outline" className={`${statusColors.bg} ${statusColors.text}`}>
                 {getStatusLabel(status)}
               </Badge>
-              <span className="text-sm">Este expediente no se puede derivar</span>
+              <span className="text-sm">Este expediente ya fue enviado</span>
             </div>
           )}
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" onClick={handleSave}>
-            <Save className="w-4 h-4 mr-2" />
-            Guardar
-          </Button>
         </div>
       </div>
 
