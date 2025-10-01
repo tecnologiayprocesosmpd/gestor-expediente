@@ -35,7 +35,14 @@ interface ExpedientViewProps {
   onBack?: () => void;
   onSaveActuacion?: (data: any) => Promise<any>;
   onUpdateActuaciones?: (actuaciones: any[]) => void;
-  autoCreateActuacion?: boolean; // New prop to automatically show actuación creation
+  autoCreateActuacion?: boolean;
+  onRegisterActions?: (actions: {
+    onDiligencia?: () => void;
+    onRegresarDiligencia?: () => void;
+    onExportPDF?: () => void;
+    onNuevaActuacion?: () => void;
+    showRegresarDiligencia?: boolean;
+  }) => void;
 }
 
 export function ExpedientView({ 
@@ -45,7 +52,8 @@ export function ExpedientView({
   onBack, 
   onSaveActuacion,
   onUpdateActuaciones,
-  autoCreateActuacion = false
+  autoCreateActuacion = false,
+  onRegisterActions
 }: ExpedientViewProps) {
   const [showEditor, setShowEditor] = useState(false);
   const [showActuacionEditor, setShowActuacionEditor] = useState(autoCreateActuacion);
@@ -109,6 +117,19 @@ export function ExpedientView({
       (d: any) => d.oficinaDestino === oficinaActual
     );
   };
+
+  // Register actions with parent component
+  useEffect(() => {
+    if (onRegisterActions) {
+      onRegisterActions({
+        onDiligencia: () => setShowDiligenciaDialog(true),
+        onRegresarDiligencia: () => setShowRegresarDiligenciaDialog(true),
+        onExportPDF: handleExportPDF,
+        onNuevaActuacion: () => setShowActuacionEditor(true),
+        showRegresarDiligencia: hayDiligenciaPendiente()
+      });
+    }
+  }, [onRegisterActions, diligenciasPendientes]);
 
   
   const getStatusColors = (status: string) => {
@@ -677,38 +698,6 @@ export function ExpedientView({
               )}
               </div>
             </div>
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            <Button 
-              variant="default" 
-              className="px-4 py-2 h-auto bg-blue-600 hover:bg-blue-700 text-white" 
-              onClick={() => setShowDiligenciaDialog(true)}
-            >
-              <Send className="w-4 h-4 mr-2" />
-              DILIGENCIA
-            </Button>
-            
-            {/* Solo mostrar botón de regresar si hay diligencia pendiente para esta oficina */}
-            {hayDiligenciaPendiente() && (
-              <Button 
-                variant="default" 
-                className="px-4 py-2 h-auto bg-green-600 hover:bg-green-700 text-white" 
-                onClick={() => setShowRegresarDiligenciaDialog(true)}
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Regresar DILIGENCIA
-              </Button>
-            )}
-            
-            <Button 
-              variant="outline" 
-              className="px-4 py-2 h-auto" 
-              onClick={handleExportPDF}
-            >
-              <Download className="w-4 h-4 mr-2" />
-              Exportar PDF
-            </Button>
           </div>
         </div>
       </div>

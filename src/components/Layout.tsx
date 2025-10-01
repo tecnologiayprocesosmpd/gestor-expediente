@@ -17,9 +17,28 @@ interface LayoutProps {
   currentView?: 'dashboard' | 'expedientes' | 'view' | 'editor' | 'agenda' | 'oficios';
   onNavigate?: (view: 'dashboard' | 'expedientes' | 'agenda' | 'oficios') => void;
   onCreateExpedient?: () => void;
+  isExpedientView?: boolean;
+  onDiligencia?: () => void;
+  onRegresarDiligencia?: () => void;
+  onExportPDF?: () => void;
+  onTramites?: () => void;
+  onNuevaActuacion?: () => void;
+  showRegresarDiligencia?: boolean;
 }
 
-export function Layout({ children, currentView = 'dashboard', onNavigate, onCreateExpedient }: LayoutProps) {
+export function Layout({ 
+  children, 
+  currentView = 'dashboard', 
+  onNavigate, 
+  onCreateExpedient,
+  isExpedientView = false,
+  onDiligencia,
+  onRegresarDiligencia,
+  onExportPDF,
+  onTramites,
+  onNuevaActuacion,
+  showRegresarDiligencia = false
+}: LayoutProps) {
   const { user } = useUser();
   const { logout: securityLogout } = useSecurity();
 
@@ -78,6 +97,13 @@ export function Layout({ children, currentView = 'dashboard', onNavigate, onCrea
           currentView={currentView}
           onNavigate={onNavigate}
           onCreateExpedient={onCreateExpedient}
+          isExpedientView={isExpedientView}
+          onDiligencia={onDiligencia}
+          onRegresarDiligencia={onRegresarDiligencia}
+          onExportPDF={onExportPDF}
+          onTramites={onTramites}
+          onNuevaActuacion={onNuevaActuacion}
+          showRegresarDiligencia={showRegresarDiligencia}
         />
         
         <div className="flex-1 flex flex-col min-w-0">

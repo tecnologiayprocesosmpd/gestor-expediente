@@ -129,6 +129,15 @@ function AppContent() {
   // State for managing actuaciones per expedient
   const [expedientActuaciones, setExpedientActuaciones] = useState<Record<string, any[]>>({});
   
+  // State for expedient view actions
+  const [expedientViewActions, setExpedientViewActions] = useState<{
+    onDiligencia?: () => void;
+    onRegresarDiligencia?: () => void;
+    onExportPDF?: () => void;
+    onNuevaActuacion?: () => void;
+    showRegresarDiligencia?: boolean;
+  }>({});
+  
   // Get current expedient data
   const getCurrentExpedient = () => {
     if (!currentExpedientId) return null;
@@ -312,6 +321,13 @@ function AppContent() {
     setCurrentView('oficios');
   };
 
+  const handleTramites = () => {
+    toast({
+      title: "Trámites",
+      description: "Función de trámites en desarrollo",
+    });
+  };
+
   const renderCurrentView = () => {
     switch (currentView) {
       case 'dashboard':
@@ -354,6 +370,7 @@ function AppContent() {
               }
             }}
             autoCreateActuacion={autoCreateActuacion}
+            onRegisterActions={setExpedientViewActions}
           />
         );
       case 'editor':
@@ -391,6 +408,13 @@ function AppContent() {
       currentView={currentView}
       onNavigate={setCurrentView}
       onCreateExpedient={handleCreateExpedient}
+      isExpedientView={currentView === 'view'}
+      onDiligencia={expedientViewActions.onDiligencia}
+      onRegresarDiligencia={expedientViewActions.onRegresarDiligencia}
+      onExportPDF={expedientViewActions.onExportPDF}
+      onTramites={handleTramites}
+      onNuevaActuacion={expedientViewActions.onNuevaActuacion}
+      showRegresarDiligencia={expedientViewActions.showRegresarDiligencia}
     >
       {renderCurrentView()}
     </Layout>

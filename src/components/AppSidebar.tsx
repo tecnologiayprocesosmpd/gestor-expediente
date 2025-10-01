@@ -4,7 +4,10 @@ import {
   Calendar,
   Plus,
   Building2,
-  Shield
+  Shield,
+  Send,
+  ArrowLeft,
+  Download
 } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import {
@@ -26,9 +29,27 @@ interface AppSidebarProps {
   currentView: string;
   onNavigate?: (view: 'dashboard' | 'expedientes' | 'agenda') => void;
   onCreateExpedient?: () => void;
+  isExpedientView?: boolean;
+  onDiligencia?: () => void;
+  onRegresarDiligencia?: () => void;
+  onExportPDF?: () => void;
+  onTramites?: () => void;
+  onNuevaActuacion?: () => void;
+  showRegresarDiligencia?: boolean;
 }
 
-export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSidebarProps) {
+export function AppSidebar({ 
+  currentView, 
+  onNavigate, 
+  onCreateExpedient,
+  isExpedientView = false,
+  onDiligencia,
+  onRegresarDiligencia,
+  onExportPDF,
+  onTramites,
+  onNuevaActuacion,
+  showRegresarDiligencia = false
+}: AppSidebarProps) {
   const { user } = useUser();
 
   if (!user) return null;
@@ -69,6 +90,79 @@ export function AppSidebar({ currentView, onNavigate, onCreateExpedient }: AppSi
   ];
 
 
+
+  // Si estamos en vista de expediente, mostrar botones de acciones
+  if (isExpedientView) {
+    return (
+      <div 
+        className="h-full min-h-screen bg-background border-r flex-shrink-0"
+        style={{ width: '100px' }}
+      >
+        <div className="flex flex-col h-full min-h-screen">
+          <div className="flex-1 pt-6 flex flex-col h-full min-h-full">
+            <div className="px-2 mb-4">
+              <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider text-center">
+                Acciones
+              </h3>
+            </div>
+            <nav className="space-y-3 px-2">
+              <button
+                onClick={onDiligencia}
+                className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-blue-600 hover:text-white bg-muted/50 text-foreground"
+              >
+                <Send className="w-6 h-6 mb-2" />
+                <span className="text-xs text-center">
+                  Diligencia
+                </span>
+              </button>
+
+              {showRegresarDiligencia && (
+                <button
+                  onClick={onRegresarDiligencia}
+                  className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-green-600 hover:text-white bg-muted/50 text-foreground"
+                >
+                  <ArrowLeft className="w-6 h-6 mb-2" />
+                  <span className="text-xs text-center">
+                    Regresar Diligencia
+                  </span>
+                </button>
+              )}
+
+              <button
+                onClick={onExportPDF}
+                className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-muted text-foreground"
+              >
+                <Download className="w-6 h-6 mb-2" />
+                <span className="text-xs text-center">
+                  Exportar
+                </span>
+              </button>
+
+              <button
+                onClick={onTramites}
+                className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-muted text-foreground"
+              >
+                <FileText className="w-6 h-6 mb-2" />
+                <span className="text-xs text-center">
+                  Trámites
+                </span>
+              </button>
+
+              <button
+                onClick={onNuevaActuacion}
+                className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-primary hover:text-primary-foreground bg-muted/50 text-foreground"
+              >
+                <Plus className="w-6 h-6 mb-2" />
+                <span className="text-xs text-center">
+                  Nueva Actuación
+                </span>
+              </button>
+            </nav>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div 
