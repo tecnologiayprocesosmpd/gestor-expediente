@@ -25,8 +25,11 @@ import { ActuacionEditor } from "./ActuacionEditor";
 import { ExpedientEditor } from "./ExpedientEditor";
 import { DiligenciaDialog } from "./DiligenciaDialog";
 import { RegresarDiligenciaDialog } from "./RegresarDiligenciaDialog";
+import { TramiteEditor } from "./TramiteEditor";
 import type { Actuacion } from "@/types/actuacion";
 import { actuacionStorage } from "@/utils/actuacionStorage";
+import { tramiteStorage } from "@/utils/tramiteStorage";
+import type { Tramite } from "@/types/tramite";
 
 interface ExpedientViewProps {
   expedientId?: string;
@@ -41,6 +44,7 @@ interface ExpedientViewProps {
     onRegresarDiligencia?: () => void;
     onExportPDF?: () => void;
     onNuevaActuacion?: () => void;
+    onTramites?: () => void;
     showRegresarDiligencia?: boolean;
   }) => void;
 }
@@ -63,6 +67,8 @@ export function ExpedientView({
   const [showDiligenciaDialog, setShowDiligenciaDialog] = useState(false);
   const [showRegresarDiligenciaDialog, setShowRegresarDiligenciaDialog] = useState(false);
   const [diligenciasPendientes, setDiligenciasPendientes] = useState<any[]>([]);
+  const [showTramiteEditor, setShowTramiteEditor] = useState(false);
+  const [tramites, setTramites] = useState<Tramite[]>([]);
   
   const { user } = useUser();
   
@@ -82,6 +88,14 @@ export function ExpedientView({
   useEffect(() => {
     setActuaciones(propActuaciones);
   }, [propActuaciones]);
+
+  // Cargar trámites desde localStorage
+  useEffect(() => {
+    if (expedientId) {
+      const loadedTramites = tramiteStorage.getByExpedientId(expedientId);
+      setTramites(loadedTramites);
+    }
+  }, [expedientId]);
 
   // Cargar diligencias pendientes desde localStorage
   useEffect(() => {
@@ -126,6 +140,7 @@ export function ExpedientView({
         onRegresarDiligencia: () => setShowRegresarDiligenciaDialog(true),
         onExportPDF: handleExportPDF,
         onNuevaActuacion: () => setShowActuacionEditor(true),
+        onTramites: () => setShowTramiteEditor(true),
         showRegresarDiligencia: hayDiligenciaPendiente()
       });
     }
@@ -512,6 +527,22 @@ export function ExpedientView({
   const latestActuacion = actuaciones.sort((a, b) => 
     new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   )[0];
+
+  if (showTramiteEditor) {
+    return (
+      <TramiteEditor 
+        expedientId={expedientId || ''}
+        onBack={() => {
+          setShowTramiteEditor(false);
+          // Recargar trámites después de crear uno nuevo
+          if (expedientId) {
+            const loadedTramites = tramiteStorage.getByExpedientId(expedientId);
+            setTramites(loadedTramites);
+          }
+        }}
+      />
+    );
+  }
 
   if (showActuacionEditor) {
     return (

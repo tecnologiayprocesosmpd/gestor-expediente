@@ -135,6 +135,7 @@ function AppContent() {
     onRegresarDiligencia?: () => void;
     onExportPDF?: () => void;
     onNuevaActuacion?: () => void;
+    onTramites?: () => void;
     showRegresarDiligencia?: boolean;
   }>({});
   
@@ -412,7 +413,7 @@ function AppContent() {
       onDiligencia={expedientViewActions.onDiligencia}
       onRegresarDiligencia={expedientViewActions.onRegresarDiligencia}
       onExportPDF={expedientViewActions.onExportPDF}
-      onTramites={handleTramites}
+      onTramites={expedientViewActions.onTramites}
       onNuevaActuacion={expedientViewActions.onNuevaActuacion}
       showRegresarDiligencia={expedientViewActions.showRegresarDiligencia}
     >
