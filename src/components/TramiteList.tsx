@@ -1,0 +1,160 @@
+import { useState } from 'react';
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { 
+  Search, 
+  FileText,
+  Plus,
+  Calendar,
+  User,
+  ArrowLeft
+} from "lucide-react";
+import { Tramite } from "@/types/tramite";
+
+interface TramiteListProps {
+  tramites: Tramite[];
+  onCreateTramite: () => void;
+  onBack: () => void;
+}
+
+export function TramiteList({ tramites, onCreateTramite, onBack }: TramiteListProps) {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Filter tramites based on search term
+  const filteredTramites = tramites.filter(tramite => {
+    const matchesSearch = searchTerm === '' || 
+      tramite.numero.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      tramite.referencia.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      tramite.createdBy.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return matchesSearch;
+  });
+
+  // Sort by creation date (newest first)
+  const sortedTramites = [...filteredTramites].sort((a, b) => 
+    b.fechaCreacion.getTime() - a.fechaCreacion.getTime()
+  );
+
+  return (
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Button variant="outline" onClick={onBack}>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Volver
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Trámites</h1>
+            <p className="text-muted-foreground">
+              Gestión de trámites del expediente
+            </p>
+          </div>
+        </div>
+        <Button onClick={onCreateTramite}>
+          <Plus className="w-4 h-4 mr-2" />
+          Nuevo Trámite
+        </Button>
+      </div>
+
+      {/* Search Bar */}
+      <div className="bg-background border rounded-lg shadow-sm overflow-hidden">
+        <div className="px-4 py-3">
+          <div className="relative w-full">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar por número, referencia o creador..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 h-9"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Tramites Table */}
+      {sortedTramites.length === 0 ? (
+        <Card>
+          <CardContent className="text-center py-12">
+            <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground/30" />
+            <h3 className="text-lg font-medium mb-2">No hay trámites</h3>
+            <p className="text-muted-foreground mb-6">
+              {searchTerm 
+                ? 'No se encontraron trámites que coincidan con la búsqueda.'
+                : 'No hay trámites disponibles para este expediente.'
+              }
+            </p>
+            {!searchTerm && (
+              <Button onClick={onCreateTramite}>
+                <Plus className="w-4 h-4 mr-2" />
+                Crear Primer Trámite
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full table-fixed">
+                <colgroup>
+                  <col className="w-32" />
+                  <col className="w-auto" />
+                  <col className="w-40" />
+                  <col className="w-32" />
+                </colgroup>
+                <thead className="border-b">
+                  <tr className="bg-muted/30">
+                    <th className="text-left p-4 font-medium w-32">Número</th>
+                    <th className="text-left p-4 font-medium">Referencia</th>
+                    <th className="text-left p-4 font-medium w-40">Creado por</th>
+                    <th className="text-left p-4 font-medium w-32">Fecha</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedTramites.map((tramite) => (
+                    <tr 
+                      key={tramite.id} 
+                      className="border-b hover:bg-muted/20 transition-colors"
+                    >
+                      <td className="p-4">
+                        <span className="text-sm font-mono text-primary">
+                          {tramite.numero}
+                        </span>
+                      </td>
+                      <td className="p-4">
+                        <div className="text-foreground line-clamp-2">
+                          {tramite.referencia}
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <div className="flex items-center text-sm">
+                          <User className="w-4 h-4 mr-2 text-muted-foreground" />
+                          <span>{tramite.createdBy}</span>
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <div className="flex items-center text-sm">
+                          <Calendar className="w-4 h-4 mr-2 text-muted-foreground" />
+                          <span>{tramite.fechaCreacion.toLocaleDateString('es-ES')}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Results Count */}
+      {sortedTramites.length > 0 && (
+        <div className="text-sm text-muted-foreground text-right">
+          {sortedTramites.length} {sortedTramites.length === 1 ? 'trámite' : 'trámites'}
+        </div>
+      )}
+    </div>
+  );
+}

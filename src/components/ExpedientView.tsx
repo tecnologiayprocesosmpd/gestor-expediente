@@ -26,6 +26,7 @@ import { ExpedientEditor } from "./ExpedientEditor";
 import { DiligenciaDialog } from "./DiligenciaDialog";
 import { RegresarDiligenciaDialog } from "./RegresarDiligenciaDialog";
 import { TramiteEditor } from "./TramiteEditor";
+import { TramiteList } from "./TramiteList";
 import type { Actuacion } from "@/types/actuacion";
 import { actuacionStorage } from "@/utils/actuacionStorage";
 import { tramiteStorage } from "@/utils/tramiteStorage";
@@ -67,6 +68,7 @@ export function ExpedientView({
   const [showDiligenciaDialog, setShowDiligenciaDialog] = useState(false);
   const [showRegresarDiligenciaDialog, setShowRegresarDiligenciaDialog] = useState(false);
   const [diligenciasPendientes, setDiligenciasPendientes] = useState<any[]>([]);
+  const [showTramiteList, setShowTramiteList] = useState(false);
   const [showTramiteEditor, setShowTramiteEditor] = useState(false);
   const [tramites, setTramites] = useState<Tramite[]>([]);
   
@@ -132,6 +134,28 @@ export function ExpedientView({
     );
   };
 
+  // Handlers for tramite navigation
+  const handleCreateTramite = () => {
+    setShowTramiteList(false);
+    setShowTramiteEditor(true);
+  };
+
+  const handleBackFromTramiteEditor = () => {
+    // Reload tramites after creating one
+    if (expedientId) {
+      const loadedTramites = tramiteStorage.getByExpedientId(expedientId);
+      setTramites(loadedTramites);
+    }
+    setShowTramiteEditor(false);
+    setShowTramiteList(true);
+  };
+
+  const handleBackFromTramiteList = () => {
+    setShowTramiteList(false);
+  };
+
+  const handleNuevaActuacion = () => setShowActuacionEditor(true);
+
   // Register actions with parent component
   useEffect(() => {
     if (onRegisterActions) {
@@ -139,8 +163,8 @@ export function ExpedientView({
         onDiligencia: () => setShowDiligenciaDialog(true),
         onRegresarDiligencia: () => setShowRegresarDiligenciaDialog(true),
         onExportPDF: handleExportPDF,
-        onNuevaActuacion: () => setShowActuacionEditor(true),
-        onTramites: () => setShowTramiteEditor(true),
+        onNuevaActuacion: handleNuevaActuacion,
+        onTramites: () => setShowTramiteList(true),
         showRegresarDiligencia: hayDiligenciaPendiente()
       });
     }
@@ -528,18 +552,23 @@ export function ExpedientView({
     new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   )[0];
 
+  // Show TramiteList if requested
+  if (showTramiteList) {
+    return (
+      <TramiteList 
+        tramites={tramites}
+        onCreateTramite={handleCreateTramite}
+        onBack={handleBackFromTramiteList}
+      />
+    );
+  }
+
+  // Show TramiteEditor if requested
   if (showTramiteEditor) {
     return (
       <TramiteEditor 
         expedientId={expedientId || ''}
-        onBack={() => {
-          setShowTramiteEditor(false);
-          // Recargar trámites después de crear uno nuevo
-          if (expedientId) {
-            const loadedTramites = tramiteStorage.getByExpedientId(expedientId);
-            setTramites(loadedTramites);
-          }
-        }}
+        onBack={handleBackFromTramiteEditor}
       />
     );
   }
