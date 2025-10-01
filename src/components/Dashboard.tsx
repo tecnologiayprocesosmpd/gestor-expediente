@@ -180,7 +180,7 @@ export function Dashboard({
   return (
     <div className="space-y-6">
       {/* Funciones Principales */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
         <ExpedientesParaRecibir 
           expedients={filteredExpedients}
           onRecibirExpediente={onRecibirExpediente}
@@ -200,19 +200,6 @@ export function Dashboard({
           </CardContent>
         </Card>
 
-        <Card 
-          className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-[hsl(var(--card-inicio-border))] bg-gradient-to-br from-[hsl(var(--card-inicio-light))] to-[hsl(var(--card-inicio-light))]"
-          onClick={() => setShowExpedientSelector(true)}
-        >
-          <CardContent className="p-6 text-center">
-            <div className="w-12 h-12 bg-[hsl(var(--card-inicio))] rounded-lg flex items-center justify-center mx-auto mb-3">
-              <Edit className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="font-semibold text-sm text-[hsl(var(--card-inicio))] mb-1">ACTUACIONES</h3>
-            <p className="text-xs text-[hsl(var(--card-inicio))] opacity-80">Para crear</p>
-            <Badge className="mt-2 bg-[hsl(var(--card-inicio))] text-white text-xs">Disponible</Badge>
-          </CardContent>
-        </Card>
 
         <Card 
           className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-[hsl(var(--card-inicio-border))] bg-gradient-to-br from-[hsl(var(--card-inicio-light))] to-[hsl(var(--card-inicio-light))] relative"
@@ -372,7 +359,7 @@ export function Dashboard({
 
       {/* Modal para seleccionar expediente */}
       <Dialog open={showExpedientSelector} onOpenChange={setShowExpedientSelector}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Seleccionar Expediente para Crear Actuación</DialogTitle>
           </DialogHeader>
