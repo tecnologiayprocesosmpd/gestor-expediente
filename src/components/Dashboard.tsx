@@ -12,7 +12,9 @@ import {
   Edit,
   Calendar,
   PenTool,
-  Bell
+  Bell,
+  CheckCircle,
+  User
 } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
 import { ExpedientSummary } from "@/types/expedient";
@@ -55,6 +57,7 @@ export function Dashboard({
   const [showExpedientSelector, setShowExpedientSelector] = useState(false);
   const [showActuacionesParaFirma, setShowActuacionesParaFirma] = useState(false);
   const [actuacionesParaFirmaList, setActuacionesParaFirmaList] = useState<any[]>([]);
+  const [expedientesExpanded, setExpedientesExpanded] = useState(false);
 
   if (!user) return null;
 
@@ -136,6 +139,9 @@ export function Dashboard({
     
   const recentExpedients = filteredExpedients.slice(0, 5);
   
+  // Expedientes para recibir
+  const expedientesParaRecibir = filteredExpedients.filter(exp => exp.status === 'en_tramite');
+  
   const stats = {
     total: filteredExpedients.length,
     draft: filteredExpedients.filter(e => e.status === 'draft').length,
@@ -184,6 +190,7 @@ export function Dashboard({
         <ExpedientesParaRecibir 
           expedients={filteredExpedients}
           onRecibirExpediente={onRecibirExpediente}
+          onExpandChange={setExpedientesExpanded}
         />
 
         <Card 
@@ -224,6 +231,68 @@ export function Dashboard({
           </CardContent>
         </Card>
       </div>
+
+      {/* Expansión de Expedientes para Recibir */}
+      {expedientesExpanded && (
+        <Card className="border-2 border-[hsl(var(--card-inicio-border))] bg-gradient-to-br from-[hsl(var(--card-inicio-light))] to-white">
+          <CardHeader>
+            <CardTitle className="text-[hsl(var(--card-inicio))]">Expedientes para Recibir</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {expedientesParaRecibir.length === 0 ? (
+              <div className="text-center py-8">
+                <CheckCircle className="w-12 h-12 mx-auto mb-3 text-green-600" />
+                <p className="text-muted-foreground">No hay expedientes pendientes de recibir</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {expedientesParaRecibir.map((expedient) => (
+                  <div 
+                    key={expedient.id}
+                    className="bg-white rounded-lg border-2 border-[hsl(var(--card-inicio-border))] p-4 hover:shadow-lg transition-shadow"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-mono text-[hsl(var(--card-inicio))] bg-[hsl(var(--card-inicio-light))] px-3 py-1 rounded font-semibold">
+                          {expedient.number}
+                        </span>
+                        <Badge className="bg-green-100 text-green-700">
+                          En Trámite
+                        </Badge>
+                      </div>
+                      
+                      <h4 className="font-semibold text-base text-gray-900 line-clamp-2">
+                        {expedient.title}
+                      </h4>
+                      
+                      <div className="space-y-2 text-sm text-gray-600">
+                        <div className="flex items-center gap-2">
+                          <User className="w-4 h-4 text-[hsl(var(--card-inicio))]" />
+                          <span>Creado por: {expedient.createdBy}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-[hsl(var(--card-inicio))]" />
+                          <span>
+                            {format(new Date(expedient.createdAt), "dd/MM/yyyy", { locale: es })}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <Button
+                        size="sm"
+                        onClick={() => onRecibirExpediente?.(expedient.id)}
+                        className="w-full bg-green-600 hover:bg-green-700 text-white"
+                      >
+                        RECIBIR EXPEDIENTE
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* NOVEDADES */}
       <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
