@@ -235,6 +235,7 @@ function AppContent() {
     toast({
       title: "Estado actualizado",
       description: `El expediente ahora está ${statusLabels[newStatus]}`,
+      duration: 2000,
     });
   };
 
