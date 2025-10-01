@@ -37,7 +37,7 @@ interface OficioItem {
   expedientId: string;
   expedientNumber: string;
   expedientTitle: string;
-  selectedActuaciones: string[];
+  destinatario: string;
   createdAt: Date;
   pdfAttached?: boolean;
   pdfFileName?: string;
@@ -51,9 +51,8 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
   const [oficios, setOficios] = useState<OficioItem[]>([]);
   const [showExpedientSelector, setShowExpedientSelector] = useState(false);
   const [selectedExpedientId, setSelectedExpedientId] = useState<string>('');
-  const [expedientActuaciones, setExpedientActuaciones] = useState<Actuacion[]>([]);
-  const [selectedActuaciones, setSelectedActuaciones] = useState<string[]>([]);
-  const [showActuacionSelector, setShowActuacionSelector] = useState(false);
+  const [showDestinatarioForm, setShowDestinatarioForm] = useState(false);
+  const [destinatario, setDestinatario] = useState('');
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [showOficioDetails, setShowOficioDetails] = useState(false);
   const [selectedOficio, setSelectedOficio] = useState<OficioItem | null>(null);
@@ -83,34 +82,24 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
 
   const handleSelectExpedient = (expedientId: string) => {
     setSelectedExpedientId(expedientId);
-    
-    // Cargar actuaciones del expediente
-    const actuaciones = actuacionStorage.getActuacionesByExpedient(expedientId);
-    setExpedientActuaciones(actuaciones);
-    setSelectedActuaciones([]);
-    
     setShowExpedientSelector(false);
-    setShowActuacionSelector(true);
-  };
-
-  const handleToggleActuacion = (actuacionId: string) => {
-    setSelectedActuaciones(prev => 
-      prev.includes(actuacionId)
-        ? prev.filter(id => id !== actuacionId)
-        : [...prev, actuacionId]
-    );
-  };
-
-  const handleSelectAllActuaciones = () => {
-    if (selectedActuaciones.length === expedientActuaciones.length) {
-      setSelectedActuaciones([]);
-    } else {
-      setSelectedActuaciones(expedientActuaciones.map(a => a.id));
-    }
+    setShowDestinatarioForm(true);
   };
 
   const handleCreateOficio = () => {
-    if (selectedExpedientId && selectedActuaciones.length > 0) {
+    const trimmedDestinatario = destinatario.trim();
+    
+    if (!trimmedDestinatario || trimmedDestinatario.length === 0) {
+      toast.error('El destinatario es obligatorio');
+      return;
+    }
+
+    if (trimmedDestinatario.length > 200) {
+      toast.error('El destinatario no puede exceder 200 caracteres');
+      return;
+    }
+
+    if (selectedExpedientId) {
       const expedient = expedients.find(e => e.id === selectedExpedientId);
       if (!expedient) return;
 
@@ -119,7 +108,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
         expedientId: selectedExpedientId,
         expedientNumber: expedient.number,
         expedientTitle: expedient.title,
-        selectedActuaciones: [...selectedActuaciones],
+        destinatario: trimmedDestinatario,
         createdAt: new Date(),
         pdfAttached: !!pdfFile,
         pdfFileName: pdfFile?.name
@@ -130,9 +119,8 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
 
       // Reset form
       setSelectedExpedientId('');
-      setSelectedActuaciones([]);
-      setExpedientActuaciones([]);
-      setShowActuacionSelector(false);
+      setDestinatario('');
+      setShowDestinatarioForm(false);
       setPdfFile(null);
 
       toast.success('Oficio creado exitosamente');
@@ -160,9 +148,6 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
   };
 
   const handleExportToPdf = (oficio: OficioItem) => {
-    const allActuaciones = actuacionStorage.getActuacionesByExpedient(oficio.expedientId);
-    const actuaciones = allActuaciones.filter(act => oficio.selectedActuaciones.includes(act.id));
-    
     const doc = new jsPDF();
     
     // Título
@@ -174,31 +159,19 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
     doc.text(`Expediente: ${oficio.expedientNumber}`, 20, 50);
     doc.setFontSize(12);
     doc.text(oficio.expedientTitle, 20, 65);
-    doc.text(`Fecha de creación: ${format(oficio.createdAt, "dd 'de' MMMM 'de' yyyy, HH:mm 'hs'", { locale: es })}`, 20, 80);
+    doc.text(`Destinatario: ${oficio.destinatario}`, 20, 80);
+    doc.text(`Fecha de creación: ${format(oficio.createdAt, "dd 'de' MMMM 'de' yyyy, HH:mm 'hs'", { locale: es })}`, 20, 95);
     
     if (oficio.pdfAttached) {
-      doc.text(`PDF adjunto: ${oficio.pdfFileName}`, 20, 95);
+      doc.text(`PDF adjunto: ${oficio.pdfFileName}`, 20, 110);
     }
     
-    // Actuaciones
-    doc.setFontSize(14);
-    doc.text(`Actuaciones incluidas (${actuaciones.length}):`, 20, 110);
-    
-    let yPosition = 125;
-    actuaciones.forEach((actuacion, index) => {
-      if (yPosition > 250) {
-        doc.addPage();
-        yPosition = 20;
+    if (oficio.finished && oficio.finishedAt) {
+      doc.text(`Fecha de regreso: ${format(oficio.finishedAt, "dd 'de' MMMM 'de' yyyy, HH:mm 'hs'", { locale: es })}`, 20, 125);
+      if (oficio.responsePdfAttached) {
+        doc.text(`PDF de respuesta: ${oficio.responsePdfFileName}`, 20, 140);
       }
-      
-      doc.setFontSize(12);
-      doc.text(`${index + 1}. ${actuacion.title}`, 20, yPosition);
-      doc.setFontSize(10);
-      doc.text(`Tipo: ${actuacion.tipo} | Estado: ${actuacion.status}`, 20, yPosition + 10);
-      doc.text(`Fecha: ${format(actuacion.createdAt, "dd/MM/yyyy HH:mm", { locale: es })}`, 20, yPosition + 20);
-      
-      yPosition += 35;
-    });
+    }
     
     // Descargar PDF
     doc.save(`Oficio_${oficio.expedientNumber}_${format(new Date(), 'dd-MM-yyyy')}.pdf`);
@@ -239,33 +212,21 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
   const finishedOficios = oficios.filter(o => o.finished);
 
   const handlePrintOficio = (oficio: OficioItem) => {
-    // Generar contenido para imprimir
-    const allActuaciones = actuacionStorage.getActuacionesByExpedient(oficio.expedientId);
-    const actuaciones = allActuaciones.filter(act => oficio.selectedActuaciones.includes(act.id));
-
-    const expedient = expedients.find(e => e.id === oficio.expedientId);
-
     const printContent = `
       <div style="font-family: Arial, sans-serif; padding: 20px;">
         <h1>OFICIO</h1>
         <hr>
         <h2>Expediente: ${oficio.expedientNumber}</h2>
         <h3>${oficio.expedientTitle}</h3>
+        <p><strong>Destinatario:</strong> ${oficio.destinatario}</p>
         <p><strong>Fecha de creación:</strong> ${format(oficio.createdAt, "dd 'de' MMMM 'de' yyyy, HH:mm 'hs'", { locale: es })}</p>
         ${oficio.pdfAttached ? `<p><strong>PDF adjunto:</strong> ${oficio.pdfFileName}</p>` : ''}
-        <hr>
-        <h3>Actuaciones incluidas (${actuaciones.length}):</h3>
-        ${actuaciones.map((actuacion, index) => `
-          <div style="margin: 20px 0; border: 1px solid #ccc; padding: 15px;">
-            <h4>${index + 1}. ${actuacion.title}</h4>
-            <p><strong>Tipo:</strong> ${actuacion.tipo}</p>
-            <p><strong>Estado:</strong> ${actuacion.status}</p>
-            <p><strong>Fecha:</strong> ${format(actuacion.createdAt, "dd/MM/yyyy HH:mm", { locale: es })}</p>
-            <div style="margin-top: 10px;">
-              ${actuacion.content}
-            </div>
-          </div>
-        `).join('')}
+        ${oficio.finished && oficio.finishedAt ? `
+          <hr>
+          <h3>Información de Regreso:</h3>
+          <p><strong>Fecha de regreso:</strong> ${format(oficio.finishedAt, "dd 'de' MMMM 'de' yyyy, HH:mm 'hs'", { locale: es })}</p>
+          ${oficio.responsePdfAttached ? `<p><strong>PDF de respuesta:</strong> ${oficio.responsePdfFileName}</p>` : ''}
+        ` : ''}
       </div>
     `;
 
@@ -349,7 +310,10 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
                       <p className="text-sm text-muted-foreground">{oficio.expedientTitle}</p>
                       <div className="flex gap-2 flex-wrap">
                         <Badge variant="outline">
-                          {oficio.selectedActuaciones.length} actuaciones
+                          Expediente: {oficio.expedientNumber}
+                        </Badge>
+                        <Badge variant="secondary">
+                          Destinatario: {oficio.destinatario}
                         </Badge>
                         {oficio.pdfAttached && (
                           <Badge variant="secondary">PDF adjunto</Badge>
@@ -405,7 +369,10 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
                       <p className="text-sm text-muted-foreground">{oficio.expedientTitle}</p>
                       <div className="flex gap-2 flex-wrap">
                         <Badge variant="outline">
-                          {oficio.selectedActuaciones.length} actuaciones
+                          Expediente: {oficio.expedientNumber}
+                        </Badge>
+                        <Badge variant="secondary">
+                          Destinatario: {oficio.destinatario}
                         </Badge>
                         {oficio.pdfAttached && (
                           <Badge variant="secondary">PDF adjunto</Badge>
@@ -473,11 +440,11 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
         </DialogContent>
       </Dialog>
 
-      {/* Dialog para seleccionar actuaciones */}
-      <Dialog open={showActuacionSelector} onOpenChange={setShowActuacionSelector}>
-        <DialogContent className="max-w-3xl">
+      {/* Dialog para ingresar destinatario y crear oficio */}
+      <Dialog open={showDestinatarioForm} onOpenChange={setShowDestinatarioForm}>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Seleccionar Actuaciones para el Oficio</DialogTitle>
+            <DialogTitle>Crear Oficio</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             {/* Expediente seleccionado */}
@@ -492,49 +459,38 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
               </div>
             )}
 
-            {/* Botón seleccionar todas */}
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleSelectAllActuaciones}
-              >
-                {selectedActuaciones.length === expedientActuaciones.length ? (
-                  <CheckSquare className="w-4 h-4 mr-2" />
-                ) : (
-                  <Square className="w-4 h-4 mr-2" />
-                )}
-                {selectedActuaciones.length === expedientActuaciones.length ? 'Deseleccionar Todas' : 'Seleccionar Todas'}
-              </Button>
-              <span className="text-sm text-muted-foreground">
-                {selectedActuaciones.length} de {expedientActuaciones.length} seleccionadas
-              </span>
+            {/* Campo de destinatario */}
+            <div className="space-y-2">
+              <Label htmlFor="destinatario" className="text-sm font-medium">
+                Destinatario <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="destinatario"
+                type="text"
+                placeholder="Ingrese el destinatario del oficio"
+                value={destinatario}
+                onChange={(e) => setDestinatario(e.target.value)}
+                maxLength={200}
+                className="w-full"
+              />
+              <p className="text-xs text-muted-foreground">
+                {destinatario.length}/200 caracteres
+              </p>
             </div>
 
-            {/* Lista de actuaciones */}
-            <ScrollArea className="max-h-64">
-              <div className="space-y-2">
-                {expedientActuaciones.map((actuacion) => (
-                  <div key={actuacion.id} className="border rounded-lg p-3">
-                    <div className="flex items-start gap-3">
-                      <Checkbox
-                        checked={selectedActuaciones.includes(actuacion.id)}
-                        onCheckedChange={() => handleToggleActuacion(actuacion.id)}
-                      />
-                      <div className="flex-1">
-                        <h5 className="font-medium text-sm">{actuacion.title}</h5>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {actuacion.tipo} - {actuacion.status}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {format(actuacion.createdAt, "dd/MM/yyyy HH:mm", { locale: es })}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
+            {/* Fecha de creación (solo informativa) */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Fecha de Creación</Label>
+              <Input
+                type="text"
+                value={format(new Date(), "dd/MM/yyyy HH:mm", { locale: es })}
+                disabled
+                className="bg-muted"
+              />
+              <p className="text-xs text-muted-foreground">
+                Esta fecha se registrará automáticamente y no puede ser modificada
+              </p>
+            </div>
 
             <Separator />
 
@@ -559,12 +515,19 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
 
             {/* Botones de acción */}
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowActuacionSelector(false)}>
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  setShowDestinatarioForm(false);
+                  setDestinatario('');
+                  setPdfFile(null);
+                }}
+              >
                 Cancelar
               </Button>
               <Button 
                 onClick={handleCreateOficio}
-                disabled={selectedActuaciones.length === 0}
+                disabled={!destinatario.trim()}
               >
                 Crear Oficio
               </Button>
@@ -587,7 +550,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
                 <p className="text-sm text-muted-foreground">{selectedOficio.expedientTitle}</p>
                 <div className="flex gap-2 mt-2 flex-wrap">
                   <Badge variant="outline">
-                    {selectedOficio.selectedActuaciones.length} actuaciones
+                    Destinatario: {selectedOficio.destinatario}
                   </Badge>
                   {selectedOficio.pdfAttached && (
                     <Badge variant="secondary">PDF adjunto</Badge>
