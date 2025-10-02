@@ -7,7 +7,7 @@ export interface CitaAgenda {
   expedientId?: string; // Relación con expediente
   actuacionId?: string; // Relación con actuación específica
   tipo: 'audiencia' | 'citacion' | 'reunion' | 'vencimiento' | 'otro';
-  estado: 'programada' | 'confirmada' | 'reprogramada' | 'cancelada' | 'completada';
+  estado: 'programado' | 'proximo' | 'hoy' | 'completada';
   participantes?: string[];
   ubicacion?: string;
   observaciones?: string;

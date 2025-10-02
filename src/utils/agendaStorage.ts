@@ -112,7 +112,7 @@ export const fechasCitacionStorage = {
       expedientId: fecha.expedientId,
       actuacionId: fecha.actuacionId,
       tipo: fecha.tipo as any,
-      estado: 'programada',
+      estado: 'programado',
       createdBy: 'system'
     });
     
