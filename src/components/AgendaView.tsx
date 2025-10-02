@@ -219,9 +219,9 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
         </Dialog>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      <div className="flex gap-6">
         {/* Calendario */}
-        <div>
+        <div className="flex-shrink-0">
           <h2 className="text-2xl font-bold tracking-tight mb-4">Calendario</h2>
           <div className="border rounded-lg bg-card w-fit">
             <Calendar
@@ -246,130 +246,125 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
           </div>
         </div>
 
-        {/* Lista de Citas */}
-        <div className="space-y-6">
-          {/* Citas Próximas */}
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight mb-4">Citas Próximas</h2>
-            <div className="space-y-2">
-              {citasProximas.length === 0 ? (
-                <div className="text-center py-8 bg-muted/30 rounded-lg">
-                  <CalendarIcon className="mx-auto h-12 w-12 text-muted-foreground" />
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    No hay citas programadas
-                  </p>
-                </div>
-              ) : (
-                citasProximas.map((cita) => (
-                  <div 
-                    key={cita.id} 
-                    className="flex items-center justify-between p-4 bg-card border rounded-lg hover:bg-muted/50 transition-colors"
-                  >
-                    <div className="flex items-center gap-4 flex-1">
-                      <div className="flex items-center gap-2">
-                        {getTipoIcon(cita.tipo)}
-                        <Badge className={getStatusColor(cita.estado)} variant="outline">
-                          {cita.estado}
-                        </Badge>
-                      </div>
-                      
-                      <div className="flex-1">
-                        <h3 className="font-medium">{cita.titulo}</h3>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
-                          <div className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            {format(cita.fechaInicio, 'dd/MM/yyyy HH:mm', { locale: es })}
-                          </div>
-                          {cita.ubicacion && (
-                            <div className="flex items-center gap-1">
-                              <MapPin className="h-3 w-3" />
-                              {cita.ubicacion}
-                            </div>
-                          )}
-                          {cita.participantes && cita.participantes.length > 0 && (
-                            <div className="flex items-center gap-1">
-                              <Users className="h-3 w-3" />
-                              {cita.participantes.length} participante{cita.participantes.length > 1 ? 's' : ''}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      
-                      {cita.expedientId && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => onNavigateToExpedient?.(cita.expedientId!)}
-                        >
-                          <FileText className="h-4 w-4 mr-1" />
-                          Ver Expediente
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Historial de Citas Pasadas */}
-          {citasPasadas.length > 0 && (
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight mb-4">Historial</h2>
-              <div className="space-y-2">
-                {citasPasadas.map((cita) => (
-                  <div 
-                    key={cita.id} 
-                    className="flex items-center justify-between p-4 bg-muted/30 border rounded-lg opacity-75 hover:opacity-100 transition-opacity"
-                  >
-                    <div className="flex items-center gap-4 flex-1">
-                      <div className="flex items-center gap-2">
-                        {getTipoIcon(cita.tipo)}
-                        <Badge className={getStatusColor(cita.estado)} variant="outline">
-                          {cita.estado}
-                        </Badge>
-                      </div>
-                      
-                      <div className="flex-1">
-                        <h3 className="font-medium text-muted-foreground">{cita.titulo}</h3>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
-                          <div className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            {format(cita.fechaInicio, 'dd/MM/yyyy HH:mm', { locale: es })}
-                          </div>
-                          {cita.ubicacion && (
-                            <div className="flex items-center gap-1">
-                              <MapPin className="h-3 w-3" />
-                              {cita.ubicacion}
-                            </div>
-                          )}
-                          {cita.participantes && cita.participantes.length > 0 && (
-                            <div className="flex items-center gap-1">
-                              <Users className="h-3 w-3" />
-                              {cita.participantes.length} participante{cita.participantes.length > 1 ? 's' : ''}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      
-                      {cita.expedientId && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => onNavigateToExpedient?.(cita.expedientId!)}
-                        >
-                          <FileText className="h-4 w-4 mr-1" />
-                          Ver Expediente
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                ))}
+        {/* Citas Próximas */}
+        <div className="flex-1">
+          <h2 className="text-2xl font-bold tracking-tight mb-4">Citas Próximas</h2>
+          <div className="space-y-2">
+            {citasProximas.length === 0 ? (
+              <div className="text-center py-8 bg-muted/30 rounded-lg">
+                <CalendarIcon className="mx-auto h-12 w-12 text-muted-foreground" />
+                <p className="mt-2 text-sm text-muted-foreground">
+                  No hay citas programadas
+                </p>
               </div>
-            </div>
-          )}
+            ) : (
+              citasProximas.map((cita) => (
+                <div 
+                  key={cita.id} 
+                  className="flex items-center justify-between p-4 bg-card border rounded-lg hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className="flex items-center gap-2">
+                      {getTipoIcon(cita.tipo)}
+                      <Badge className={getStatusColor(cita.estado)} variant="outline">
+                        {cita.estado}
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex-1">
+                      <h3 className="font-medium">{cita.titulo}</h3>
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                        <div className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {format(cita.fechaInicio, 'dd/MM/yyyy HH:mm', { locale: es })}
+                        </div>
+                        {cita.ubicacion && (
+                          <div className="flex items-center gap-1">
+                            <MapPin className="h-3 w-3" />
+                            {cita.ubicacion}
+                          </div>
+                        )}
+                        {cita.participantes && cita.participantes.length > 0 && (
+                          <div className="flex items-center gap-1">
+                            <Users className="h-3 w-3" />
+                            {cita.participantes.length} participante{cita.participantes.length > 1 ? 's' : ''}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {cita.expedientId && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onNavigateToExpedient?.(cita.expedientId!)}
+                      >
+                        <FileText className="h-4 w-4 mr-1" />
+                        Ver Expediente
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
+
+      {/* Historial de Citas Pasadas */}
+      {citasPasadas.length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-2xl font-bold tracking-tight mb-4">Historial</h2>
+          <div className="border rounded-lg overflow-hidden">
+            <div className="bg-muted/50 px-4 py-2 grid grid-cols-12 gap-4 text-sm font-medium">
+              <div className="col-span-1">Tipo</div>
+              <div className="col-span-3">Título</div>
+              <div className="col-span-2">Fecha</div>
+              <div className="col-span-2">Ubicación</div>
+              <div className="col-span-2">Estado</div>
+              <div className="col-span-2">Acciones</div>
+            </div>
+            <div className="divide-y">
+              {citasPasadas.map((cita) => (
+                <div 
+                  key={cita.id} 
+                  className="px-4 py-3 grid grid-cols-12 gap-4 items-center hover:bg-muted/30 transition-colors"
+                >
+                  <div className="col-span-1">
+                    {getTipoIcon(cita.tipo)}
+                  </div>
+                  <div className="col-span-3">
+                    <p className="font-medium text-muted-foreground">{cita.titulo}</p>
+                  </div>
+                  <div className="col-span-2 text-sm text-muted-foreground">
+                    {format(cita.fechaInicio, 'dd/MM/yyyy HH:mm', { locale: es })}
+                  </div>
+                  <div className="col-span-2 text-sm text-muted-foreground">
+                    {cita.ubicacion || '-'}
+                  </div>
+                  <div className="col-span-2">
+                    <Badge className={getStatusColor(cita.estado)} variant="outline">
+                      {cita.estado}
+                    </Badge>
+                  </div>
+                  <div className="col-span-2">
+                    {cita.expedientId && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onNavigateToExpedient?.(cita.expedientId!)}
+                      >
+                        <FileText className="h-4 w-4 mr-1" />
+                        Ver
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
