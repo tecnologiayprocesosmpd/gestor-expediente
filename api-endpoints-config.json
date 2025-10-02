@@ -2,7 +2,7 @@
   "apiConfig": {
     "name": "Sistema Mesa de Entrada API",
     "version": "1.0.0",
-    "baseUrl": "https://your-genexus-kb.com/api/v1",
+    "baseUrl": "http://localhost:8082/SAE_MPD3.NETEnvironment/",
     "description": "API para sistema de mesa de entrada y gestión de expedientes",
     "authentication": {
       "type": "GAM",
