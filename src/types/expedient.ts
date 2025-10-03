@@ -1,55 +1,71 @@
 export interface Expedient {
-  id: string;
-  number: string; // Formato: SEC-YYYY-NNNNNN
-  title: string;
-  content: string;
-  createdAt: Date;
-  updatedAt: Date;
-  createdBy: string;
-  department: string; // Secretaría responsable
-  status: 'draft' | 'en_tramite' | 'paralizado' | 'archivado';
-  tags: string[];
+  // Campos principales del expediente según API real
+  ExpedienteId: string;
+  ExpedienteNro: string;
+  ExpedienteAnio: number;
+  ExpedienteReferencia: string;
+  ExpedienteEstado: string;
+  ExpedienteFecha: string;
+  ExpedienteCuerpos: number;
+  ExpedienteActuaciones: number;
   
-  // Nuevos campos obligatorios para el flujo simplificado
-  oficina: string; // Oficina a la que se deriva
-  referencia: string; // Descripción de referencia
-  tipoProceso: 'administrativo' | 'compra'; // Tipo de proceso
+  // Información de oficina
+  OficinaId: string;
+  OficinaCodigo: string;
+  OficinaDescripcion: string;
+  OficinaTipo: string;
   
-  // Metadatos obligatorios
-  tipoTramite: string; // Tipo de proceso/trámite
-  solicitante: string; // Quién solicita el trámite
-  numeroExpediente?: string; // Número oficial si difiere del number
+  // Información de dependencia
+  DependenciaId: string;
+  DependenciaCodigo: string;
+  DependenciaDescripcion: string;
   
-  // Fechas de estado y derivación
-  fechaInicio: Date;
+  // Información de organismo
+  OrganismoId: string;
+  OrganismoCodigo: string;
+  OrganismoDescripcion: string;
+  
+  // Oficina actual
+  ExpOficinaActual: string;
+  
+  // Campos adicionales para compatibilidad con el sistema actual
+  id?: string;
+  number?: string;
+  title?: string;
+  content?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  createdBy?: string;
+  department?: string;
+  status?: 'draft' | 'en_tramite' | 'paralizado' | 'archivado';
+  tags?: string[];
+  oficina?: string;
+  referencia?: string;
+  tipoProceso?: 'administrativo' | 'compra';
+  tipoTramite?: string;
+  solicitante?: string;
+  numeroExpediente?: string;
+  fechaInicio?: Date;
   fechaPausa?: Date;
   fechaCierre?: Date;
   fechaArchivo?: Date;
-  fechaDerivacion?: Date; // Cuando se deriva el expediente
-  fechaRecepcion?: Date; // Cuando se recibe el expediente
-  
-  // Campos de control
-  version: number; // Para control de versiones
-  confidencial: boolean; // Si contiene información sensible
-  urgente: boolean; // Marcador de urgencia
-  
-  // Relaciones
-  actuaciones?: string[]; // IDs de actuaciones asociadas
-  derivaciones?: string[]; // IDs de derivaciones
-  adjuntos?: string[]; // IDs de archivos adjuntos
-  
-  // Campos de archivo
+  fechaDerivacion?: Date;
+  fechaRecepcion?: Date;
+  version?: number;
+  confidencial?: boolean;
+  urgente?: boolean;
+  actuaciones?: string[];
+  derivaciones?: string[];
+  adjuntos?: string[];
   archived?: boolean;
   archivedAt?: Date;
   archivedBy?: string;
-  archivoMotivo?: string; // Motivo del archivo
-  
-  // Auditoría y trazabilidad del flujo
+  archivoMotivo?: string;
   lastAccessedAt?: Date;
   lastAccessedBy?: string;
   modificaciones?: ModificacionExpediente[];
-  derivadoPor?: string; // Usuario que derivó el expediente
-  recibidoPor?: string; // Usuario que recibió el expediente
+  derivadoPor?: string;
+  recibidoPor?: string;
 }
 
 export interface ExpedientSummary {
