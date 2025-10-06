@@ -92,21 +92,23 @@ export function Layout({
       </header>
 
       {/* Sidebar + Main Content */}
-      <div className="flex w-full">
-        <AppSidebar 
-          currentView={currentView}
-          onNavigate={onNavigate}
-          onCreateExpedient={onCreateExpedient}
-          isExpedientView={isExpedientView}
-          onDiligencia={onDiligencia}
-          onRegresarDiligencia={onRegresarDiligencia}
-          onExportPDF={onExportPDF}
-          onTramites={onTramites}
-          onNuevaActuacion={onNuevaActuacion}
-          showRegresarDiligencia={showRegresarDiligencia}
-        />
+      <div className="flex w-full h-[calc(100vh-5rem)]">
+        <div className="sticky top-20 h-[calc(100vh-5rem)] overflow-y-auto">
+          <AppSidebar 
+            currentView={currentView}
+            onNavigate={onNavigate}
+            onCreateExpedient={onCreateExpedient}
+            isExpedientView={isExpedientView}
+            onDiligencia={onDiligencia}
+            onRegresarDiligencia={onRegresarDiligencia}
+            onExportPDF={onExportPDF}
+            onTramites={onTramites}
+            onNuevaActuacion={onNuevaActuacion}
+            showRegresarDiligencia={showRegresarDiligencia}
+          />
+        </div>
         
-        <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 flex flex-col min-w-0 overflow-y-auto h-[calc(100vh-5rem)]">
           {/* Main Content */}
           <main className="p-6">
             {children}
