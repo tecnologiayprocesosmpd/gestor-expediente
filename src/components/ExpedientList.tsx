@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   Search, 
   Filter,
@@ -258,71 +259,72 @@ export function ExpedientList({
       ) : (
         <Card>
           <CardContent className="p-0">
-            <div className="overflow-x-auto">
-               <table className="w-full table-fixed">
-                 <colgroup>
-                   <col className="w-32" />
-                   <col className="w-auto" />
-                   <col className="w-32" />
-                   <col className="w-40" />
-                   <col className="w-32" />
-                   <col className="w-24" />
-                 </colgroup>
-                <thead className="border-b">
-                  <tr className="bg-muted/30">
-                    <th className="text-left p-4 font-medium w-32">Número</th>
-                    <th className="text-left p-4 font-medium">Expediente</th>
-                    <th className="text-left p-4 font-medium w-32">Estado</th>
-                    <th className="text-left p-4 font-medium w-40">Creado por</th>
-                    <th className="text-left p-4 font-medium w-32">Fecha</th>
-                    <th className="text-right p-4 font-medium w-24">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sortedExpedients.map((expedient) => (
-                    <tr 
-                      key={expedient.id} 
-                      className="border-b hover:bg-muted/20 transition-colors"
-                    >
-                      <td className="p-4">
-                        <span className="text-sm font-mono text-primary">
-                          {expedient.number}
-                        </span>
-                      </td>
-                      <td className="p-4">
-                        <div className="font-medium text-foreground line-clamp-1">
-                          {expedient.title}
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        {getStatusBadge(expedient.status)}
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center text-sm">
-                          <User className="w-4 h-4 mr-2 text-muted-foreground" />
-                          <span>{expedient.createdBy}</span>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <div className="text-sm">
-                          <div>{expedient.createdAt.toLocaleDateString('es-ES')}</div>
-                          {expedient.updatedAt.toDateString() !== expedient.createdAt.toDateString() && (
-                            <div className="text-xs text-muted-foreground">
-                              Act: {expedient.updatedAt.toLocaleDateString('es-ES')}
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                       <td className="p-4">
-                         <div className="flex flex-col items-end space-y-2">
-                           <div className="flex items-center space-x-2">
-                             <Button
-                               variant="ghost"
-                               size="sm"
-                               onClick={() => onViewExpedient?.(expedient.id)}
-                             >
-                               <Eye className="w-4 h-4" />
-                             </Button>
+            <ScrollArea className="h-[600px]">
+              <div className="overflow-x-auto">
+                <table className="w-full table-fixed">
+                  <colgroup>
+                    <col className="w-32" />
+                    <col className="w-auto" />
+                    <col className="w-32" />
+                    <col className="w-40" />
+                    <col className="w-32" />
+                    <col className="w-24" />
+                  </colgroup>
+                  <thead className="border-b sticky top-0 bg-background z-10">
+                    <tr className="bg-muted/30">
+                      <th className="text-left p-4 font-medium w-32">Número</th>
+                      <th className="text-left p-4 font-medium">Expediente</th>
+                      <th className="text-left p-4 font-medium w-32">Estado</th>
+                      <th className="text-left p-4 font-medium w-40">Creado por</th>
+                      <th className="text-left p-4 font-medium w-32">Fecha</th>
+                      <th className="text-right p-4 font-medium w-24">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sortedExpedients.map((expedient) => (
+                      <tr 
+                        key={expedient.id} 
+                        className="border-b hover:bg-muted/20 transition-colors"
+                      >
+                        <td className="p-4">
+                          <span className="text-sm font-mono text-primary">
+                            {expedient.number}
+                          </span>
+                        </td>
+                        <td className="p-4">
+                          <div className="font-medium text-foreground line-clamp-1">
+                            {expedient.title}
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          {getStatusBadge(expedient.status)}
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center text-sm">
+                            <User className="w-4 h-4 mr-2 text-muted-foreground" />
+                            <span>{expedient.createdBy}</span>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="text-sm">
+                            <div>{expedient.createdAt.toLocaleDateString('es-ES')}</div>
+                            {expedient.updatedAt.toDateString() !== expedient.createdAt.toDateString() && (
+                              <div className="text-xs text-muted-foreground">
+                                Act: {expedient.updatedAt.toLocaleDateString('es-ES')}
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex flex-col items-end space-y-2">
+                            <div className="flex items-center space-x-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => onViewExpedient?.(expedient.id)}
+                              >
+                                <Eye className="w-4 h-4" />
+                              </Button>
                               {canEdit && expedient.status !== 'draft' && (
                                 <StatusChangeConfirmDialog
                                   onConfirm={() => handleStatusChange(expedient.id, expedient.status as 'en_tramite' | 'paralizado' | 'archivado')}
@@ -343,14 +345,15 @@ export function ExpedientList({
                               {canEdit && expedient.status !== 'draft' && (
                                 <span>{getStatusChangeLabel(expedient.status as 'en_tramite' | 'paralizado' | 'archivado')}</span>
                               )}
-                           </div>
-                         </div>
-                       </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </ScrollArea>
           </CardContent>
         </Card>
       )}
