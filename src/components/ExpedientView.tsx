@@ -889,14 +889,19 @@ export function ExpedientView({
                 <div className="flex flex-col space-y-2 py-2 border-b border-border/50">
                   <span className="text-sm font-medium">Estado</span>
                   <select
-                    value={expedient.status}
-                    onChange={(e) => handleExpedientStatusChange(e.target.value as any)}
+                    value=""
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        handleExpedientStatusChange(e.target.value as any);
+                      }
+                    }}
                     className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
-                    <option value="draft">Borrador</option>
-                    <option value="en_tramite">En Trámite</option>
-                    <option value="paralizado">Paralizado</option>
-                    <option value="archivado">Archivado</option>
+                    <option value="">{getStatusLabel(expedient.status)}</option>
+                    {expedient.status !== 'draft' && <option value="draft">Borrador</option>}
+                    {expedient.status !== 'en_tramite' && <option value="en_tramite">En Trámite</option>}
+                    {expedient.status !== 'paralizado' && <option value="paralizado">Paralizado</option>}
+                    {expedient.status !== 'archivado' && <option value="archivado">Archivado</option>}
                   </select>
                 </div>
                 <div className="flex items-center justify-between py-2 border-b border-border/50">
