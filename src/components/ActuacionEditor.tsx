@@ -89,8 +89,6 @@ export function ActuacionEditor({
   const [title, setTitle] = useState(propActuacion?.title || '');
   const [tipo, setTipo] = useState<Actuacion['tipo']>(propActuacion?.tipo || 'nota');
   const [status, setStatus] = useState<Actuacion['status']>(propActuacion?.status || 'borrador');
-  const [confidencial, setConfidencial] = useState(propActuacion?.confidencial || false);
-  const [urgente, setUrgente] = useState(propActuacion?.urgente || false);
   const [margins, setMargins] = useState({ top: 20, right: 20, bottom: 20, left: 20 });
   const [content, setContent] = useState(propActuacion?.content || '');
   
@@ -119,8 +117,6 @@ export function ActuacionEditor({
         content,
         tipo,
         status,
-        confidencial,
-        urgente,
         updatedAt: new Date(),
         createdBy: user?.name || 'Usuario'
       };
@@ -247,8 +243,6 @@ export function ActuacionEditor({
       setTitle(propActuacion.title || '');
       setTipo(propActuacion.tipo || 'nota');
       setStatus(propActuacion.status || 'borrador');
-      setConfidencial(propActuacion.confidencial || false);
-      setUrgente(propActuacion.urgente || false);
       
       if (editor && propActuacion.content) {
         editor.commands.setContent(propActuacion.content);
@@ -376,7 +370,7 @@ export function ActuacionEditor({
           <CardTitle>Información de la Actuación</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="title">Título *</Label>
               <Input
@@ -403,30 +397,6 @@ export function ActuacionEditor({
                   <SelectItem value="auto">Auto</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-
-            <div className="flex items-center space-x-4 pt-6">
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={confidencial}
-                  onChange={(e) => setConfidencial(e.target.checked)}
-                  disabled={!canEdit}
-                  className="rounded border-gray-300"
-                />
-                <span className="text-sm">Confidencial</span>
-              </label>
-
-              <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={urgente}
-                  onChange={(e) => setUrgente(e.target.checked)}
-                  disabled={!canEdit}
-                  className="rounded border-gray-300"
-                />
-                <span className="text-sm">Urgente</span>
-              </label>
             </div>
           </div>
         </CardContent>
@@ -646,21 +616,6 @@ export function ActuacionEditor({
             </Button>
           )}
         </div>
-
-        {(confidencial || urgente) && (
-          <div className="flex items-center space-x-2">
-            {confidencial && (
-              <Badge variant="destructive" className="text-xs">
-                CONFIDENCIAL
-              </Badge>
-            )}
-            {urgente && (
-              <Badge variant="outline" className="text-xs border-orange-500 text-orange-700">
-                URGENTE
-              </Badge>
-            )}
-          </div>
-        )}
       </div>
     </div>
   );
