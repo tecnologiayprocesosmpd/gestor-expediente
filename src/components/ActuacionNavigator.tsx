@@ -35,40 +35,18 @@ export function ActuacionNavigator({ actuaciones, expedientNumber, expedientTitl
 
     return (
       <div className="bg-white text-black p-12 min-h-full" style={{ fontFamily: 'Times New Roman, serif' }}>
-        {/* Encabezado estilo oficial */}
-        <div className="text-center mb-8 border-b-2 border-black pb-4">
-          <h1 className="text-xl font-bold mb-2">MINISTERIO PUPILAR Y DE LA DEFENSA</h1>
-          <h2 className="text-lg">San Miguel de Tucumán</h2>
-        </div>
-
-        {/* Información del expediente */}
-        <div className="mb-6 text-sm">
-          <p><strong>Expediente N°:</strong> {expedientNumber}</p>
-          <p><strong>Título:</strong> {expedientTitle}</p>
-        </div>
-
         {/* Información de la actuación */}
         <div className="mb-8">
-          <h3 className="text-center text-lg font-bold mb-4">
+          <h3 className="text-center text-lg font-bold mb-6">
             ACTUACIÓN N° {actuacion.number}
           </h3>
           
-          <div className="mb-4 text-sm">
+          <div className="mb-6 text-sm space-y-1">
             <p><strong>Título:</strong> {actuacion.title}</p>
             <p><strong>Tipo:</strong> {actuacion.tipo.toUpperCase()}</p>
-            <p><strong>Creado por:</strong> {actuacion.createdBy}</p>
             <p><strong>Fecha de Creación:</strong> {new Date(actuacion.createdAt).toLocaleDateString('es-ES')}</p>
-            {actuacion.signedAt && (
-              <p><strong>Fecha de Firma:</strong> {new Date(actuacion.signedAt).toLocaleDateString('es-ES')}</p>
-            )}
-            {actuacion.signedBy && (
-              <p><strong>Firmado por:</strong> {actuacion.signedBy}</p>
-            )}
           </div>
         </div>
-
-        {/* Línea separadora */}
-        <div className="border-t-2 border-black mb-6"></div>
 
         {/* Contenido de la actuación */}
         <div className="text-justify leading-relaxed whitespace-pre-wrap">
