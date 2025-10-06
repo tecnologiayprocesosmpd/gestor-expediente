@@ -14,7 +14,9 @@ import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
 
 interface StatusChangeConfirmDialogProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   onConfirm: () => void;
   title?: string;
   message?: string;
@@ -22,6 +24,8 @@ interface StatusChangeConfirmDialogProps {
 
 export function StatusChangeConfirmDialog({
   children,
+  open: controlledOpen,
+  onOpenChange,
   onConfirm,
   title = "Confirmar cambio de estado",
   message = "¿Está seguro de enviar la actuación para firma?"
@@ -32,16 +36,22 @@ export function StatusChangeConfirmDialog({
     setIsLoading(true);
     try {
       onConfirm();
+      onOpenChange?.(false);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Si se proporciona `open`, usa modo controlado
+  const isControlled = controlledOpen !== undefined;
+
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        {children}
-      </AlertDialogTrigger>
+    <AlertDialog open={isControlled ? controlledOpen : undefined} onOpenChange={onOpenChange}>
+      {children && (
+        <AlertDialogTrigger asChild>
+          {children}
+        </AlertDialogTrigger>
+      )}
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
