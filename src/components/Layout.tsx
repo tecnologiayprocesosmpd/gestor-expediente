@@ -65,7 +65,7 @@ export function Layout({
   return (
     <div className="flex flex-col w-full">
       {/* Full Width Header */}
-      <header className="bg-card border-b shadow-soft h-20 flex items-center justify-between px-6 w-full">
+      <header className="sticky top-0 z-50 bg-card border-b shadow-soft h-20 flex items-center justify-between px-6 w-full">
         <div className="flex items-center space-x-6">
           <div className="flex items-center space-x-3">
             <img 
