@@ -7,8 +7,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   Search, 
   Filter,
-  Eye,
-  RefreshCw,
   Calendar,
   User,
   FileText,
@@ -16,8 +14,6 @@ import {
   SortAsc,
   SortDesc
 } from "lucide-react";
-import { StatusChangeConfirmDialog } from "@/components/StatusChangeConfirmDialog";
-import { SelectEstadoDialog } from "@/components/SelectEstadoDialog";
 import { ExpedientSummary } from "@/types/expedient";
 import { useUser } from "@/contexts/UserContext";
 
@@ -49,43 +45,7 @@ export function ExpedientList({
   const [sortField, setSortField] = useState<SortField>('createdAt');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   
-  // Estado para manejar los diálogos
-  const [selectEstadoOpen, setSelectEstadoOpen] = useState(false);
-  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [selectedExpedientId, setSelectedExpedientId] = useState<string>('');
-  const [currentExpedientStatus, setCurrentExpedientStatus] = useState<'en_tramite' | 'paralizado' | 'archivado'>('en_tramite');
-  const [pendingNewStatus, setPendingNewStatus] = useState<'en_tramite' | 'paralizado' | 'archivado'>('en_tramite');
-
   const canEdit = true; // Ambos perfiles pueden editar
-
-  // Abre el diálogo de selección de estado
-  const handleOpenSelectEstado = (expedientId: string, currentStatus: 'en_tramite' | 'paralizado' | 'archivado') => {
-    setSelectedExpedientId(expedientId);
-    setCurrentExpedientStatus(currentStatus);
-    setSelectEstadoOpen(true);
-  };
-
-  // Cuando el usuario selecciona un estado en el diálogo
-  const handleEstadoSelected = (newStatus: 'en_tramite' | 'paralizado' | 'archivado') => {
-    setPendingNewStatus(newStatus);
-    setConfirmDialogOpen(true);
-  };
-
-  // Ejecuta el cambio de estado después de la confirmación
-  const handleConfirmStatusChange = () => {
-    onStatusChange?.(selectedExpedientId, pendingNewStatus);
-    setConfirmDialogOpen(false);
-  };
-
-  const getStatusLabel = (status: 'en_tramite' | 'paralizado' | 'archivado') => {
-    if (status === 'en_tramite') return 'En Trámite';
-    if (status === 'paralizado') return 'Paralizado';
-    return 'Archivado';
-  };
-
-  const getConfirmMessage = (newStatus: 'en_tramite' | 'paralizado' | 'archivado') => {
-    return `¿Está seguro de que desea cambiar el expediente a ${getStatusLabel(newStatus)}?`;
-  };
 
   // Filter expedients based on search term and status (excluding draft)
   const filteredExpedients = expedients.filter(expedient => {
@@ -278,7 +238,6 @@ export function ExpedientList({
                     <col className="w-32" />
                     <col className="w-40" />
                     <col className="w-32" />
-                    <col className="w-24" />
                   </colgroup>
                   <thead className="border-b sticky top-0 bg-background z-10">
                     <tr className="bg-muted/30">
@@ -287,14 +246,14 @@ export function ExpedientList({
                       <th className="text-left p-4 font-medium w-32">Estado</th>
                       <th className="text-left p-4 font-medium w-40">Creado por</th>
                       <th className="text-left p-4 font-medium w-32">Fecha</th>
-                      <th className="text-right p-4 font-medium w-24">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
                     {sortedExpedients.map((expedient) => (
                       <tr 
                         key={expedient.id} 
-                        className="border-b hover:bg-muted/20 transition-colors"
+                        className="border-b hover:bg-muted/20 transition-colors cursor-pointer"
+                        onClick={() => onViewExpedient?.(expedient.id)}
                       >
                         <td className="p-4">
                           <span className="text-sm font-mono text-primary">
@@ -325,34 +284,6 @@ export function ExpedientList({
                             )}
                           </div>
                         </td>
-                        <td className="p-4">
-                          <div className="flex flex-col items-end space-y-2">
-                            <div className="flex items-center space-x-2">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => onViewExpedient?.(expedient.id)}
-                              >
-                                <Eye className="w-4 h-4" />
-                              </Button>
-                              {canEdit && expedient.status !== 'draft' && (
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleOpenSelectEstado(expedient.id, expedient.status as 'en_tramite' | 'paralizado' | 'archivado')}
-                                >
-                                  <RefreshCw className="w-4 h-4" />
-                                </Button>
-                              )}
-                            </div>
-                            <div className="flex items-center space-x-4 text-xs text-muted-foreground">
-                              <span>Ver expediente</span>
-                              {canEdit && expedient.status !== 'draft' && (
-                                <span>Cambiar estado</span>
-                              )}
-                            </div>
-                          </div>
-                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -362,23 +293,6 @@ export function ExpedientList({
           </CardContent>
         </Card>
       )}
-      
-      {/* Diálogo de selección de estado */}
-      <SelectEstadoDialog
-        open={selectEstadoOpen}
-        onOpenChange={setSelectEstadoOpen}
-        currentStatus={currentExpedientStatus}
-        onSelect={handleEstadoSelected}
-      />
-      
-      {/* Diálogo de confirmación */}
-      <StatusChangeConfirmDialog
-        open={confirmDialogOpen}
-        onOpenChange={setConfirmDialogOpen}
-        onConfirm={handleConfirmStatusChange}
-        title="Confirmar cambio de estado"
-        message={getConfirmMessage(pendingNewStatus)}
-      />
     </div>
   );
 }

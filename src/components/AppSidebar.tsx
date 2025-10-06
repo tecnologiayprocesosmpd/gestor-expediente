@@ -8,7 +8,8 @@ import {
   Send,
   ArrowLeft,
   Download,
-  Navigation
+  Navigation,
+  RefreshCw
 } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import {
@@ -37,6 +38,7 @@ interface AppSidebarProps {
   onTramites?: () => void;
   onNuevaActuacion?: () => void;
   onNavegar?: () => void;
+  onChangeStatus?: () => void;
   showRegresarDiligencia?: boolean;
 }
 
@@ -51,6 +53,7 @@ export function AppSidebar({
   onTramites,
   onNuevaActuacion,
   onNavegar,
+  onChangeStatus,
   showRegresarDiligencia = false
 }: AppSidebarProps) {
   const { user } = useUser();
@@ -168,6 +171,16 @@ export function AppSidebar({
                 <Plus className="w-6 h-6 mb-2" />
                 <span className="text-xs text-center">
                   Nueva Actuación
+                </span>
+              </button>
+
+              <button
+                onClick={onChangeStatus}
+                className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-orange-600 hover:text-white bg-muted/50 text-foreground"
+              >
+                <RefreshCw className="w-6 h-6 mb-2" />
+                <span className="text-xs text-center">
+                  Cambiar Estado
                 </span>
               </button>
             </nav>

@@ -137,6 +137,7 @@ function AppContent() {
     onNuevaActuacion?: () => void;
     onTramites?: () => void;
     onNavegar?: () => void;
+    onChangeStatus?: () => void;
     showRegresarDiligencia?: boolean;
   }>({});
   
@@ -374,6 +375,7 @@ function AppContent() {
               }
             }}
             autoCreateActuacion={autoCreateActuacion}
+            onStatusChange={handleStatusChange}
             onRegisterActions={setExpedientViewActions}
           />
         );
@@ -419,6 +421,7 @@ function AppContent() {
       onTramites={expedientViewActions.onTramites}
       onNuevaActuacion={expedientViewActions.onNuevaActuacion}
       onNavegar={expedientViewActions.onNavegar}
+      onChangeStatus={expedientViewActions.onChangeStatus}
       showRegresarDiligencia={expedientViewActions.showRegresarDiligencia}
     >
       {renderCurrentView()}
