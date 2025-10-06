@@ -35,19 +35,6 @@ export function ActuacionNavigator({ actuaciones, expedientNumber, expedientTitl
 
     return (
       <div className="bg-white text-black p-12 min-h-full" style={{ fontFamily: 'Times New Roman, serif' }}>
-        {/* Información de la actuación */}
-        <div className="mb-8">
-          <h3 className="text-center text-lg font-bold mb-6">
-            ACTUACIÓN N° {actuacion.number}
-          </h3>
-          
-          <div className="mb-6 text-sm space-y-1">
-            <p><strong>Título:</strong> {actuacion.title}</p>
-            <p><strong>Tipo:</strong> {actuacion.tipo.toUpperCase()}</p>
-            <p><strong>Fecha de Creación:</strong> {new Date(actuacion.createdAt).toLocaleDateString('es-ES')}</p>
-          </div>
-        </div>
-
         {/* Contenido de la actuación */}
         <div className="text-justify leading-relaxed whitespace-pre-wrap">
           {textContent}
