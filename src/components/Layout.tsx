@@ -63,7 +63,7 @@ export function Layout({
                      getProfileIcon() === 'Building2' ? Building2 : Shield;
 
   return (
-    <div className="min-h-screen flex flex-col w-full">
+    <div className="flex flex-col w-full">
       {/* Full Width Header */}
       <header className="bg-card border-b shadow-soft h-20 flex items-center justify-between px-6 w-full">
         <div className="flex items-center space-x-6">
@@ -92,7 +92,7 @@ export function Layout({
       </header>
 
       {/* Sidebar + Main Content */}
-      <div className="flex flex-1 w-full">
+      <div className="flex w-full">
         <AppSidebar 
           currentView={currentView}
           onNavigate={onNavigate}
@@ -108,7 +108,7 @@ export function Layout({
         
         <div className="flex-1 flex flex-col min-w-0">
           {/* Main Content */}
-          <main className="flex-1 p-6 overflow-auto">
+          <main className="p-6">
             {children}
           </main>
         </div>

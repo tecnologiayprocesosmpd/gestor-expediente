@@ -95,17 +95,17 @@ export function AppSidebar({
   if (isExpedientView) {
     return (
       <div 
-        className="h-full min-h-screen bg-background border-r flex-shrink-0"
+        className="bg-background border-r flex-shrink-0"
         style={{ width: '100px' }}
       >
-        <div className="flex flex-col h-full min-h-screen">
-          <div className="flex-1 pt-6 flex flex-col h-full min-h-full">
+        <div className="flex flex-col">
+          <div className="pt-6 flex flex-col">
             <div className="px-2 mb-4">
               <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider text-center">
                 Acciones
               </h3>
             </div>
-            <nav className="space-y-3 px-2">
+            <nav className="space-y-3 px-2 pb-6">
               <button
                 onClick={onDiligencia}
                 className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-blue-600 hover:text-white bg-muted/50 text-foreground"
@@ -166,12 +166,12 @@ export function AppSidebar({
 
   return (
     <div 
-      className="h-full min-h-screen bg-background border-r flex-shrink-0"
+      className="bg-background border-r flex-shrink-0"
       style={{ width: '100px' }}
     >
-      <div className="flex flex-col h-full min-h-screen">
+      <div className="flex flex-col">
         {/* Navigation */}
-        <div className="flex-1 pt-6 flex flex-col h-full min-h-full">
+        <div className="pt-6 flex flex-col">
           <div className="px-2 mb-4">
             <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider text-center">
               Navegación
@@ -198,7 +198,7 @@ export function AppSidebar({
 
           {/* Quick Actions */}
           {canCreateExpedients && (
-            <div className="mt-6">
+            <div className="mt-6 pb-6">
               <div className="px-2 mb-4">
                 <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider text-center">
                   Acciones
