@@ -287,7 +287,7 @@ export function ExpedientList({
                       <th className="text-left p-4 font-medium w-32">Estado</th>
                       <th className="text-left p-4 font-medium w-40">Creado por</th>
                       <th className="text-left p-4 font-medium w-32">Fecha</th>
-                      <th className="text-right p-4 font-medium w-24">Acciones</th>
+                      <th className="text-center p-4 font-medium w-24">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -326,8 +326,8 @@ export function ExpedientList({
                           </div>
                         </td>
                         <td className="p-4">
-                          <div className="flex flex-col items-end space-y-2">
-                            <div className="flex items-center space-x-2">
+                          <div className="flex flex-col items-center space-y-2">
+                            <div className="flex items-center justify-center space-x-2">
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -345,7 +345,7 @@ export function ExpedientList({
                                 </Button>
                               )}
                             </div>
-                            <div className="flex items-center space-x-4 text-xs text-muted-foreground">
+                            <div className="flex items-center justify-center space-x-4 text-xs text-muted-foreground text-center">
                               <span>Ver expediente</span>
                               {canEdit && expedient.status !== 'draft' && (
                                 <span>Cambiar estado</span>
