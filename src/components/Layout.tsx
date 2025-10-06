@@ -23,6 +23,7 @@ interface LayoutProps {
   onExportPDF?: () => void;
   onTramites?: () => void;
   onNuevaActuacion?: () => void;
+  onNavegar?: () => void;
   showRegresarDiligencia?: boolean;
 }
 
@@ -37,6 +38,7 @@ export function Layout({
   onExportPDF,
   onTramites,
   onNuevaActuacion,
+  onNavegar,
   showRegresarDiligencia = false
 }: LayoutProps) {
   const { user } = useUser();
@@ -104,6 +106,7 @@ export function Layout({
             onExportPDF={onExportPDF}
             onTramites={onTramites}
             onNuevaActuacion={onNuevaActuacion}
+            onNavegar={onNavegar}
             showRegresarDiligencia={showRegresarDiligencia}
           />
         </div>

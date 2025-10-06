@@ -27,6 +27,7 @@ import { DiligenciaDialog } from "./DiligenciaDialog";
 import { RegresarDiligenciaDialog } from "./RegresarDiligenciaDialog";
 import { TramiteEditor } from "./TramiteEditor";
 import { TramiteList } from "./TramiteList";
+import { ActuacionNavigator } from "./ActuacionNavigator";
 import type { Actuacion } from "@/types/actuacion";
 import { actuacionStorage } from "@/utils/actuacionStorage";
 import { tramiteStorage } from "@/utils/tramiteStorage";
@@ -46,6 +47,7 @@ interface ExpedientViewProps {
     onExportPDF?: () => void;
     onNuevaActuacion?: () => void;
     onTramites?: () => void;
+    onNavegar?: () => void;
     showRegresarDiligencia?: boolean;
   }) => void;
 }
@@ -71,6 +73,7 @@ export function ExpedientView({
   const [showTramiteList, setShowTramiteList] = useState(false);
   const [showTramiteEditor, setShowTramiteEditor] = useState(false);
   const [tramites, setTramites] = useState<Tramite[]>([]);
+  const [showNavigator, setShowNavigator] = useState(false);
   
   const { user } = useUser();
   
@@ -165,6 +168,7 @@ export function ExpedientView({
         onExportPDF: handleExportPDF,
         onNuevaActuacion: handleNuevaActuacion,
         onTramites: () => setShowTramiteList(true),
+        onNavegar: () => setShowNavigator(true),
         showRegresarDiligencia: hayDiligenciaPendiente()
       });
     }
@@ -557,6 +561,28 @@ export function ExpedientView({
   const latestActuacion = actuaciones.sort((a, b) => 
     new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   )[0];
+
+  // Show ActuacionNavigator if requested
+  if (showNavigator) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Button variant="outline" onClick={() => setShowNavigator(false)}>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Volver al Expediente
+          </Button>
+          <h2 className="text-2xl font-bold">
+            Navegador de Actuaciones - {expedient.number}
+          </h2>
+        </div>
+        <ActuacionNavigator 
+          actuaciones={actuaciones}
+          expedientNumber={expedient.number}
+          expedientTitle={expedient.title}
+        />
+      </div>
+    );
+  }
 
   // Show TramiteList if requested
   if (showTramiteList) {

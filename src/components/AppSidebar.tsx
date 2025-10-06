@@ -7,7 +7,8 @@ import {
   Shield,
   Send,
   ArrowLeft,
-  Download
+  Download,
+  Navigation
 } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import {
@@ -35,6 +36,7 @@ interface AppSidebarProps {
   onExportPDF?: () => void;
   onTramites?: () => void;
   onNuevaActuacion?: () => void;
+  onNavegar?: () => void;
   showRegresarDiligencia?: boolean;
 }
 
@@ -48,6 +50,7 @@ export function AppSidebar({
   onExportPDF,
   onTramites,
   onNuevaActuacion,
+  onNavegar,
   showRegresarDiligencia = false
 }: AppSidebarProps) {
   const { user } = useUser();
@@ -106,6 +109,16 @@ export function AppSidebar({
               </h3>
             </div>
             <nav className="space-y-3 px-2 pb-6">
+              <button
+                onClick={onNavegar}
+                className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-primary hover:text-primary-foreground bg-muted/50 text-foreground"
+              >
+                <Navigation className="w-6 h-6 mb-2" />
+                <span className="text-xs text-center">
+                  Navegar
+                </span>
+              </button>
+
               <button
                 onClick={onDiligencia}
                 className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-blue-600 hover:text-white bg-muted/50 text-foreground"

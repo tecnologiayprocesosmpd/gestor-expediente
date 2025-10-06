@@ -136,6 +136,7 @@ function AppContent() {
     onExportPDF?: () => void;
     onNuevaActuacion?: () => void;
     onTramites?: () => void;
+    onNavegar?: () => void;
     showRegresarDiligencia?: boolean;
   }>({});
   
@@ -417,6 +418,7 @@ function AppContent() {
       onExportPDF={expedientViewActions.onExportPDF}
       onTramites={expedientViewActions.onTramites}
       onNuevaActuacion={expedientViewActions.onNuevaActuacion}
+      onNavegar={expedientViewActions.onNavegar}
       showRegresarDiligencia={expedientViewActions.showRegresarDiligencia}
     >
       {renderCurrentView()}
