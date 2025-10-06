@@ -28,6 +28,16 @@ import { RegresarDiligenciaDialog } from "./RegresarDiligenciaDialog";
 import { TramiteEditor } from "./TramiteEditor";
 import { TramiteList } from "./TramiteList";
 import { ActuacionNavigator } from "./ActuacionNavigator";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import type { Actuacion } from "@/types/actuacion";
 import { actuacionStorage } from "@/utils/actuacionStorage";
 import { tramiteStorage } from "@/utils/tramiteStorage";
@@ -74,6 +84,7 @@ export function ExpedientView({
   const [showTramiteEditor, setShowTramiteEditor] = useState(false);
   const [tramites, setTramites] = useState<Tramite[]>([]);
   const [showNavigator, setShowNavigator] = useState(false);
+  const [pendingStatusChange, setPendingStatusChange] = useState<'draft' | 'en_tramite' | 'paralizado' | 'archivado' | null>(null);
   
   const { user } = useUser();
   
@@ -516,6 +527,38 @@ export function ExpedientView({
 - Actuaciones enviadas: ${cantidadActuaciones}`);
   };
 
+  const handleExpedientStatusChange = (newStatus: 'draft' | 'en_tramite' | 'paralizado' | 'archivado') => {
+    setPendingStatusChange(newStatus);
+  };
+
+  const confirmExpedientStatusChange = () => {
+    if (!pendingStatusChange) return;
+    
+    // Update expedient status
+    const updatedExpedient = {
+      ...propExpedient,
+      status: pendingStatusChange,
+      updatedAt: new Date()
+    };
+    
+    // Save to localStorage
+    try {
+      const savedExpedients = localStorage.getItem('expedientes');
+      const expedients = savedExpedients ? JSON.parse(savedExpedients) : [];
+      const updatedExpedients = expedients.map((exp: any) => 
+        exp.id === expedient.id ? updatedExpedient : exp
+      );
+      localStorage.setItem('expedientes', JSON.stringify(updatedExpedients));
+      
+      // Force reload of the page to show updated status
+      window.location.reload();
+    } catch (error) {
+      console.error('Error updating expedient status:', error);
+    }
+    
+    setPendingStatusChange(null);
+  };
+
   const handleRegresarDiligencia = async (data: {
     fechaRegreso: string;
   }) => {
@@ -843,11 +886,18 @@ export function ExpedientView({
                   <span className="text-sm font-medium">Número</span>
                   <span className="text-sm text-muted-foreground">{expedient.number}</span>
                 </div>
-                <div className="flex items-center justify-between py-2 border-b border-border/50">
+                <div className="flex flex-col space-y-2 py-2 border-b border-border/50">
                   <span className="text-sm font-medium">Estado</span>
-                  <Badge className={`${statusColors.bg} ${statusColors.text} border-0`}>
-                    {getStatusLabel(expedient.status)}
-                  </Badge>
+                  <select
+                    value={expedient.status}
+                    onChange={(e) => handleExpedientStatusChange(e.target.value as any)}
+                    className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <option value="draft">Borrador</option>
+                    <option value="en_tramite">En Trámite</option>
+                    <option value="paralizado">Paralizado</option>
+                    <option value="archivado">Archivado</option>
+                  </select>
                 </div>
                 <div className="flex items-center justify-between py-2 border-b border-border/50">
                   <span className="text-sm font-medium">Creado</span>
@@ -907,6 +957,32 @@ export function ExpedientView({
         oficinaRemitente="Mesa de Entrada" // Esto debería venir de los datos del expediente
         onConfirm={handleRegresarDiligencia}
       />
+
+      {/* Diálogo de Confirmación de Cambio de Estado */}
+      <AlertDialog open={pendingStatusChange !== null} onOpenChange={(open) => !open && setPendingStatusChange(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-orange-500" />
+              Confirmar cambio de estado
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {pendingStatusChange && `¿Está seguro de cambiar el estado del expediente a "${getStatusLabel(pendingStatusChange)}"?`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setPendingStatusChange(null)}>
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmExpedientStatusChange}
+              className="bg-orange-500 hover:bg-orange-600"
+            >
+              Confirmar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
