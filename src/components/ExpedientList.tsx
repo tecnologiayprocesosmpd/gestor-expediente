@@ -275,19 +275,19 @@ export function ExpedientList({
                   <colgroup>
                     <col className="w-32" />
                     <col className="w-auto" />
+                    <col className="w-28" />
+                    <col className="w-36" />
                     <col className="w-32" />
-                    <col className="w-40" />
-                    <col className="w-32" />
-                    <col className="w-24" />
+                    <col className="w-48" />
                   </colgroup>
                   <thead className="border-b sticky top-0 bg-background z-10">
                     <tr className="bg-muted/30">
                       <th className="text-left p-4 font-medium w-32">Número</th>
                       <th className="text-left p-4 font-medium">Expediente</th>
-                      <th className="text-left p-4 font-medium w-32">Estado</th>
-                      <th className="text-left p-4 font-medium w-40">Creado por</th>
+                      <th className="text-left p-4 font-medium w-28">Estado</th>
+                      <th className="text-left p-4 font-medium w-36">Creado por</th>
                       <th className="text-left p-4 font-medium w-32">Fecha</th>
-                      <th className="text-center p-4 font-medium w-24">Acciones</th>
+                      <th className="text-center p-4 font-medium w-48">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
