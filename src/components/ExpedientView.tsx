@@ -598,22 +598,54 @@ export function ExpedientView({
   // Show ActuacionNavigator if requested
   if (showNavigator) {
     return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <Button variant="outline" onClick={() => setShowNavigator(false)}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Volver al Expediente
-          </Button>
-          <h2 className="text-2xl font-bold">
-            Navegador de Actuaciones - {expedient.number}
-          </h2>
+      <>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Button variant="outline" onClick={() => setShowNavigator(false)}>
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Volver al Expediente
+            </Button>
+            <h2 className="text-2xl font-bold">
+              Navegador de Actuaciones - {expedient.number}
+            </h2>
+          </div>
+          <ActuacionNavigator 
+            actuaciones={actuaciones}
+            expedientNumber={expedient.number}
+            expedientTitle={expedient.title}
+          />
         </div>
-        <ActuacionNavigator 
-          actuaciones={actuaciones}
+
+        {/* Diálogos disponibles en vista de navegación */}
+        <DiligenciaDialog
+          open={showDiligenciaDialog}
+          onOpenChange={setShowDiligenciaDialog}
           expedientNumber={expedient.number}
-          expedientTitle={expedient.title}
+          actuaciones={actuaciones}
+          onConfirm={handleDiligencia}
         />
-      </div>
+
+        <RegresarDiligenciaDialog
+          open={showRegresarDiligenciaDialog}
+          onOpenChange={setShowRegresarDiligenciaDialog}
+          expedientNumber={expedient.number}
+          oficinaRemitente="Mesa de Entrada"
+          onConfirm={handleRegresarDiligencia}
+        />
+
+        <SelectEstadoDialog
+          open={showSelectEstado}
+          onOpenChange={setShowSelectEstado}
+          currentStatus={expedient.status as 'en_tramite' | 'paralizado' | 'archivado'}
+          onSelect={handleStatusSelected}
+        />
+        
+        <StatusChangeConfirmDialog
+          open={showStatusConfirm}
+          onOpenChange={setShowStatusConfirm}
+          onConfirm={handleConfirmStatusChange}
+        />
+      </>
     );
   }
 
