@@ -183,7 +183,7 @@ export function AppSidebar({
               >
                 <FileCheck className="w-6 h-6 mb-2" />
                 <span className="text-xs text-center">
-                  Oficio
+                  Oficios
                 </span>
               </button>
 
