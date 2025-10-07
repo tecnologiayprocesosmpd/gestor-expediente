@@ -109,7 +109,7 @@ export function TramiteList({ tramites, onCreateTramite, onBack, onTramiteUpdate
               }
             </p>
             {!searchTerm && (
-              <Button onClick={onCreateTramite}>
+              <Button onClick={onCreateTramite} variant="outline">
                 <Plus className="w-4 h-4 mr-2" />
                 Crear Primer Trámite
               </Button>
