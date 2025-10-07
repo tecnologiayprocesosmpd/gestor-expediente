@@ -199,6 +199,14 @@ export function ExpedientView({
     setShowTramiteList(false);
   };
 
+  const handleTramiteUpdated = () => {
+    // Reload tramites after updating one
+    if (expedientId) {
+      const loadedTramites = tramiteStorage.getByExpedientId(expedientId);
+      setTramites(loadedTramites);
+    }
+  };
+
   const handleNuevaActuacion = () => setShowActuacionEditor(true);
 
   // Register actions with parent component
@@ -656,6 +664,7 @@ export function ExpedientView({
         tramites={tramites}
         onCreateTramite={handleCreateTramite}
         onBack={handleBackFromTramiteList}
+        onTramiteUpdated={handleTramiteUpdated}
       />
     );
   }
@@ -817,16 +826,26 @@ export function ExpedientView({
             
             <div className="space-y-2">
               <div className="flex items-start">
-                <h1 className="text-2xl font-bold text-foreground">
-                  {expedient.title}
-                </h1>
-                
-                <div className={`${statusColors.bg} rounded-md px-4 py-2 flex items-center space-x-2 shadow-sm border border-white/20 ml-8`}>
-                  <div className={`w-2.5 h-2.5 rounded-full ${statusColors.text === 'text-[hsl(var(--status-draft-foreground))]' ? 'bg-white' : 'bg-white'} animate-pulse`}></div>
-                  <span className={`text-sm font-semibold ${statusColors.text}`}>
-                    {getStatusLabel(expedient.status)}
-                  </span>
-                </div>
+              <h1 className="text-2xl font-bold text-foreground">
+                {expedient.title}
+              </h1>
+              
+              {/* Current Tramite Badge */}
+              {tramites.length > 0 && !tramites.every(t => t.finalizado) && (
+                <Badge 
+                  variant="outline" 
+                  className="ml-4 px-3 py-1 text-sm font-medium border-primary/30 bg-primary/5 text-primary"
+                >
+                  {tramites.find(t => !t.finalizado)?.referencia || 'En Trámite'}
+                </Badge>
+              )}
+              
+              <div className={`${statusColors.bg} rounded-md px-4 py-2 flex items-center space-x-2 shadow-sm border border-white/20 ml-8`}>
+                <div className={`w-2.5 h-2.5 rounded-full ${statusColors.text === 'text-[hsl(var(--status-draft-foreground))]' ? 'bg-white' : 'bg-white'} animate-pulse`}></div>
+                <span className={`text-sm font-semibold ${statusColors.text}`}>
+                  {getStatusLabel(expedient.status)}
+                </span>
+              </div>
               </div>
               
               <div className="flex items-center space-x-4 text-sm text-muted-foreground">

@@ -10,7 +10,8 @@ export const tramiteStorage = {
     const tramites = JSON.parse(data);
     return tramites.map((t: any) => ({
       ...t,
-      fechaCreacion: new Date(t.fechaCreacion)
+      fechaCreacion: new Date(t.fechaCreacion),
+      finalizado: t.finalizado ?? false // default to false for existing records
     }));
   },
 

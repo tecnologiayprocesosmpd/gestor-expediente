@@ -2,24 +2,43 @@ import { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { 
   Search, 
   FileText,
   Plus,
   Calendar,
   User,
-  ArrowLeft
+  ArrowLeft,
+  CheckCircle2
 } from "lucide-react";
 import { Tramite } from "@/types/tramite";
+import { tramiteStorage } from "@/utils/tramiteStorage";
+import { toast } from "sonner";
 
 interface TramiteListProps {
   tramites: Tramite[];
   onCreateTramite: () => void;
   onBack: () => void;
+  onTramiteUpdated: () => void;
 }
 
-export function TramiteList({ tramites, onCreateTramite, onBack }: TramiteListProps) {
+export function TramiteList({ tramites, onCreateTramite, onBack, onTramiteUpdated }: TramiteListProps) {
   const [searchTerm, setSearchTerm] = useState('');
+
+  const handleFinalizarTramite = (tramiteId: string) => {
+    const tramite = tramites.find(t => t.id === tramiteId);
+    if (tramite) {
+      const updatedTramite = { ...tramite, finalizado: true };
+      tramiteStorage.save(updatedTramite);
+      toast.success("Trámite finalizado");
+      onTramiteUpdated();
+    }
+  };
+
+  // Check if there's an active (non-finished) tramite
+  const hasActiveTramite = tramites.some(t => !t.finalizado);
+  const canCreateNew = !hasActiveTramite;
 
   // Filter tramites based on search term
   const filteredTramites = tramites.filter(tramite => {
@@ -52,7 +71,11 @@ export function TramiteList({ tramites, onCreateTramite, onBack }: TramiteListPr
             </p>
           </div>
         </div>
-        <Button onClick={onCreateTramite}>
+        <Button 
+          onClick={onCreateTramite}
+          disabled={!canCreateNew}
+          title={!canCreateNew ? "Debe finalizar el trámite actual antes de crear uno nuevo" : ""}
+        >
           <Plus className="w-4 h-4 mr-2" />
           Nuevo Trámite
         </Button>
@@ -103,6 +126,7 @@ export function TramiteList({ tramites, onCreateTramite, onBack }: TramiteListPr
                   <col className="w-auto" />
                   <col className="w-40" />
                   <col className="w-32" />
+                  <col className="w-32" />
                 </colgroup>
                 <thead className="border-b">
                   <tr className="bg-muted/30">
@@ -110,6 +134,7 @@ export function TramiteList({ tramites, onCreateTramite, onBack }: TramiteListPr
                     <th className="text-left p-4 font-medium">Referencia</th>
                     <th className="text-left p-4 font-medium w-40">Creado por</th>
                     <th className="text-left p-4 font-medium w-32">Fecha</th>
+                    <th className="text-left p-4 font-medium w-32">Estado</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -139,6 +164,24 @@ export function TramiteList({ tramites, onCreateTramite, onBack }: TramiteListPr
                           <Calendar className="w-4 h-4 mr-2 text-muted-foreground" />
                           <span>{tramite.fechaCreacion.toLocaleDateString('es-ES')}</span>
                         </div>
+                      </td>
+                      <td className="p-4">
+                        {tramite.finalizado ? (
+                          <Badge variant="default" className="bg-green-500">
+                            <CheckCircle2 className="w-3 h-3 mr-1" />
+                            Finalizado
+                          </Badge>
+                        ) : (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleFinalizarTramite(tramite.id)}
+                            className="text-xs"
+                          >
+                            <CheckCircle2 className="w-3 h-3 mr-1" />
+                            Finalizar
+                          </Button>
+                        )}
                       </td>
                     </tr>
                   ))}

@@ -32,7 +32,8 @@ export function TramiteEditor({ expedientId, onBack }: TramiteEditorProps) {
       numero,
       referencia: referencia.trim(),
       fechaCreacion,
-      createdBy: user?.name || 'Usuario'
+      createdBy: user?.name || 'Usuario',
+      finalizado: false
     };
 
     tramiteStorage.save(tramite);
