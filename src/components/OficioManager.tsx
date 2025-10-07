@@ -58,6 +58,11 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
   const [showOficioDetails, setShowOficioDetails] = useState(false);
   const [selectedOficio, setSelectedOficio] = useState<OficioItem | null>(null);
   const [responsePdfFile, setResponsePdfFile] = useState<File | null>(null);
+  
+  // Estados para filtrado de expedientes
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState<string[]>(['en_tramite', 'paralizado', 'archivado']);
+  const [filterTipoTramite, setFilterTipoTramite] = useState<string[]>([]);
 
   // Cargar oficios desde localStorage
   useEffect(() => {
@@ -207,6 +212,30 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
     setSelectedOficio(oficio);
     setShowOficioDetails(true);
   };
+
+  // Filtrar expedientes disponibles
+  const filteredExpedients = expedients.filter(exp => {
+    // Filtro por status
+    if (!filterStatus.includes(exp.status)) return false;
+    
+    // Filtro por tipo de trámite
+    if (filterTipoTramite.length > 0 && !filterTipoTramite.includes(exp.tipoTramite)) return false;
+    
+    // Filtro por búsqueda
+    if (searchTerm) {
+      const search = searchTerm.toLowerCase();
+      return (
+        exp.number.toLowerCase().includes(search) ||
+        exp.title.toLowerCase().includes(search) ||
+        exp.tipoTramite.toLowerCase().includes(search)
+      );
+    }
+    
+    return true;
+  });
+
+  // Obtener tipos de trámite únicos
+  const uniqueTipoTramites = Array.from(new Set(expedients.map(e => e.tipoTramite)));
 
   // Separar oficios activos y finalizados
   const activeOficios = oficios.filter(o => !o.finished);
@@ -398,38 +427,124 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
 
       {/* Dialog para seleccionar expediente */}
       <Dialog open={showExpedientSelector} onOpenChange={setShowExpedientSelector}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-3xl max-h-[80vh]">
           <DialogHeader>
             <DialogTitle>Seleccionar Expediente para Oficio</DialogTitle>
           </DialogHeader>
+          
+          {/* Filtros */}
+          <div className="space-y-4 border-b pb-4">
+            {/* Búsqueda */}
+            <div className="space-y-2">
+              <Label htmlFor="search" className="text-sm font-medium">
+                Buscar expediente
+              </Label>
+              <Input
+                id="search"
+                type="text"
+                placeholder="Buscar por número, título o tipo de trámite..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full"
+              />
+            </div>
+
+            {/* Filtro por Estado */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Estado</Label>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { value: 'en_tramite', label: 'En Trámite' },
+                  { value: 'paralizado', label: 'Paralizado' },
+                  { value: 'archivado', label: 'Archivado' }
+                ].map(status => (
+                  <Button
+                    key={status.value}
+                    variant={filterStatus.includes(status.value) ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => {
+                      setFilterStatus(prev => 
+                        prev.includes(status.value)
+                          ? prev.filter(s => s !== status.value)
+                          : [...prev, status.value]
+                      );
+                    }}
+                  >
+                    {status.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* Filtro por Tipo de Trámite */}
+            {uniqueTipoTramites.length > 0 && (
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Tipo de Trámite</Label>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    variant={filterTipoTramite.length === 0 ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setFilterTipoTramite([])}
+                  >
+                    Todos
+                  </Button>
+                  {uniqueTipoTramites.map(tipo => (
+                    <Button
+                      key={tipo}
+                      variant={filterTipoTramite.includes(tipo) ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => {
+                        setFilterTipoTramite(prev => 
+                          prev.includes(tipo)
+                            ? prev.filter(t => t !== tipo)
+                            : [...prev, tipo]
+                        );
+                      }}
+                    >
+                      {tipo}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Contador de resultados */}
+            <p className="text-sm text-muted-foreground">
+              {filteredExpedients.length} expediente{filteredExpedients.length !== 1 ? 's' : ''} disponible{filteredExpedients.length !== 1 ? 's' : ''}
+            </p>
+          </div>
+
           <ScrollArea className="max-h-96">
             <div className="space-y-2">
-              {expedients.filter(exp => 
-                exp.status === 'en_tramite' || 
-                exp.status === 'paralizado' || 
-                exp.status === 'archivado'
-              ).map((expedient) => (
-                <div
-                  key={expedient.id}
-                  className="border rounded-lg p-3 cursor-pointer hover:bg-muted/50"
-                  onClick={() => handleSelectExpedient(expedient.id)}
-                >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h4 className="font-medium">{expedient.number}</h4>
-                      <p className="text-sm text-muted-foreground mt-1">{expedient.title}</p>
-                      <div className="flex gap-2 mt-2">
-                        <Badge variant="outline">{expedient.tipoTramite}</Badge>
-                        <Badge variant={expedient.status === 'en_tramite' ? 'default' : 'secondary'}>
-                          {expedient.status === 'en_tramite' ? 'En Trámite' : 
-                           expedient.status === 'draft' ? 'Borrador' : 
-                           expedient.status === 'archivado' ? 'Archivado' : 'Estado desconocido'}
-                        </Badge>
+              {filteredExpedients.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <FileText className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                  <p>No se encontraron expedientes con los filtros seleccionados</p>
+                </div>
+              ) : (
+                filteredExpedients.map((expedient) => (
+                  <div
+                    key={expedient.id}
+                    className="border rounded-lg p-3 cursor-pointer hover:bg-muted/50"
+                    onClick={() => handleSelectExpedient(expedient.id)}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="font-medium">{expedient.number}</h4>
+                        <p className="text-sm text-muted-foreground mt-1">{expedient.title}</p>
+                        <div className="flex gap-2 mt-2">
+                          <Badge variant="outline">{expedient.tipoTramite}</Badge>
+                          <Badge variant={expedient.status === 'en_tramite' ? 'default' : 'secondary'}>
+                            {expedient.status === 'en_tramite' ? 'En Trámite' : 
+                             expedient.status === 'draft' ? 'Borrador' : 
+                             expedient.status === 'archivado' ? 'Archivado' : 'Estado desconocido'}
+                          </Badge>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </ScrollArea>
         </DialogContent>
