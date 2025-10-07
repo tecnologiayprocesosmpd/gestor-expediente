@@ -29,6 +29,7 @@ import { TramiteList } from "./TramiteList";
 import { ActuacionNavigator } from "./ActuacionNavigator";
 import { SelectEstadoDialog } from "./SelectEstadoDialog";
 import { StatusChangeConfirmDialog } from "./StatusChangeConfirmDialog";
+import { ExpedientOficioView } from "./ExpedientOficioView";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -61,6 +62,7 @@ interface ExpedientViewProps {
     onTramites?: () => void;
     onNavegar?: () => void;
     onChangeStatus?: () => void;
+    onOficio?: () => void;
     showRegresarRadicacionInterna?: boolean;
   }) => void;
 }
@@ -91,6 +93,7 @@ export function ExpedientView({
   const [showSelectEstado, setShowSelectEstado] = useState(false);
   const [showStatusConfirm, setShowStatusConfirm] = useState(false);
   const [pendingNewStatus, setPendingNewStatus] = useState<'en_tramite' | 'paralizado' | 'archivado'>('en_tramite');
+  const [showOficioView, setShowOficioView] = useState(false);
   
   const { user } = useUser();
 
@@ -219,6 +222,7 @@ export function ExpedientView({
         onTramites: () => setShowTramiteList(true),
         onNavegar: () => setShowNavigator(true),
         onChangeStatus: () => setShowSelectEstado(true),
+        onOficio: () => setShowOficioView(true),
         showRegresarRadicacionInterna: hayRadicacionInternaPendiente()
       });
     }
@@ -653,6 +657,18 @@ export function ExpedientView({
           onConfirm={handleConfirmStatusChange}
         />
       </>
+    );
+  }
+
+  // Show OficioView if requested
+  if (showOficioView) {
+    return (
+      <ExpedientOficioView 
+        expedientId={expedientId || ''}
+        expedientNumber={expedient.number}
+        expedientTitle={expedient.title}
+        onBack={() => setShowOficioView(false)}
+      />
     );
   }
 

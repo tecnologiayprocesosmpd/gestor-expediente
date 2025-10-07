@@ -9,7 +9,8 @@ import {
   ArrowLeft,
   Download,
   Navigation,
-  RefreshCw
+  RefreshCw,
+  FileCheck
 } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import {
@@ -39,6 +40,7 @@ interface AppSidebarProps {
   onNuevaActuacion?: () => void;
   onNavegar?: () => void;
   onChangeStatus?: () => void;
+  onOficio?: () => void;
   showRegresarRadicacionInterna?: boolean;
 }
 
@@ -54,6 +56,7 @@ export function AppSidebar({
   onNuevaActuacion,
   onNavegar,
   onChangeStatus,
+  onOficio,
   showRegresarRadicacionInterna = false
 }: AppSidebarProps) {
   const { user } = useUser();
@@ -181,6 +184,16 @@ export function AppSidebar({
                 <RefreshCw className="w-6 h-6 mb-2" />
                 <span className="text-xs text-center">
                   Estado Expediente
+                </span>
+              </button>
+
+              <button
+                onClick={onOficio}
+                className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-purple-600 hover:text-white bg-muted/50 text-foreground"
+              >
+                <FileCheck className="w-6 h-6 mb-2" />
+                <span className="text-xs text-center">
+                  Oficio
                 </span>
               </button>
             </nav>

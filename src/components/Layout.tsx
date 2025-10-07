@@ -25,6 +25,7 @@ interface LayoutProps {
   onNuevaActuacion?: () => void;
   onNavegar?: () => void;
   onChangeStatus?: () => void;
+  onOficio?: () => void;
   showRegresarRadicacionInterna?: boolean;
 }
 
@@ -41,6 +42,7 @@ export function Layout({
   onNuevaActuacion,
   onNavegar,
   onChangeStatus,
+  onOficio,
   showRegresarRadicacionInterna = false
 }: LayoutProps) {
   const { user } = useUser();
@@ -110,6 +112,7 @@ export function Layout({
             onNuevaActuacion={onNuevaActuacion}
             onNavegar={onNavegar}
             onChangeStatus={onChangeStatus}
+            onOficio={onOficio}
             showRegresarRadicacionInterna={showRegresarRadicacionInterna}
           />
         </div>
