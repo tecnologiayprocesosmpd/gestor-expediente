@@ -29,6 +29,7 @@ import { TramiteList } from "./TramiteList";
 import { ActuacionNavigator } from "./ActuacionNavigator";
 import { SelectEstadoDialog } from "./SelectEstadoDialog";
 import { StatusChangeConfirmDialog } from "./StatusChangeConfirmDialog";
+import { ExpedientOficioView } from "./ExpedientOficioView";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -91,6 +92,7 @@ export function ExpedientView({
   const [showSelectEstado, setShowSelectEstado] = useState(false);
   const [showStatusConfirm, setShowStatusConfirm] = useState(false);
   const [pendingNewStatus, setPendingNewStatus] = useState<'en_tramite' | 'paralizado' | 'archivado'>('en_tramite');
+  const [showOficioView, setShowOficioView] = useState(false);
   
   const { user } = useUser();
 
@@ -223,6 +225,8 @@ export function ExpedientView({
       });
     }
   }, [onRegisterActions, radicacionesInternasPendientes]);
+
+  const handleOficioView = () => setShowOficioView(true);
 
   
   
@@ -705,6 +709,17 @@ export function ExpedientView({
     );
   }
 
+  if (showOficioView) {
+    return (
+      <ExpedientOficioView
+        expedientId={expedient.id}
+        expedientNumber={expedient.number}
+        expedientTitle={expedient.title}
+        onBack={() => setShowOficioView(false)}
+      />
+    );
+  }
+
   if (selectedActuacion) {
     return (
       <div className="min-h-screen p-6 space-y-6">
@@ -904,6 +919,20 @@ export function ExpedientView({
         
         {/* Panel izquierdo: Información del expediente */}
         <div className="lg:col-span-1 space-y-4">
+          {/* Botón de Oficio */}
+          <Card>
+            <CardContent className="pt-6">
+              <Button 
+                onClick={handleOficioView}
+                className="w-full"
+                variant="default"
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                Oficio
+              </Button>
+            </CardContent>
+          </Card>
+
           <Card className={`${statusColors.border} border-l-4`}>
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center space-x-2">
