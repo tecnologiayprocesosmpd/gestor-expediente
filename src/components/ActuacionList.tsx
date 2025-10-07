@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   FileText, 
   Edit3, 
@@ -11,12 +10,12 @@ import {
   Clock,
   AlertTriangle,
   Plus,
-  Calendar
+  Undo2
 } from "lucide-react";
 import { Actuacion } from "@/types/actuacion";
 import { useUser } from "@/contexts/UserContext";
-import { CitacionDialog } from "./CitacionDialog";
 import { StatusChangeConfirmDialog } from "./StatusChangeConfirmDialog";
+import { SelectActuacionEstadoDialog } from "./SelectActuacionEstadoDialog";
 
 interface ActuacionListProps {
   expedientId: string;
@@ -40,48 +39,105 @@ export function ActuacionList({
   const { user } = useUser();
   const canEdit = true; // Ambos perfiles pueden editar
   const canCreate = true; // Ambos perfiles pueden crear
+  const [selectEstadoOpen, setSelectEstadoOpen] = useState(false);
+  const [selectedActuacionId, setSelectedActuacionId] = useState<string | null>(null);
 
-  const getStatusBadge = (status: Actuacion['status']) => {
-    const config = {
-      'borrador': { 
-        variant: 'secondary' as const, 
-        label: 'Borrador', 
-        icon: Edit3 
-      },
-      'para-firmar': { 
-        variant: 'default' as const, 
-        label: 'Para Firma', 
-        icon: AlertTriangle 
-      },
-      'firmado': { 
-        variant: 'outline' as const, 
-        label: 'Firmado', 
-        icon: CheckCircle 
-      }
-    };
-
-    const { variant, label, icon: Icon } = config[status];
-    
-    return (
-      <Badge variant={variant} className="flex items-center gap-1">
-        <Icon className="w-3 h-3" />
-        {label}
-      </Badge>
-    );
+  const canRevertFromFirmado = (actuacion: Actuacion): boolean => {
+    if (actuacion.status !== 'firmado' || !actuacion.signedAt) return false;
+    const twentyFourHours = 24 * 60 * 60 * 1000;
+    const timeSinceSigned = Date.now() - actuacion.signedAt.getTime();
+    return timeSinceSigned < twentyFourHours;
   };
 
-  const handleStatusChange = (actuacionId: string, currentStatus: Actuacion['status']) => {
+  const handleStatusButtonClick = (actuacionId: string, currentStatus: Actuacion['status']) => {
     if (!canEdit || !onChangeStatus) return;
 
-    const nextStatus: { [key in Actuacion['status']]: Actuacion['status'] | null } = {
-      'borrador': 'para-firmar',
-      'para-firmar': 'firmado',
-      'firmado': null
-    };
+    if (currentStatus === 'borrador') {
+      // Directo a para-firmar con confirmación
+      onChangeStatus(actuacionId, 'para-firmar');
+    } else if (currentStatus === 'para-firmar') {
+      // Abrir diálogo para elegir entre volver a borrador o firmado
+      setSelectedActuacionId(actuacionId);
+      setSelectEstadoOpen(true);
+    }
+  };
 
-    const next = nextStatus[currentStatus];
-    if (next) {
-      onChangeStatus(actuacionId, next);
+  const handleSelectEstado = (newStatus: Actuacion['status']) => {
+    if (selectedActuacionId && onChangeStatus) {
+      onChangeStatus(selectedActuacionId, newStatus);
+      setSelectedActuacionId(null);
+    }
+  };
+
+  const handleRevertFromFirmado = (actuacionId: string) => {
+    if (onChangeStatus) {
+      onChangeStatus(actuacionId, 'para-firmar');
+    }
+  };
+
+  const getStatusButton = (actuacion: Actuacion) => {
+    const { status, id } = actuacion;
+    
+    if (status === 'borrador') {
+      return (
+        <StatusChangeConfirmDialog
+          onConfirm={() => handleStatusButtonClick(id, status)}
+          message="¿Está seguro de enviar la actuación para firma?"
+        >
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-orange-500 text-orange-600 hover:bg-orange-50"
+          >
+            <AlertTriangle className="w-4 h-4 mr-1" />
+            Borrador
+          </Button>
+        </StatusChangeConfirmDialog>
+      );
+    }
+    
+    if (status === 'para-firmar') {
+      return (
+        <Button
+          variant="outline"
+          size="sm"
+          className="border-blue-500 text-blue-600 hover:bg-blue-50"
+          onClick={() => handleStatusButtonClick(id, status)}
+        >
+          <Clock className="w-4 h-4 mr-1" />
+          Para Firma
+        </Button>
+      );
+    }
+    
+    if (status === 'firmado') {
+      const canRevert = canRevertFromFirmado(actuacion);
+      return canRevert ? (
+        <StatusChangeConfirmDialog
+          onConfirm={() => handleRevertFromFirmado(id)}
+          title="Revertir firma"
+          message="¿Está seguro de revertir esta actuación a 'Para Firma'? Esta acción se puede realizar solo dentro de las 24 horas posteriores a la firma."
+        >
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-green-500 text-green-600 hover:bg-green-50"
+          >
+            <CheckCircle className="w-4 h-4 mr-1" />
+            Firmado
+          </Button>
+        </StatusChangeConfirmDialog>
+      ) : (
+        <Button
+          variant="outline"
+          size="sm"
+          disabled
+          className="border-green-500 text-green-600"
+        >
+          <CheckCircle className="w-4 h-4 mr-1" />
+          Firmado
+        </Button>
+      );
     }
   };
 
@@ -130,7 +186,6 @@ export function ActuacionList({
                     <span className="font-medium text-sm text-muted-foreground">
                       Actuación #{actuacion.number}
                     </span>
-                    {getStatusBadge(actuacion.status)}
                   </div>
                   <h4 className="font-medium text-foreground mb-1">
                     {actuacion.title}
@@ -156,54 +211,31 @@ export function ActuacionList({
                     Ver
                   </Button>
                   
-                  {actuacion.status === 'borrador' && canEdit && (
-                    <StatusChangeConfirmDialog
-                      onConfirm={() => handleStatusChange(actuacion.id, actuacion.status)}
-                      message="¿Está seguro de enviar la actuación para firma?"
+                  {canEdit && (actuacion.status === 'borrador' || actuacion.status === 'para-firmar') && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onEditActuacion?.(actuacion.id)}
                     >
-                      <Button
-                        variant="default"
-                        size="sm"
-                        className="bg-orange-500 hover:bg-orange-600 text-white"
-                      >
-                        <AlertTriangle className="w-4 h-4 mr-1" />
-                        PARA FIRMA
-                      </Button>
-                    </StatusChangeConfirmDialog>
+                      <Edit3 className="w-4 h-4 mr-1" />
+                      Editar
+                    </Button>
                   )}
-                  
-                   {canEdit && (actuacion.status === 'borrador' || actuacion.status === 'para-firmar') && (
-                     <Button
-                       variant="default"
-                       size="sm"
-                       onClick={() => onEditActuacion?.(actuacion.id)}
-                     >
-                       <Edit3 className="w-4 h-4 mr-1" />
-                       Editar
-                     </Button>
-                   )}
 
-                  {canEdit && actuacion.status === 'para-firmar' && (
-                    <StatusChangeConfirmDialog
-                      onConfirm={() => handleStatusChange(actuacion.id, actuacion.status)}
-                      title="Confirmar firma"
-                      message="¿Está seguro de firmar esta actuación? Una vez firmada no podrá ser modificada."
-                    >
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                      >
-                        <CheckCircle className="w-4 h-4 mr-1" />
-                        Firmar
-                      </Button>
-                    </StatusChangeConfirmDialog>
-                  )}
+                  {canEdit && getStatusButton(actuacion)}
                 </div>
               </div>
             ))}
           </div>
         )}
       </CardContent>
+      
+      <SelectActuacionEstadoDialog
+        open={selectEstadoOpen}
+        onOpenChange={setSelectEstadoOpen}
+        currentStatus="para-firmar"
+        onSelect={handleSelectEstado}
+      />
     </Card>
   );
 }
