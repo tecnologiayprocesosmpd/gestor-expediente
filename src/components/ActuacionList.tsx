@@ -10,7 +10,8 @@ import {
   Clock,
   AlertTriangle,
   Plus,
-  Undo2
+  Undo2,
+  RefreshCw
 } from "lucide-react";
 import { Actuacion } from "@/types/actuacion";
 import { useUser } from "@/contexts/UserContext";
@@ -75,6 +76,35 @@ export function ActuacionList({
     }
   };
 
+  const getStatusBadge = (status: Actuacion['status']) => {
+    if (status === 'borrador') {
+      return (
+        <Badge variant="outline" className="border-orange-500 text-orange-600">
+          <AlertTriangle className="w-3 h-3 mr-1" />
+          Borrador
+        </Badge>
+      );
+    }
+    
+    if (status === 'para-firmar') {
+      return (
+        <Badge variant="outline" className="border-blue-500 text-blue-600">
+          <Clock className="w-3 h-3 mr-1" />
+          Para Firma
+        </Badge>
+      );
+    }
+    
+    if (status === 'firmado') {
+      return (
+        <Badge variant="outline" className="border-green-500 text-green-600">
+          <CheckCircle className="w-3 h-3 mr-1" />
+          Firmado
+        </Badge>
+      );
+    }
+  };
+
   const getStatusButton = (actuacion: Actuacion) => {
     const { status, id } = actuacion;
     
@@ -87,10 +117,9 @@ export function ActuacionList({
           <Button
             variant="outline"
             size="sm"
-            className="border-orange-500 text-orange-600 hover:bg-orange-50"
           >
-            <AlertTriangle className="w-4 h-4 mr-1" />
-            Borrador
+            <RefreshCw className="w-4 h-4 mr-1" />
+            Estado actuación
           </Button>
         </StatusChangeConfirmDialog>
       );
@@ -101,11 +130,10 @@ export function ActuacionList({
         <Button
           variant="outline"
           size="sm"
-          className="border-blue-500 text-blue-600 hover:bg-blue-50"
           onClick={() => handleStatusButtonClick(id, status)}
         >
-          <Clock className="w-4 h-4 mr-1" />
-          Para Firma
+          <RefreshCw className="w-4 h-4 mr-1" />
+          Estado actuación
         </Button>
       );
     }
@@ -121,10 +149,9 @@ export function ActuacionList({
           <Button
             variant="outline"
             size="sm"
-            className="border-green-500 text-green-600 hover:bg-green-50"
           >
-            <CheckCircle className="w-4 h-4 mr-1" />
-            Firmado
+            <RefreshCw className="w-4 h-4 mr-1" />
+            Estado actuación
           </Button>
         </StatusChangeConfirmDialog>
       ) : (
@@ -132,10 +159,9 @@ export function ActuacionList({
           variant="outline"
           size="sm"
           disabled
-          className="border-green-500 text-green-600"
         >
-          <CheckCircle className="w-4 h-4 mr-1" />
-          Firmado
+          <RefreshCw className="w-4 h-4 mr-1" />
+          Estado actuación
         </Button>
       );
     }
@@ -186,6 +212,7 @@ export function ActuacionList({
                     <span className="font-medium text-sm text-muted-foreground">
                       Actuación #{actuacion.number}
                     </span>
+                    {getStatusBadge(actuacion.status)}
                   </div>
                   <h4 className="font-medium text-foreground mb-1">
                     {actuacion.title}
