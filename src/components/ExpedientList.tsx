@@ -132,7 +132,7 @@ export function ExpedientList({
   );
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden p-6">
+    <div className="h-full flex flex-col overflow-hidden space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between flex-shrink-0">
         <div>
