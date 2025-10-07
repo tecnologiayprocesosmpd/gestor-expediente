@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -62,7 +63,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
   // Estados para filtrado de expedientes
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<string[]>(['en_tramite', 'paralizado', 'archivado']);
-  const [filterTipoTramite, setFilterTipoTramite] = useState<string[]>([]);
+  const [filterTipoTramite, setFilterTipoTramite] = useState<string>('todos');
 
   // Cargar oficios desde localStorage
   useEffect(() => {
@@ -219,7 +220,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
     if (!filterStatus.includes(exp.status)) return false;
     
     // Filtro por tipo de trámite
-    if (filterTipoTramite.length > 0 && !filterTipoTramite.includes(exp.tipoTramite)) return false;
+    if (filterTipoTramite !== 'todos' && filterTipoTramite !== '' && exp.tipoTramite !== filterTipoTramite) return false;
     
     // Filtro por búsqueda
     if (searchTerm) {
@@ -427,13 +428,13 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
 
       {/* Dialog para seleccionar expediente */}
       <Dialog open={showExpedientSelector} onOpenChange={setShowExpedientSelector}>
-        <DialogContent className="max-w-3xl max-h-[80vh]">
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-hidden flex flex-col">
           <DialogHeader>
             <DialogTitle>Seleccionar Expediente para Oficio</DialogTitle>
           </DialogHeader>
           
           {/* Filtros */}
-          <div className="space-y-4 border-b pb-4">
+          <div className="space-y-4 border-b pb-4 flex-shrink-0">
             {/* Búsqueda */}
             <div className="space-y-2">
               <Label htmlFor="search" className="text-sm font-medium">
@@ -480,31 +481,19 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
             {uniqueTipoTramites.length > 0 && (
               <div className="space-y-2">
                 <Label className="text-sm font-medium">Tipo de Trámite</Label>
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    variant={filterTipoTramite.length === 0 ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setFilterTipoTramite([])}
-                  >
-                    Todos
-                  </Button>
-                  {uniqueTipoTramites.map(tipo => (
-                    <Button
-                      key={tipo}
-                      variant={filterTipoTramite.includes(tipo) ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => {
-                        setFilterTipoTramite(prev => 
-                          prev.includes(tipo)
-                            ? prev.filter(t => t !== tipo)
-                            : [...prev, tipo]
-                        );
-                      }}
-                    >
-                      {tipo}
-                    </Button>
-                  ))}
-                </div>
+                <Select value={filterTipoTramite} onValueChange={setFilterTipoTramite}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Seleccionar tipo de trámite" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="todos">Todos</SelectItem>
+                    {uniqueTipoTramites.map(tipo => (
+                      <SelectItem key={tipo} value={tipo}>
+                        {tipo}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             )}
 
@@ -514,8 +503,8 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
             </p>
           </div>
 
-          <ScrollArea className="max-h-96">
-            <div className="space-y-2">
+          <ScrollArea className="flex-1 overflow-auto">
+            <div className="space-y-2 pr-4">
               {filteredExpedients.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   <FileText className="w-12 h-12 mx-auto mb-3 opacity-30" />
