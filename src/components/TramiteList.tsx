@@ -1,18 +1,10 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { 
+  Search, 
   FileText,
   Plus,
   Calendar,
@@ -32,37 +24,36 @@ interface TramiteListProps {
 }
 
 export function TramiteList({ tramites, onCreateTramite, onBack, onTramiteUpdated }: TramiteListProps) {
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [tramiteToFinalize, setTramiteToFinalize] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const handleFinalizarClick = (tramiteId: string) => {
-    setTramiteToFinalize(tramiteId);
-    setShowConfirmDialog(true);
-  };
-
-  const handleConfirmFinalize = () => {
-    if (tramiteToFinalize) {
-      const tramite = tramites.find(t => t.id === tramiteToFinalize);
-      if (tramite) {
-        const updatedTramite = { ...tramite, finalizado: true };
-        tramiteStorage.save(updatedTramite);
-        toast.success("Trámite finalizado");
-        onTramiteUpdated();
-      }
+  const handleFinalizarTramite = (tramiteId: string) => {
+    const tramite = tramites.find(t => t.id === tramiteId);
+    if (tramite) {
+      const updatedTramite = { ...tramite, finalizado: true };
+      tramiteStorage.save(updatedTramite);
+      toast.success("Trámite finalizado");
+      onTramiteUpdated();
     }
-    setShowConfirmDialog(false);
-    setTramiteToFinalize(null);
   };
 
-  // Get only the last tramite (most recent)
-  const lastTramite = tramites.length > 0
-    ? tramites.reduce((latest, current) => 
-        current.fechaCreacion > latest.fechaCreacion ? current : latest
-      )
-    : null;
+  // Check if there's an active (non-finished) tramite
+  const hasActiveTramite = tramites.some(t => !t.finalizado);
+  const canCreateNew = !hasActiveTramite;
 
-  // Check if can create new tramite
-  const canCreateNew = !lastTramite || lastTramite.finalizado;
+  // Filter tramites based on search term
+  const filteredTramites = tramites.filter(tramite => {
+    const matchesSearch = searchTerm === '' || 
+      tramite.numero.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      tramite.referencia.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      tramite.createdBy.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return matchesSearch;
+  });
+
+  // Sort by creation date (newest first)
+  const sortedTramites = [...filteredTramites].sort((a, b) => 
+    b.fechaCreacion.getTime() - a.fechaCreacion.getTime()
+  );
 
   return (
     <div className="space-y-4">
@@ -90,100 +81,123 @@ export function TramiteList({ tramites, onCreateTramite, onBack, onTramiteUpdate
         </Button>
       </div>
 
-      {/* Tramite Card */}
-      {!lastTramite ? (
+      {/* Search Bar */}
+      <div className="bg-background border rounded-lg shadow-sm overflow-hidden">
+        <div className="px-4 py-3">
+          <div className="relative w-full">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar por número, referencia o creador..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 h-9"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Tramites Table */}
+      {sortedTramites.length === 0 ? (
         <Card>
           <CardContent className="text-center py-12">
             <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground/30" />
             <h3 className="text-lg font-medium mb-2">No hay trámites</h3>
             <p className="text-muted-foreground mb-6">
-              No hay trámites disponibles para este expediente.
+              {searchTerm 
+                ? 'No se encontraron trámites que coincidan con la búsqueda.'
+                : 'No hay trámites disponibles para este expediente.'
+              }
             </p>
-            <Button onClick={onCreateTramite}>
-              <Plus className="w-4 h-4 mr-2" />
-              Crear Primer Trámite
-            </Button>
+            {!searchTerm && (
+              <Button onClick={onCreateTramite}>
+                <Plus className="w-4 h-4 mr-2" />
+                Crear Primer Trámite
+              </Button>
+            )}
           </CardContent>
         </Card>
       ) : (
         <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Trámite Actual</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Número */}
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">Número</label>
-              <p className="text-lg font-mono text-primary mt-1">{lastTramite.numero}</p>
-            </div>
-
-            {/* Referencia */}
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">Referencia</label>
-              <p className="text-foreground mt-1">{lastTramite.referencia}</p>
-            </div>
-
-            {/* Creado por */}
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">Creado por</label>
-              <div className="flex items-center mt-1">
-                <User className="w-4 h-4 mr-2 text-muted-foreground" />
-                <span>{lastTramite.createdBy}</span>
-              </div>
-            </div>
-
-            {/* Fecha */}
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">Fecha de Creación</label>
-              <div className="flex items-center mt-1">
-                <Calendar className="w-4 h-4 mr-2 text-muted-foreground" />
-                <span>{lastTramite.fechaCreacion.toLocaleDateString('es-ES', { 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}</span>
-              </div>
-            </div>
-
-            {/* Estado y acción */}
-            <div className="pt-4 border-t">
-              {lastTramite.finalizado ? (
-                <Badge variant="default" className="bg-green-500">
-                  <CheckCircle2 className="w-4 h-4 mr-2" />
-                  Finalizado
-                </Badge>
-              ) : (
-                <Button
-                  variant="default"
-                  onClick={() => handleFinalizarClick(lastTramite.id)}
-                  className="w-full"
-                >
-                  <CheckCircle2 className="w-4 h-4 mr-2" />
-                  Finalizar Trámite
-                </Button>
-              )}
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full table-fixed">
+                <colgroup>
+                  <col className="w-32" />
+                  <col className="w-auto" />
+                  <col className="w-40" />
+                  <col className="w-32" />
+                  <col className="w-32" />
+                </colgroup>
+                <thead className="border-b">
+                  <tr className="bg-muted/30">
+                    <th className="text-left p-4 font-medium w-32">Número</th>
+                    <th className="text-left p-4 font-medium">Referencia</th>
+                    <th className="text-left p-4 font-medium w-40">Creado por</th>
+                    <th className="text-left p-4 font-medium w-32">Fecha</th>
+                    <th className="text-left p-4 font-medium w-32">Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedTramites.map((tramite) => (
+                    <tr 
+                      key={tramite.id} 
+                      className="border-b hover:bg-muted/20 transition-colors"
+                    >
+                      <td className="p-4">
+                        <span className="text-sm font-mono text-primary">
+                          {tramite.numero}
+                        </span>
+                      </td>
+                      <td className="p-4">
+                        <div className="text-foreground line-clamp-2">
+                          {tramite.referencia}
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <div className="flex items-center text-sm">
+                          <User className="w-4 h-4 mr-2 text-muted-foreground" />
+                          <span>{tramite.createdBy}</span>
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <div className="flex items-center text-sm">
+                          <Calendar className="w-4 h-4 mr-2 text-muted-foreground" />
+                          <span>{tramite.fechaCreacion.toLocaleDateString('es-ES')}</span>
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        {tramite.finalizado ? (
+                          <Badge variant="default" className="bg-green-500">
+                            <CheckCircle2 className="w-3 h-3 mr-1" />
+                            Finalizado
+                          </Badge>
+                        ) : (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleFinalizarTramite(tramite.id)}
+                            className="text-xs"
+                          >
+                            <CheckCircle2 className="w-3 h-3 mr-1" />
+                            Finalizar
+                          </Button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </CardContent>
         </Card>
       )}
 
-      {/* Confirmation Dialog */}
-      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>¿Finalizar trámite?</AlertDialogTitle>
-            <AlertDialogDescription>
-              ¿Está seguro que desea finalizar este trámite? Esta acción permitirá crear un nuevo trámite.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmFinalize}>
-              Finalizar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {/* Results Count */}
+      {sortedTramites.length > 0 && (
+        <div className="text-sm text-muted-foreground text-right">
+          {sortedTramites.length} {sortedTramites.length === 1 ? 'trámite' : 'trámites'}
+        </div>
+      )}
     </div>
   );
 }
