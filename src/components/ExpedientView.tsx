@@ -17,8 +17,7 @@ import {
   Clock,
   Building2,
   AlertTriangle,
-  CheckCircle,
-  Send
+  CheckCircle
 } from "lucide-react";
 import { ActuacionList } from "./ActuacionList";
 import { ActuacionEditor } from "./ActuacionEditor";
@@ -841,7 +840,7 @@ export function ExpedientView({
               <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                 {tramites.length > 0 && !tramites.every(t => t.finalizado) && (
                   <span className="flex items-center space-x-1">
-                    <Send className="w-4 h-4" />
+                    <FileText className="w-4 h-4" />
                     <span>Trámite: {tramites.find(t => !t.finalizado)?.referencia || 'En Trámite'}</span>
                   </span>
                 )}
