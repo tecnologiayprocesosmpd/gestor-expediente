@@ -22,8 +22,8 @@ import {
 import { ActuacionList } from "./ActuacionList";
 import { ActuacionEditor } from "./ActuacionEditor";
 import { ExpedientEditor } from "./ExpedientEditor";
-import { DiligenciaDialog } from "./DiligenciaDialog";
-import { RegresarDiligenciaDialog } from "./RegresarDiligenciaDialog";
+import { RadicacionInternaDialog } from "./RadicacionInternaDialog";
+import { RegresarRadicacionInternaDialog } from "./RegresarRadicacionInternaDialog";
 import { TramiteEditor } from "./TramiteEditor";
 import { TramiteList } from "./TramiteList";
 import { ActuacionNavigator } from "./ActuacionNavigator";
@@ -54,14 +54,14 @@ interface ExpedientViewProps {
   autoCreateActuacion?: boolean;
   onStatusChange?: (id: string, newStatus: 'en_tramite' | 'paralizado' | 'archivado') => void;
   onRegisterActions?: (actions: {
-    onDiligencia?: () => void;
-    onRegresarDiligencia?: () => void;
+    onRadicacionInterna?: () => void;
+    onRegresarRadicacionInterna?: () => void;
     onExportPDF?: () => void;
     onNuevaActuacion?: () => void;
     onTramites?: () => void;
     onNavegar?: () => void;
     onChangeStatus?: () => void;
-    showRegresarDiligencia?: boolean;
+    showRegresarRadicacionInterna?: boolean;
   }) => void;
 }
 
@@ -81,9 +81,9 @@ export function ExpedientView({
   const [editingActuacionId, setEditingActuacionId] = useState<string | null>(null);
   const [actuaciones, setActuaciones] = useState<Actuacion[]>(propActuaciones);
   const [selectedActuacion, setSelectedActuacion] = useState<Actuacion | null>(null);
-  const [showDiligenciaDialog, setShowDiligenciaDialog] = useState(false);
-  const [showRegresarDiligenciaDialog, setShowRegresarDiligenciaDialog] = useState(false);
-  const [diligenciasPendientes, setDiligenciasPendientes] = useState<any[]>([]);
+  const [showRadicacionInternaDialog, setShowRadicacionInternaDialog] = useState(false);
+  const [showRegresarRadicacionInternaDialog, setShowRegresarRadicacionInternaDialog] = useState(false);
+  const [radicacionesInternasPendientes, setRadicacionesInternasPendientes] = useState<any[]>([]);
   const [showTramiteList, setShowTramiteList] = useState(false);
   const [showTramiteEditor, setShowTramiteEditor] = useState(false);
   const [tramites, setTramites] = useState<Tramite[]>([]);
@@ -143,37 +143,37 @@ export function ExpedientView({
     }
   }, [expedientId]);
 
-  // Cargar diligencias pendientes desde localStorage
+  // Cargar radicaciones internas pendientes desde localStorage
   useEffect(() => {
-    const loadDiligenciasPendientes = () => {
+    const loadRadicacionesInternasPendientes = () => {
       try {
-        const savedDiligencias = localStorage.getItem('diligenciasPendientes');
-        if (savedDiligencias) {
-          const diligencias = JSON.parse(savedDiligencias);
-          // Filtrar diligencias para este expediente que no han sido devueltas
-          const diligenciasExpediente = diligencias.filter(
+        const savedRadicaciones = localStorage.getItem('radicacionesInternasPendientes');
+        if (savedRadicaciones) {
+          const radicaciones = JSON.parse(savedRadicaciones);
+          // Filtrar radicaciones internas para este expediente que no han sido devueltas
+          const radicacionesExpediente = radicaciones.filter(
             (d: any) => d.expedientId === expedientId && !d.devuelta
           );
-          setDiligenciasPendientes(diligenciasExpediente);
+          setRadicacionesInternasPendientes(radicacionesExpediente);
         }
       } catch (error) {
-        console.error('Error loading diligencias:', error);
+        console.error('Error loading radicaciones internas:', error);
       }
     };
 
     if (expedientId) {
-      loadDiligenciasPendientes();
+      loadRadicacionesInternasPendientes();
     }
   }, [expedientId]);
 
-  // Verificar si hay diligencia pendiente para la oficina actual
-  const hayDiligenciaPendiente = () => {
+  // Verificar si hay radicación interna pendiente para la oficina actual
+  const hayRadicacionInternaPendiente = () => {
     if (!user?.department && !user?.name) return false;
     
     // Usar department o name como identificador de oficina
     const oficinaActual = user.department || user.name;
     
-    return diligenciasPendientes.some(
+    return radicacionesInternasPendientes.some(
       (d: any) => d.oficinaDestino === oficinaActual
     );
   };
@@ -212,17 +212,17 @@ export function ExpedientView({
   useEffect(() => {
     if (onRegisterActions) {
       onRegisterActions({
-        onDiligencia: () => setShowDiligenciaDialog(true),
-        onRegresarDiligencia: () => setShowRegresarDiligenciaDialog(true),
+        onRadicacionInterna: () => setShowRadicacionInternaDialog(true),
+        onRegresarRadicacionInterna: () => setShowRegresarRadicacionInternaDialog(true),
         onExportPDF: handleExportPDF,
         onNuevaActuacion: handleNuevaActuacion,
         onTramites: () => setShowTramiteList(true),
         onNavegar: () => setShowNavigator(true),
         onChangeStatus: () => setShowSelectEstado(true),
-        showRegresarDiligencia: hayDiligenciaPendiente()
+        showRegresarRadicacionInterna: hayRadicacionInternaPendiente()
       });
     }
-  }, [onRegisterActions, diligenciasPendientes]);
+  }, [onRegisterActions, radicacionesInternasPendientes]);
 
   
   
@@ -509,15 +509,15 @@ export function ExpedientView({
     });
   };
 
-  const handleDiligencia = async (data: {
+  const handleRadicacionInterna = async (data: {
     oficina: string;
     fechaRegreso: string;
     actuacionesSeleccionadas: string[];
   }) => {
-    console.log('Procesando diligencia:', data);
+    console.log('Procesando radicación interna:', data);
     
-    // Crear nueva diligencia
-    const nuevaDiligencia = {
+    // Crear nueva radicación interna
+    const nuevaRadicacionInterna = {
       id: crypto.randomUUID(),
       expedientId: expedientId || expedient.id,
       expedientNumber: expedient.number,
@@ -531,70 +531,70 @@ export function ExpedientView({
 
     // Guardar en localStorage
     try {
-      const savedDiligencias = localStorage.getItem('diligenciasPendientes');
-      const diligencias = savedDiligencias ? JSON.parse(savedDiligencias) : [];
-      diligencias.push(nuevaDiligencia);
-      localStorage.setItem('diligenciasPendientes', JSON.stringify(diligencias));
+      const savedRadicaciones = localStorage.getItem('radicacionesInternasPendientes');
+      const radicaciones = savedRadicaciones ? JSON.parse(savedRadicaciones) : [];
+      radicaciones.push(nuevaRadicacionInterna);
+      localStorage.setItem('radicacionesInternasPendientes', JSON.stringify(radicaciones));
       
       // Actualizar estado local
-      const diligenciasExpediente = diligencias.filter(
+      const radicacionesExpediente = radicaciones.filter(
         (d: any) => d.expedientId === expedientId && !d.devuelta
       );
-      setDiligenciasPendientes(diligenciasExpediente);
+      setRadicacionesInternasPendientes(radicacionesExpediente);
     } catch (error) {
-      console.error('Error saving diligencia:', error);
+      console.error('Error saving radicación interna:', error);
     }
     
     const oficinaLabel = data.oficina.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     const fechaRegreso = data.fechaRegreso ? new Date(data.fechaRegreso).toLocaleString('es-ES') : 'No especificada';
     const cantidadActuaciones = data.actuacionesSeleccionadas.length;
     
-    alert(`Diligencia enviada exitosamente:
+    alert(`Radicación interna enviada exitosamente:
 - Expediente: ${expedient.number}
 - Oficina destino: ${oficinaLabel}
 - Fecha de regreso: ${fechaRegreso}
 - Actuaciones enviadas: ${cantidadActuaciones}`);
   };
 
-  const handleRegresarDiligencia = async (data: {
+  const handleRegresarRadicacionInterna = async (data: {
     fechaRegreso: string;
   }) => {
-    console.log('Procesando regreso de diligencia:', data);
+    console.log('Procesando regreso de radicación interna:', data);
     
-    // Marcar diligencia como devuelta
+    // Marcar radicación interna como devuelta
     try {
-      const savedDiligencias = localStorage.getItem('diligenciasPendientes');
-      if (savedDiligencias) {
-        const diligencias = JSON.parse(savedDiligencias);
+      const savedRadicaciones = localStorage.getItem('radicacionesInternasPendientes');
+      if (savedRadicaciones) {
+        const radicaciones = JSON.parse(savedRadicaciones);
         const oficinaActual = user?.department || user?.name;
         
-        // Encontrar y actualizar la diligencia correspondiente
-        const diligenciaIndex = diligencias.findIndex(
+        // Encontrar y actualizar la radicación interna correspondiente
+        const radicacionIndex = radicaciones.findIndex(
           (d: any) => d.expedientId === expedientId && 
                       d.oficinaDestino === oficinaActual && 
                       !d.devuelta
         );
         
-        if (diligenciaIndex !== -1) {
-          diligencias[diligenciaIndex].devuelta = true;
-          diligencias[diligenciaIndex].fechaDevolucion = data.fechaRegreso;
-          localStorage.setItem('diligenciasPendientes', JSON.stringify(diligencias));
+        if (radicacionIndex !== -1) {
+          radicaciones[radicacionIndex].devuelta = true;
+          radicaciones[radicacionIndex].fechaDevolucion = data.fechaRegreso;
+          localStorage.setItem('radicacionesInternasPendientes', JSON.stringify(radicaciones));
           
           // Actualizar estado local
-          const diligenciasExpediente = diligencias.filter(
+          const radicacionesExpediente = radicaciones.filter(
             (d: any) => d.expedientId === expedientId && !d.devuelta
           );
-          setDiligenciasPendientes(diligenciasExpediente);
+          setRadicacionesInternasPendientes(radicacionesExpediente);
         }
       }
     } catch (error) {
-      console.error('Error updating diligencia:', error);
+      console.error('Error updating radicación interna:', error);
     }
     
-    alert(`Diligencia devuelta exitosamente:
+    alert(`Radicación interna devuelta exitosamente:
 - Expediente: ${expedient.number}
 - Fecha de regreso: ${data.fechaRegreso}
-- La diligencia ha sido devuelta a la oficina remitente`);
+- La radicación interna ha sido devuelta a la oficina remitente`);
   };
 
   const statusColors = getStatusColors(expedient.status);
@@ -624,20 +624,20 @@ export function ExpedientView({
         </div>
 
         {/* Diálogos disponibles en vista de navegación */}
-        <DiligenciaDialog
-          open={showDiligenciaDialog}
-          onOpenChange={setShowDiligenciaDialog}
+        <RadicacionInternaDialog
+          open={showRadicacionInternaDialog}
+          onOpenChange={setShowRadicacionInternaDialog}
           expedientNumber={expedient.number}
           actuaciones={actuaciones}
-          onConfirm={handleDiligencia}
+          onConfirm={handleRadicacionInterna}
         />
 
-        <RegresarDiligenciaDialog
-          open={showRegresarDiligenciaDialog}
-          onOpenChange={setShowRegresarDiligenciaDialog}
+        <RegresarRadicacionInternaDialog
+          open={showRegresarRadicacionInternaDialog}
+          onOpenChange={setShowRegresarRadicacionInternaDialog}
           expedientNumber={expedient.number}
           oficinaRemitente="Mesa de Entrada"
-          onConfirm={handleRegresarDiligencia}
+          onConfirm={handleRegresarRadicacionInterna}
         />
 
         <SelectEstadoDialog
@@ -961,22 +961,22 @@ export function ExpedientView({
         </div>
       </div>
 
-      {/* Diálogo de Diligencia */}
-      <DiligenciaDialog
-        open={showDiligenciaDialog}
-        onOpenChange={setShowDiligenciaDialog}
+      {/* Diálogo de Radicación Interna */}
+      <RadicacionInternaDialog
+        open={showRadicacionInternaDialog}
+        onOpenChange={setShowRadicacionInternaDialog}
         expedientNumber={expedient.number}
         actuaciones={actuaciones}
-        onConfirm={handleDiligencia}
+        onConfirm={handleRadicacionInterna}
       />
 
-      {/* Diálogo de Regresar Diligencia */}
-      <RegresarDiligenciaDialog
-        open={showRegresarDiligenciaDialog}
-        onOpenChange={setShowRegresarDiligenciaDialog}
+      {/* Diálogo de Regresar Radicación Interna */}
+      <RegresarRadicacionInternaDialog
+        open={showRegresarRadicacionInternaDialog}
+        onOpenChange={setShowRegresarRadicacionInternaDialog}
         expedientNumber={expedient.number}
         oficinaRemitente="Mesa de Entrada" // Esto debería venir de los datos del expediente
-        onConfirm={handleRegresarDiligencia}
+        onConfirm={handleRegresarRadicacionInterna}
       />
 
       {/* Diálogos de Cambio de Estado */}

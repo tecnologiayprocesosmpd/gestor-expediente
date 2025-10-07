@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Building2, Clock, FileText } from "lucide-react";
 import type { Actuacion } from "@/types/actuacion";
 
-interface DiligenciaDialogProps {
+interface RadicacionInternaDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   expedientNumber: string;
@@ -21,13 +21,13 @@ interface DiligenciaDialogProps {
   }) => Promise<void>;
 }
 
-export function DiligenciaDialog({
+export function RadicacionInternaDialog({
   open,
   onOpenChange,
   expedientNumber,
   actuaciones,
   onConfirm
-}: DiligenciaDialogProps) {
+}: RadicacionInternaDialogProps) {
   const [loading, setLoading] = useState(false);
   const [oficina, setOficina] = useState('');
   const [fechaRegreso, setFechaRegreso] = useState('');
@@ -100,8 +100,8 @@ export function DiligenciaDialog({
       setActuacionesSeleccionadas([]);
       onOpenChange(false);
     } catch (error) {
-      console.error('Error al procesar diligencia:', error);
-      alert('Error al procesar la diligencia');
+      console.error('Error al procesar radicación interna:', error);
+      alert('Error al procesar la radicación interna');
     } finally {
       setLoading(false);
     }
@@ -116,7 +116,7 @@ export function DiligenciaDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <Building2 className="w-5 h-5" />
-            <span>Diligencia de Expediente</span>
+            <span>Radicación Interna de Expediente</span>
           </DialogTitle>
         </DialogHeader>
 
@@ -133,7 +133,7 @@ export function DiligenciaDialog({
             </CardContent>
           </Card>
 
-          {/* Datos de la diligencia */}
+          {/* Datos de la radicación interna */}
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Oficina destino */}
@@ -253,7 +253,7 @@ export function DiligenciaDialog({
                 Procesando...
               </>
             ) : (
-              'Enviar Diligencia'
+              'Enviar Radicación Interna'
             )}
           </Button>
         </DialogFooter>

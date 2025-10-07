@@ -18,14 +18,14 @@ interface LayoutProps {
   onNavigate?: (view: 'dashboard' | 'expedientes' | 'agenda' | 'oficios') => void;
   onCreateExpedient?: () => void;
   isExpedientView?: boolean;
-  onDiligencia?: () => void;
-  onRegresarDiligencia?: () => void;
+  onRadicacionInterna?: () => void;
+  onRegresarRadicacionInterna?: () => void;
   onExportPDF?: () => void;
   onTramites?: () => void;
   onNuevaActuacion?: () => void;
   onNavegar?: () => void;
   onChangeStatus?: () => void;
-  showRegresarDiligencia?: boolean;
+  showRegresarRadicacionInterna?: boolean;
 }
 
 export function Layout({ 
@@ -34,14 +34,14 @@ export function Layout({
   onNavigate, 
   onCreateExpedient,
   isExpedientView = false,
-  onDiligencia,
-  onRegresarDiligencia,
+  onRadicacionInterna,
+  onRegresarRadicacionInterna,
   onExportPDF,
   onTramites,
   onNuevaActuacion,
   onNavegar,
   onChangeStatus,
-  showRegresarDiligencia = false
+  showRegresarRadicacionInterna = false
 }: LayoutProps) {
   const { user } = useUser();
   const { logout: securityLogout } = useSecurity();
@@ -103,14 +103,14 @@ export function Layout({
             onNavigate={onNavigate}
             onCreateExpedient={onCreateExpedient}
             isExpedientView={isExpedientView}
-            onDiligencia={onDiligencia}
-            onRegresarDiligencia={onRegresarDiligencia}
+            onRadicacionInterna={onRadicacionInterna}
+            onRegresarRadicacionInterna={onRegresarRadicacionInterna}
             onExportPDF={onExportPDF}
             onTramites={onTramites}
             onNuevaActuacion={onNuevaActuacion}
             onNavegar={onNavegar}
             onChangeStatus={onChangeStatus}
-            showRegresarDiligencia={showRegresarDiligencia}
+            showRegresarRadicacionInterna={showRegresarRadicacionInterna}
           />
         </div>
         

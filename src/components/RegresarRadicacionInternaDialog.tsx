@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, ArrowLeft, Clock } from "lucide-react";
 
-interface RegresarDiligenciaDialogProps {
+interface RegresarRadicacionInternaDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   expedientNumber: string;
@@ -14,13 +14,13 @@ interface RegresarDiligenciaDialogProps {
   }) => Promise<void>;
 }
 
-export function RegresarDiligenciaDialog({
+export function RegresarRadicacionInternaDialog({
   open,
   onOpenChange,
   expedientNumber,
   oficinaRemitente,
   onConfirm
-}: RegresarDiligenciaDialogProps) {
+}: RegresarRadicacionInternaDialogProps) {
   const [loading, setLoading] = useState(false);
 
   const fechaRegreso = new Date().toLocaleString('es-ES', {
@@ -40,8 +40,8 @@ export function RegresarDiligenciaDialog({
       
       onOpenChange(false);
     } catch (error) {
-      console.error('Error al procesar regreso de diligencia:', error);
-      alert('Error al procesar el regreso de la diligencia');
+      console.error('Error al procesar regreso de radicación interna:', error);
+      alert('Error al procesar el regreso de la radicación interna');
     } finally {
       setLoading(false);
     }
@@ -53,7 +53,7 @@ export function RegresarDiligenciaDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <ArrowLeft className="w-5 h-5" />
-            <span>Regresar Diligencia</span>
+            <span>Regresar Radicación Interna</span>
           </DialogTitle>
         </DialogHeader>
 
@@ -85,7 +85,7 @@ export function RegresarDiligenciaDialog({
           </Card>
 
           <p className="text-sm text-muted-foreground">
-            Esta diligencia será devuelta a la oficina remitente con la fecha y hora actual registrada.
+            Esta radicación interna será devuelta a la oficina remitente con la fecha y hora actual registrada.
           </p>
         </div>
 

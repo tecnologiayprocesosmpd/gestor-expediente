@@ -131,14 +131,14 @@ function AppContent() {
   
   // State for expedient view actions
   const [expedientViewActions, setExpedientViewActions] = useState<{
-    onDiligencia?: () => void;
-    onRegresarDiligencia?: () => void;
+    onRadicacionInterna?: () => void;
+    onRegresarRadicacionInterna?: () => void;
     onExportPDF?: () => void;
     onNuevaActuacion?: () => void;
     onTramites?: () => void;
     onNavegar?: () => void;
     onChangeStatus?: () => void;
-    showRegresarDiligencia?: boolean;
+    showRegresarRadicacionInterna?: boolean;
   }>({});
   
   // Get current expedient data
@@ -415,14 +415,14 @@ function AppContent() {
       onNavigate={setCurrentView}
       onCreateExpedient={handleCreateExpedient}
       isExpedientView={currentView === 'view'}
-      onDiligencia={expedientViewActions.onDiligencia}
-      onRegresarDiligencia={expedientViewActions.onRegresarDiligencia}
+      onRadicacionInterna={expedientViewActions.onRadicacionInterna}
+      onRegresarRadicacionInterna={expedientViewActions.onRegresarRadicacionInterna}
       onExportPDF={expedientViewActions.onExportPDF}
       onTramites={expedientViewActions.onTramites}
       onNuevaActuacion={expedientViewActions.onNuevaActuacion}
       onNavegar={expedientViewActions.onNavegar}
       onChangeStatus={expedientViewActions.onChangeStatus}
-      showRegresarDiligencia={expedientViewActions.showRegresarDiligencia}
+      showRegresarRadicacionInterna={expedientViewActions.showRegresarRadicacionInterna}
     >
       {renderCurrentView()}
     </Layout>

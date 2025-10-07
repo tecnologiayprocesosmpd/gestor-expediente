@@ -32,14 +32,14 @@ interface AppSidebarProps {
   onNavigate?: (view: 'dashboard' | 'expedientes' | 'agenda') => void;
   onCreateExpedient?: () => void;
   isExpedientView?: boolean;
-  onDiligencia?: () => void;
-  onRegresarDiligencia?: () => void;
+  onRadicacionInterna?: () => void;
+  onRegresarRadicacionInterna?: () => void;
   onExportPDF?: () => void;
   onTramites?: () => void;
   onNuevaActuacion?: () => void;
   onNavegar?: () => void;
   onChangeStatus?: () => void;
-  showRegresarDiligencia?: boolean;
+  showRegresarRadicacionInterna?: boolean;
 }
 
 export function AppSidebar({ 
@@ -47,14 +47,14 @@ export function AppSidebar({
   onNavigate, 
   onCreateExpedient,
   isExpedientView = false,
-  onDiligencia,
-  onRegresarDiligencia,
+  onRadicacionInterna,
+  onRegresarRadicacionInterna,
   onExportPDF,
   onTramites,
   onNuevaActuacion,
   onNavegar,
   onChangeStatus,
-  showRegresarDiligencia = false
+  showRegresarRadicacionInterna = false
 }: AppSidebarProps) {
   const { user } = useUser();
 
@@ -123,23 +123,23 @@ export function AppSidebar({
               </button>
 
               <button
-                onClick={onDiligencia}
+                onClick={onRadicacionInterna}
                 className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-blue-600 hover:text-white bg-muted/50 text-foreground"
               >
                 <Send className="w-6 h-6 mb-2" />
                 <span className="text-xs text-center">
-                  Diligencia
+                  Radicación Interna
                 </span>
               </button>
 
-              {showRegresarDiligencia && (
+              {showRegresarRadicacionInterna && (
                 <button
-                  onClick={onRegresarDiligencia}
+                  onClick={onRegresarRadicacionInterna}
                   className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-green-600 hover:text-white bg-muted/50 text-foreground"
                 >
                   <ArrowLeft className="w-6 h-6 mb-2" />
                   <span className="text-xs text-center">
-                    Regresar Diligencia
+                    Regresar Radicación Interna
                   </span>
                 </button>
               )}
