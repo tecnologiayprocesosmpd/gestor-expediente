@@ -830,16 +830,6 @@ export function ExpedientView({
                 {expedient.title}
               </h1>
               
-              {/* Current Tramite Badge */}
-              {tramites.length > 0 && !tramites.every(t => t.finalizado) && (
-                <Badge 
-                  variant="outline" 
-                  className="ml-4 px-3 py-1 text-sm font-medium border-primary/30 bg-primary/5 text-primary"
-                >
-                  {tramites.find(t => !t.finalizado)?.referencia || 'En Trámite'}
-                </Badge>
-              )}
-              
               <div className={`${statusColors.bg} rounded-md px-4 py-2 flex items-center space-x-2 shadow-sm border border-white/20 ml-8`}>
                 <div className={`w-2.5 h-2.5 rounded-full ${statusColors.text === 'text-[hsl(var(--status-draft-foreground))]' ? 'bg-white' : 'bg-white'} animate-pulse`}></div>
                 <span className={`text-sm font-semibold ${statusColors.text}`}>
@@ -849,14 +839,12 @@ export function ExpedientView({
               </div>
               
               <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                <span className="flex items-center space-x-1">
-                  <FileText className="w-4 h-4" />
-                  <span>Expediente: {expedient.number}</span>
-                </span>
-                <span className="flex items-center space-x-1">
-                  <Calendar className="w-4 h-4" />
-                  <span>Creado: {expedient.createdAt.toLocaleDateString('es-ES')}</span>
-                </span>
+                {tramites.length > 0 && !tramites.every(t => t.finalizado) && (
+                  <span className="flex items-center space-x-1">
+                    <Send className="w-4 h-4" />
+                    <span>Trámite: {tramites.find(t => !t.finalizado)?.referencia || 'En Trámite'}</span>
+                  </span>
+                )}
                 {expedient.oficina && (
                   <span className="flex items-center space-x-1">
                     <Building2 className="w-4 h-4" />
