@@ -824,26 +824,29 @@ export function ExpedientView({
             </Button>
             
             <div className="space-y-2">
-              <div className="flex items-start">
-              <h1 className="text-2xl font-bold text-foreground">
-                {expedient.title}
-              </h1>
-              
-              <div className={`${statusColors.bg} rounded-md px-4 py-2 flex items-center space-x-2 shadow-sm border border-white/20 ml-8`}>
-                <div className={`w-2.5 h-2.5 rounded-full ${statusColors.text === 'text-[hsl(var(--status-draft-foreground))]' ? 'bg-white' : 'bg-white'} animate-pulse`}></div>
-                <span className={`text-sm font-semibold ${statusColors.text}`}>
-                  {getStatusLabel(expedient.status)}
-                </span>
-              </div>
+              <div className="flex items-center gap-6">
+                <h1 className="text-2xl font-bold text-foreground">
+                  {expedient.title}
+                </h1>
+                
+                <div className={`${statusColors.bg} rounded-md px-4 py-2 flex items-center space-x-2 shadow-sm border border-white/20`}>
+                  <div className={`w-2.5 h-2.5 rounded-full ${statusColors.text === 'text-[hsl(var(--status-draft-foreground))]' ? 'bg-white' : 'bg-white'} animate-pulse`}></div>
+                  <span className={`text-sm font-semibold ${statusColors.text}`}>
+                    {getStatusLabel(expedient.status)}
+                  </span>
+                </div>
+
+                {tramites.length > 0 && !tramites.every(t => t.finalizado) && (
+                  <div className="bg-primary/10 rounded-md px-4 py-2 flex items-center space-x-2 shadow-sm border border-primary/20">
+                    <FileText className="w-5 h-5 text-primary" />
+                    <span className="text-sm font-semibold text-primary">
+                      Trámite: {tramites.find(t => !t.finalizado)?.referencia || 'En Trámite'}
+                    </span>
+                  </div>
+                )}
               </div>
               
               <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                {tramites.length > 0 && !tramites.every(t => t.finalizado) && (
-                  <span className="flex items-center space-x-1">
-                    <FileText className="w-4 h-4" />
-                    <span>Trámite: {tramites.find(t => !t.finalizado)?.referencia || 'En Trámite'}</span>
-                  </span>
-                )}
                 {expedient.oficina && (
                   <span className="flex items-center space-x-1">
                     <Building2 className="w-4 h-4" />
