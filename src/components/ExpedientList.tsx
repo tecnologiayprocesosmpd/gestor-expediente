@@ -132,9 +132,9 @@ export function ExpedientList({
   );
 
   return (
-    <div className="space-y-4">
+    <div className="h-screen flex flex-col overflow-hidden p-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-shrink-0">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Expedientes</h1>
           <p className="text-muted-foreground">
@@ -150,7 +150,7 @@ export function ExpedientList({
       </div>
 
       {/* Compact Filter Navbar */}
-      <div className="bg-background border rounded-lg shadow-sm overflow-hidden">
+      <div className="bg-background border rounded-lg shadow-sm overflow-hidden flex-shrink-0">
         <div className="px-4 py-3">
           <div className="flex flex-col gap-4">
             {/* Search Bar */}
@@ -208,7 +208,7 @@ export function ExpedientList({
 
       {/* Expedients Table */}
       {sortedExpedients.length === 0 ? (
-        <Card>
+        <Card className="flex-shrink-0">
           <CardContent className="text-center py-12">
             <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground/30" />
             <h3 className="text-lg font-medium mb-2">No hay expedientes</h3>
@@ -227,10 +227,10 @@ export function ExpedientList({
           </CardContent>
         </Card>
       ) : (
-        <Card>
-          <CardContent className="p-0">
-            <ScrollArea className="h-[600px]">
-              <div className="overflow-x-auto">
+        <Card className="flex-1 overflow-hidden flex flex-col">
+          <CardContent className="p-0 flex-1 overflow-hidden">
+            <ScrollArea className="h-full">
+              <div className="overflow-x-auto pr-4">
                 <table className="w-full table-fixed">
                   <colgroup>
                     <col className="w-32" />
