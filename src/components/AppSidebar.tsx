@@ -180,7 +180,7 @@ export function AppSidebar({
               >
                 <RefreshCw className="w-6 h-6 mb-2" />
                 <span className="text-xs text-center">
-                  Cambiar Estado
+                  Estado Expediente
                 </span>
               </button>
             </nav>
