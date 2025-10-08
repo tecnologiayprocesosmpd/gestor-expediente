@@ -249,7 +249,7 @@ export function ExpedientView({
     setSelectedActuacion(null);
   };
 
-  // Register actions with parent component
+  // Register actions with parent component - ALWAYS execute before any conditional returns
   useEffect(() => {
     if (onRegisterActions) {
       onRegisterActions({
@@ -264,7 +264,15 @@ export function ExpedientView({
         showRegresarRadicacionInterna: hayRadicacionInternaPendiente()
       });
     }
-  }, [onRegisterActions, radicacionesInternasPendientes]);
+  }, [
+    onRegisterActions, 
+    radicacionesInternasPendientes, 
+    showActuacionEditor, 
+    showNavigator, 
+    showTramiteList, 
+    showOficioView, 
+    showTramiteEditor
+  ]);
 
   
   
