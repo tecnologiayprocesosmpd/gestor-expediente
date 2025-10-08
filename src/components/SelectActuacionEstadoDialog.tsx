@@ -37,10 +37,10 @@ export function SelectActuacionEstadoDialog({
         },
         { 
           value: 'firmado' as const, 
-          label: 'Firmado', 
+          label: 'Firmar', 
           icon: CheckCircle, 
-          variant: 'default' as const,
-          confirmMessage: '¿Está seguro de marcar la actuación como Firmada?'
+          variant: 'outline' as const,
+          confirmMessage: '¿Está seguro de firmar la actuación?'
         }
       ];
     }
