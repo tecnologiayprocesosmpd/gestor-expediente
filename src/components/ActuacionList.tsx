@@ -170,18 +170,10 @@ export function ActuacionList({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <FileText className="w-5 h-5" />
-            <span>Actuaciones</span>
-            <Badge variant="secondary">{actuaciones.length}</Badge>
-          </div>
-          {canCreate && (
-            <Button onClick={onCreateActuacion} size="sm">
-              <Plus className="w-4 h-4 mr-1" />
-              Nueva Actuación
-            </Button>
-          )}
+        <CardTitle className="flex items-center gap-2">
+          <FileText className="w-5 h-5" />
+          <span>Actuaciones</span>
+          <Badge variant="secondary">{actuaciones.length}</Badge>
         </CardTitle>
       </CardHeader>
       <CardContent>
