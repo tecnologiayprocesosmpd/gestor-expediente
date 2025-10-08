@@ -777,15 +777,6 @@ export function ExpedientView({
               <p className="text-sm capitalize">{expedient.tipoProceso || 'administrativo'}</p>
             </div>
           </div>
-          <Separator />
-          <div>
-            <p className="text-sm font-medium text-muted-foreground mb-2">Descripción del Expediente</p>
-            <div className="prose prose-sm max-w-none p-3 border rounded-lg bg-muted/30">
-              <div dangerouslySetInnerHTML={{
-              __html: expedient.content || '<p>Sin contenido especificado</p>'
-            }} />
-            </div>
-          </div>
         </CardContent>
       </Card>
 
