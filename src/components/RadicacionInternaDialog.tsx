@@ -59,6 +59,9 @@ export function RadicacionInternaDialog({
     minute: '2-digit'
   });
 
+  // Filtrar solo actuaciones firmadas
+  const actuacionesFirmadas = actuaciones.filter(act => act.status === 'firmado');
+
   const handleActuacionToggle = (actuacionId: string, checked: boolean) => {
     if (checked) {
       setActuacionesSeleccionadas(prev => [...prev, actuacionId]);
@@ -69,7 +72,7 @@ export function RadicacionInternaDialog({
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setActuacionesSeleccionadas(actuaciones.map(act => act.id));
+      setActuacionesSeleccionadas(actuacionesFirmadas.map(act => act.id));
     } else {
       setActuacionesSeleccionadas([]);
     }
@@ -107,8 +110,8 @@ export function RadicacionInternaDialog({
     }
   };
 
-  const allSelected = actuaciones.length > 0 && actuacionesSeleccionadas.length === actuaciones.length;
-  const someSelected = actuacionesSeleccionadas.length > 0 && actuacionesSeleccionadas.length < actuaciones.length;
+  const allSelected = actuacionesFirmadas.length > 0 && actuacionesSeleccionadas.length === actuacionesFirmadas.length;
+  const someSelected = actuacionesSeleccionadas.length > 0 && actuacionesSeleccionadas.length < actuacionesFirmadas.length;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -192,14 +195,14 @@ export function RadicacionInternaDialog({
                     className={someSelected ? "data-[state=checked]:bg-orange-500" : ""}
                   />
                   <Label htmlFor="select-all" className="text-sm">
-                    Seleccionar todas ({actuacionesSeleccionadas.length}/{actuaciones.length})
+                    Seleccionar todas ({actuacionesSeleccionadas.length}/{actuacionesFirmadas.length})
                   </Label>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-2 max-h-48 overflow-y-auto">
-                {actuaciones.map((actuacion) => (
+                {actuacionesFirmadas.map((actuacion) => (
                   <div key={actuacion.id} className="flex items-start space-x-3 p-2 border rounded-md hover:bg-muted/50">
                     <Checkbox
                       id={actuacion.id}
@@ -213,21 +216,16 @@ export function RadicacionInternaDialog({
                       <div className="flex items-center space-x-4 mt-1 text-xs text-muted-foreground">
                         <span>#{actuacion.number}</span>
                         <span>{actuacion.createdAt.toLocaleDateString('es-ES')}</span>
-                        <span className={
-                          actuacion.status === 'firmado' ? 'text-green-600' :
-                          actuacion.status === 'para-firmar' ? 'text-orange-600' :
-                          'text-gray-600'
-                        }>
-                          {actuacion.status === 'firmado' ? 'Firmado' :
-                           actuacion.status === 'para-firmar' ? 'Para Firma' : 'Borrador'}
+                        <span className="text-green-600">
+                          Firmado
                         </span>
                       </div>
                     </div>
                   </div>
                 ))}
-                {actuaciones.length === 0 && (
+                {actuacionesFirmadas.length === 0 && (
                   <p className="text-sm text-muted-foreground text-center py-4">
-                    No hay actuaciones disponibles
+                    No hay actuaciones firmadas disponibles para radicar
                   </p>
                 )}
               </div>
