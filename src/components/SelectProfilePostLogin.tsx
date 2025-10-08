@@ -6,45 +6,50 @@ import { FileText, Building2, Shield } from "lucide-react";
 import { useState } from "react";
 import { useUser, type UserProfile } from "@/contexts/UserContext";
 import { useToast } from "@/hooks/use-toast";
+
 export default function SelectProfilePostLogin() {
-  const {
-    setUser
-  } = useUser();
-  const {
-    toast
-  } = useToast();
+  const { setUser } = useUser();
+  const { toast } = useToast();
   const [selectedProfile, setSelectedProfile] = useState<string>("");
+
   const handleConfirm = () => {
     const map = {
       "mesa-entrada": {
         role: "mesa" as const,
         title: "Mesa de Entrada",
-        Icon: FileText
+        Icon: FileText,
       },
       oficina: {
         role: "oficina" as const,
         title: "Oficina",
-        Icon: Building2
-      }
+        Icon: Building2,
+      },
     } as const;
+
     if (!selectedProfile) return;
     const cfg = map[selectedProfile as UserProfile];
     setUser({
       profile: selectedProfile as UserProfile,
       role: cfg.role,
       name: `Usuario ${cfg.title}`,
-      department: cfg.title
+      department: cfg.title,
     });
     toast({
       title: "Perfil seleccionado",
-      description: `Ingresando como ${cfg.title}`
+      description: `Ingresando como ${cfg.title}`,
     });
   };
-  return <div className="min-h-[60vh] flex items-center justify-center p-4">
+
+  return (
+    <div className="min-h-[60vh] flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-medium">
         <CardHeader className="space-y-1 text-center">
           <div className="w-32 h-32 mx-auto mb-2">
-            <img src="/assets/logo-mpd.png" alt="Logo MPD" className="w-200px h-35px " />
+            <img 
+              src="/assets/logo-mpd.png" 
+              alt="Logo MPD" 
+              className="w-full h-full object-contain"
+            />
           </div>
           <CardTitle className="text-2xl">Seleccionar Perfil</CardTitle>
           <p className="text-sm text-muted-foreground">
@@ -85,10 +90,15 @@ export default function SelectProfilePostLogin() {
             </Select>
           </div>
 
-          <Button className="w-full h-11 bg-gradient-primary hover:bg-gradient-primary/90" onClick={handleConfirm} disabled={!selectedProfile}>
+          <Button 
+            className="w-full h-11 bg-gradient-primary hover:bg-gradient-primary/90" 
+            onClick={handleConfirm} 
+            disabled={!selectedProfile}
+          >
             Ingresar
           </Button>
         </CardContent>
       </Card>
-    </div>;
+    </div>
+  );
 }
