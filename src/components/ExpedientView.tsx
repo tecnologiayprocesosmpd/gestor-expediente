@@ -209,7 +209,45 @@ export function ExpedientView({
     }
   };
 
-  const handleNuevaActuacion = () => setShowActuacionEditor(true);
+  const handleNuevaActuacion = () => {
+    setShowActuacionEditor(true);
+    setShowNavigator(false);
+    setShowTramiteList(false);
+    setShowOficioView(false);
+    setShowTramiteEditor(false);
+    setShowEditor(false);
+    setSelectedActuacion(null);
+  };
+
+  const handleNavegar = () => {
+    setShowNavigator(true);
+    setShowTramiteList(false);
+    setShowOficioView(false);
+    setShowTramiteEditor(false);
+    setShowActuacionEditor(false);
+    setShowEditor(false);
+    setSelectedActuacion(null);
+  };
+
+  const handleShowTramites = () => {
+    setShowTramiteList(true);
+    setShowNavigator(false);
+    setShowOficioView(false);
+    setShowTramiteEditor(false);
+    setShowActuacionEditor(false);
+    setShowEditor(false);
+    setSelectedActuacion(null);
+  };
+
+  const handleShowOficio = () => {
+    setShowOficioView(true);
+    setShowNavigator(false);
+    setShowTramiteList(false);
+    setShowTramiteEditor(false);
+    setShowActuacionEditor(false);
+    setShowEditor(false);
+    setSelectedActuacion(null);
+  };
 
   // Register actions with parent component
   useEffect(() => {
@@ -219,10 +257,10 @@ export function ExpedientView({
         onRegresarRadicacionInterna: () => setShowRegresarRadicacionInternaDialog(true),
         onExportPDF: handleExportPDF,
         onNuevaActuacion: handleNuevaActuacion,
-        onTramites: () => setShowTramiteList(true),
-        onNavegar: () => setShowNavigator(true),
+        onTramites: handleShowTramites,
+        onNavegar: handleNavegar,
         onChangeStatus: () => setShowSelectEstado(true),
-        onOficio: () => setShowOficioView(true),
+        onOficio: handleShowOficio,
         showRegresarRadicacionInterna: hayRadicacionInternaPendiente()
       });
     }
