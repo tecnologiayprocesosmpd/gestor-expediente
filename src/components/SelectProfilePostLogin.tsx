@@ -44,8 +44,12 @@ export default function SelectProfilePostLogin() {
     <div className="min-h-[60vh] flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-medium">
         <CardHeader className="space-y-1 text-center">
-          <div className="bg-gradient-primary rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-2">
-            <Shield className="w-8 h-8 text-white" />
+          <div className="w-16 h-16 mx-auto mb-2">
+            <img 
+              src="/assets/logo-mpd.png" 
+              alt="Logo MPD" 
+              className="w-full h-full object-contain"
+            />
           </div>
           <CardTitle className="text-2xl">Seleccionar Perfil</CardTitle>
           <p className="text-sm text-muted-foreground">

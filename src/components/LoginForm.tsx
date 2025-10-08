@@ -44,8 +44,12 @@ export function LoginForm() {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="bg-gradient-primary rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-            <Shield className="w-10 h-10 text-white" />
+          <div className="w-20 h-20 mx-auto mb-4">
+            <img 
+              src="/assets/logo-mpd.png" 
+              alt="Logo MPD" 
+              className="w-full h-full object-contain"
+            />
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
             MPD Sistema
