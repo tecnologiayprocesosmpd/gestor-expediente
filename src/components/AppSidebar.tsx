@@ -129,25 +129,29 @@ export function AppSidebar({
                 </span>
               </button>
 
-              <button
-                onClick={onNuevaActuacion}
-                className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-primary hover:text-primary-foreground bg-muted/50 text-foreground"
-              >
-                <Plus className="w-6 h-6 mb-2" />
-                <span className="text-xs text-center">
-                  Nueva Actuación
-                </span>
-              </button>
+              {onNuevaActuacion && (
+                <button
+                  onClick={onNuevaActuacion}
+                  className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-primary hover:text-primary-foreground bg-muted/50 text-foreground"
+                >
+                  <Plus className="w-6 h-6 mb-2" />
+                  <span className="text-xs text-center">
+                    Nueva Actuación
+                  </span>
+                </button>
+              )}
 
-              <button
-                onClick={onChangeActuacionStatus}
-                className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-orange-600 hover:text-white bg-muted/50 text-foreground"
-              >
-                <RefreshCw className="w-6 h-6 mb-2" />
-                <span className="text-xs text-center">
-                  Estado Actuación
-                </span>
-              </button>
+              {onNavegar && (
+                <button
+                  onClick={onNavegar}
+                  className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-primary hover:text-primary-foreground bg-muted/50 text-foreground"
+                >
+                  <Navigation className="w-6 h-6 mb-2" />
+                  <span className="text-xs text-center">
+                    Navegar
+                  </span>
+                </button>
+              )}
             </nav>
           </div>
         </div>

@@ -140,6 +140,7 @@ function AppContent() {
     onChangeStatus?: () => void;
     onOficio?: () => void;
     showRegresarRadicacionInterna?: boolean;
+    isActuacionView?: boolean;
   }>({});
   
   // Get current expedient data
@@ -415,7 +416,8 @@ function AppContent() {
       currentView={currentView}
       onNavigate={setCurrentView}
       onCreateExpedient={handleCreateExpedient}
-      isExpedientView={currentView === 'view'}
+      isExpedientView={currentView === 'view' && !expedientViewActions.isActuacionView}
+      isActuacionView={expedientViewActions.isActuacionView || false}
       onRadicacionInterna={expedientViewActions.onRadicacionInterna}
       onRegresarRadicacionInterna={expedientViewActions.onRegresarRadicacionInterna}
       onExportPDF={expedientViewActions.onExportPDF}

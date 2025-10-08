@@ -64,6 +64,7 @@ interface ExpedientViewProps {
     onChangeStatus?: () => void;
     onOficio?: () => void;
     showRegresarRadicacionInterna?: boolean;
+    isActuacionView?: boolean;
   }) => void;
 }
 
@@ -261,7 +262,8 @@ export function ExpedientView({
         onNavegar: handleNavegar,
         onChangeStatus: () => setShowSelectEstado(true),
         onOficio: handleShowOficio,
-        showRegresarRadicacionInterna: hayRadicacionInternaPendiente()
+        showRegresarRadicacionInterna: hayRadicacionInternaPendiente(),
+        isActuacionView: showActuacionEditor || showNavigator
       });
     }
   }, [
