@@ -5,20 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
-import {
-  ArrowLeft,
-  FileText,
-  Plus,
-  Eye,
-  Edit,
-  Download,
-  Calendar,
-  User,
-  Clock,
-  Building2,
-  AlertTriangle,
-  CheckCircle
-} from "lucide-react";
+import { ArrowLeft, FileText, Plus, Eye, Edit, Download, Calendar, User, Clock, Building2, AlertTriangle, CheckCircle } from "lucide-react";
 import { ActuacionList } from "./ActuacionList";
 import { ActuacionEditor } from "./ActuacionEditor";
 import { ExpedientEditor } from "./ExpedientEditor";
@@ -28,24 +15,13 @@ import { TramiteEditor } from "./TramiteEditor";
 import { TramiteList } from "./TramiteList";
 import { ActuacionNavigator } from "./ActuacionNavigator";
 import { SelectEstadoDialog } from "./SelectEstadoDialog";
-import { SelectActuacionEstadoDialog } from "./SelectActuacionEstadoDialog";
 import { StatusChangeConfirmDialog } from "./StatusChangeConfirmDialog";
 import { ExpedientOficioView } from "./ExpedientOficioView";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import type { Actuacion } from "@/types/actuacion";
 import { actuacionStorage } from "@/utils/actuacionStorage";
 import { tramiteStorage } from "@/utils/tramiteStorage";
 import type { Tramite } from "@/types/tramite";
-
 interface ExpedientViewProps {
   expedientId?: string;
   expedient?: any;
@@ -64,17 +40,14 @@ interface ExpedientViewProps {
     onNavegar?: () => void;
     onChangeStatus?: () => void;
     onOficio?: () => void;
-    onChangeActuacionStatus?: () => void;
     showRegresarRadicacionInterna?: boolean;
-    isActuacionView?: boolean;
   }) => void;
 }
-
-export function ExpedientView({ 
-  expedientId, 
-  expedient: propExpedient, 
-  actuaciones: propActuaciones = [], 
-  onBack, 
+export function ExpedientView({
+  expedientId,
+  expedient: propExpedient,
+  actuaciones: propActuaciones = [],
+  onBack,
   onSaveActuacion,
   onUpdateActuaciones,
   autoCreateActuacion = false,
@@ -97,10 +70,9 @@ export function ExpedientView({
   const [showStatusConfirm, setShowStatusConfirm] = useState(false);
   const [pendingNewStatus, setPendingNewStatus] = useState<'en_tramite' | 'paralizado' | 'archivado'>('en_tramite');
   const [showOficioView, setShowOficioView] = useState(false);
-  const [showSelectActuacionEstado, setShowSelectActuacionEstado] = useState(false);
-  const [currentActuacionForStatusChange, setCurrentActuacionForStatusChange] = useState<Actuacion | null>(null);
-  
-  const { user } = useUser();
+  const {
+    user
+  } = useUser();
 
   // Manejadores para el cambio de estado
   const handleStatusSelected = (newStatus: 'en_tramite' | 'paralizado' | 'archivado') => {
@@ -108,14 +80,12 @@ export function ExpedientView({
     setShowSelectEstado(false);
     setShowStatusConfirm(true);
   };
-
   const handleConfirmStatusChange = () => {
     if (expedientId) {
       onStatusChange?.(expedientId, pendingNewStatus);
     }
     setShowStatusConfirm(false);
   };
-
   const getStatusLabel = (status: string) => {
     const labels = {
       draft: 'Borrador',
@@ -125,8 +95,7 @@ export function ExpedientView({
     };
     return labels[status as keyof typeof labels] || 'Borrador';
   };
-  
-  
+
   // Use passed expedient data or fallback to default
   const expedient = propExpedient || {
     id: expedientId || 'unknown',
@@ -159,16 +128,13 @@ export function ExpedientView({
         if (savedRadicaciones) {
           const radicaciones = JSON.parse(savedRadicaciones);
           // Filtrar radicaciones internas para este expediente que no han sido devueltas
-          const radicacionesExpediente = radicaciones.filter(
-            (d: any) => d.expedientId === expedientId && !d.devuelta
-          );
+          const radicacionesExpediente = radicaciones.filter((d: any) => d.expedientId === expedientId && !d.devuelta);
           setRadicacionesInternasPendientes(radicacionesExpediente);
         }
       } catch (error) {
         console.error('Error loading radicaciones internas:', error);
       }
     };
-
     if (expedientId) {
       loadRadicacionesInternasPendientes();
     }
@@ -177,13 +143,10 @@ export function ExpedientView({
   // Verificar si hay radicación interna pendiente para la oficina actual
   const hayRadicacionInternaPendiente = () => {
     if (!user?.department && !user?.name) return false;
-    
+
     // Usar department o name como identificador de oficina
     const oficinaActual = user.department || user.name;
-    
-    return radicacionesInternasPendientes.some(
-      (d: any) => d.oficinaDestino === oficinaActual
-    );
+    return radicacionesInternasPendientes.some((d: any) => d.oficinaDestino === oficinaActual);
   };
 
   // Handlers for tramite navigation
@@ -191,7 +154,6 @@ export function ExpedientView({
     setShowTramiteList(false);
     setShowTramiteEditor(true);
   };
-
   const handleBackFromTramiteEditor = () => {
     // Reload tramites after creating one
     if (expedientId) {
@@ -201,11 +163,9 @@ export function ExpedientView({
     setShowTramiteEditor(false);
     setShowTramiteList(true);
   };
-
   const handleBackFromTramiteList = () => {
     setShowTramiteList(false);
   };
-
   const handleTramiteUpdated = () => {
     // Reload tramites after updating one
     if (expedientId) {
@@ -213,7 +173,6 @@ export function ExpedientView({
       setTramites(loadedTramites);
     }
   };
-
   const handleNuevaActuacion = () => {
     setShowActuacionEditor(true);
     setShowNavigator(false);
@@ -223,7 +182,6 @@ export function ExpedientView({
     setShowEditor(false);
     setSelectedActuacion(null);
   };
-
   const handleNavegar = () => {
     setShowNavigator(true);
     setShowTramiteList(false);
@@ -233,7 +191,6 @@ export function ExpedientView({
     setShowEditor(false);
     setSelectedActuacion(null);
   };
-
   const handleShowTramites = () => {
     setShowTramiteList(true);
     setShowNavigator(false);
@@ -243,7 +200,6 @@ export function ExpedientView({
     setShowEditor(false);
     setSelectedActuacion(null);
   };
-
   const handleShowOficio = () => {
     setShowOficioView(true);
     setShowNavigator(false);
@@ -252,41 +208,6 @@ export function ExpedientView({
     setShowActuacionEditor(false);
     setShowEditor(false);
     setSelectedActuacion(null);
-  };
-
-  const handleChangeActuacionStatus = () => {
-    // Find the current actuacion being edited or viewed
-    if (editingActuacionId) {
-      const actuacion = actuaciones.find(a => a.id === editingActuacionId);
-      setCurrentActuacionForStatusChange(actuacion || null);
-    } else if (selectedActuacion) {
-      setCurrentActuacionForStatusChange(selectedActuacion);
-    } else if (actuaciones.length > 0) {
-      // If in navigator, use the first one or latest
-      setCurrentActuacionForStatusChange(actuaciones[0]);
-    }
-    setShowSelectActuacionEstado(true);
-  };
-
-  const handleActuacionStatusSelected = (newStatus: Actuacion['status']) => {
-    if (!currentActuacionForStatusChange) return;
-    
-    // Update the actuacion status
-    const updatedActuaciones = actuaciones.map(a => 
-      a.id === currentActuacionForStatusChange.id 
-        ? { ...a, status: newStatus, updatedAt: new Date() }
-        : a
-    );
-    
-    setActuaciones(updatedActuaciones);
-    onUpdateActuaciones?.(updatedActuaciones);
-    
-    // Save to storage
-    const updatedActuacion = { ...currentActuacionForStatusChange, status: newStatus, updatedAt: new Date() };
-    actuacionStorage.saveActuacion(updatedActuacion);
-    
-    setShowSelectActuacionEstado(false);
-    setCurrentActuacionForStatusChange(null);
   };
 
   // Register actions with parent component - ALWAYS execute before any conditional returns
@@ -301,26 +222,10 @@ export function ExpedientView({
         onNavegar: handleNavegar,
         onChangeStatus: () => setShowSelectEstado(true),
         onOficio: handleShowOficio,
-        onChangeActuacionStatus: handleChangeActuacionStatus,
-        showRegresarRadicacionInterna: hayRadicacionInternaPendiente(),
-        isActuacionView: showActuacionEditor || showNavigator
+        showRegresarRadicacionInterna: hayRadicacionInternaPendiente()
       });
     }
-  }, [
-    onRegisterActions, 
-    radicacionesInternasPendientes, 
-    showActuacionEditor, 
-    showNavigator, 
-    showTramiteList, 
-    showOficioView, 
-    showTramiteEditor,
-    editingActuacionId,
-    selectedActuacion,
-    actuaciones
-  ]);
-
-  
-  
+  }, [onRegisterActions, radicacionesInternasPendientes, showActuacionEditor, showNavigator, showTramiteList, showOficioView, showTramiteEditor]);
   const getStatusColors = (status: string) => {
     const colors = {
       draft: {
@@ -344,14 +249,11 @@ export function ExpedientView({
         text: 'text-[hsl(var(--status-archivado-foreground))]'
       }
     };
-    
     return colors[status as keyof typeof colors] || colors.draft;
   };
-
   const handleAddActuacion = () => {
     setShowActuacionEditor(true);
   };
-
   const handleViewActuacion = (actuacionId: string) => {
     const actuacion = actuaciones.find(act => act.id === actuacionId);
     if (actuacion) {
@@ -364,7 +266,6 @@ export function ExpedientView({
       }
     }
   };
-
   const handleEditActuacion = (actuacionId: string) => {
     setEditingActuacionId(actuacionId);
     const actuacion = actuaciones.find(act => act.id === actuacionId);
@@ -373,41 +274,41 @@ export function ExpedientView({
     }
     setShowActuacionEditor(true);
   };
-
   const handleStatusChange = (actuacionId: string, newStatus: Actuacion['status']) => {
     const updatedActuaciones = actuaciones.map(act => {
       if (act.id === actuacionId) {
-        const updatedActuacion = { 
-          ...act, 
-          status: newStatus, 
+        const updatedActuacion = {
+          ...act,
+          status: newStatus,
           signedAt: newStatus === 'firmado' ? new Date() : undefined,
           updatedAt: new Date()
         };
-        
+
         // Guardar la actuación individual en localStorage
         actuacionStorage.saveActuacion(updatedActuacion);
-        
         return updatedActuacion;
       }
       return act;
     });
-    
     setActuaciones(updatedActuaciones);
     onUpdateActuaciones?.(updatedActuaciones);
   };
-
   const handleSaveActuacion = async (actuacionData: any, autoSave = false) => {
-    console.log('[ExpedientView.handleSaveActuacion] Iniciando guardado:', { actuacionData, editingActuacionId, autoSave });
-    
+    console.log('[ExpedientView.handleSaveActuacion] Iniciando guardado:', {
+      actuacionData,
+      editingActuacionId,
+      autoSave
+    });
     if (editingActuacionId) {
       // Editing existing actuacion
       console.log('[ExpedientView.handleSaveActuacion] Editando actuación existente');
-      const updatedActuaciones = actuaciones.map(act => 
-        act.id === editingActuacionId ? { ...act, ...actuacionData } : act
-      );
+      const updatedActuaciones = actuaciones.map(act => act.id === editingActuacionId ? {
+        ...act,
+        ...actuacionData
+      } : act);
       setActuaciones(updatedActuaciones);
       onUpdateActuaciones?.(updatedActuaciones);
-      
+
       // Close editor for manual saves
       if (!autoSave) {
         setShowEditor(false);
@@ -422,7 +323,7 @@ export function ExpedientView({
         if (onSaveActuacion) {
           const result = await onSaveActuacion(actuacionData);
           console.log('[ExpedientView.handleSaveActuacion] Actuación guardada exitosamente:', result);
-          
+
           // Only close editor for manual saves after successful save
           if (!autoSave) {
             console.log('[ExpedientView.handleSaveActuacion] Cerrando editor');
@@ -438,10 +339,11 @@ export function ExpedientView({
       }
     }
   };
-
   const handleExportPDF = () => {
     // Importar jsPDF dinámicamente
-    import('jspdf').then(({ jsPDF }) => {
+    import('jspdf').then(({
+      jsPDF
+    }) => {
       const doc = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
@@ -452,22 +354,26 @@ export function ExpedientView({
       const pageWidth = 216;
       const pageHeight = 330;
       const margin = 20;
-      const contentWidth = pageWidth - (margin * 2);
+      const contentWidth = pageWidth - margin * 2;
 
       // Función auxiliar para añadir texto con salto de línea
       const addMultiLineText = (text: string, x: number, y: number, maxWidth: number, fontSize: number = 10) => {
         doc.setFontSize(fontSize);
         const lines = doc.splitTextToSize(text, maxWidth);
         doc.text(lines, x, y);
-        return y + (lines.length * fontSize * 0.35); // Retorna la nueva posición Y
+        return y + lines.length * fontSize * 0.35; // Retorna la nueva posición Y
       };
 
       // === CARÁTULA ===
       doc.setFontSize(16);
       doc.setFont('helvetica', 'bold');
-      doc.text('MINISTERIO PUPILAR Y DE LA DEFENSA', pageWidth / 2, 30, { align: 'center' });
-      doc.text('San Miguel de Tucumán', pageWidth / 2, 40, { align: 'center' });
-      
+      doc.text('MINISTERIO PUPILAR Y DE LA DEFENSA', pageWidth / 2, 30, {
+        align: 'center'
+      });
+      doc.text('San Miguel de Tucumán', pageWidth / 2, 40, {
+        align: 'center'
+      });
+
       // Línea separadora
       doc.setLineWidth(0.5);
       doc.line(margin, 50, pageWidth - margin, 50);
@@ -478,24 +384,18 @@ export function ExpedientView({
       doc.setFont('helvetica', 'bold');
       doc.text('EXPEDIENTE', margin, yPosition);
       yPosition += 15;
-
       doc.setFontSize(12);
       doc.setFont('helvetica', 'normal');
       doc.text(`Número: ${expedient.number}`, margin, yPosition);
       yPosition += 10;
-      
       yPosition = addMultiLineText(`Título: ${expedient.title}`, margin, yPosition, contentWidth, 12);
       yPosition += 5;
-      
       doc.text(`Estado: ${getStatusLabel(expedient.status)}`, margin, yPosition);
       yPosition += 10;
-      
       doc.text(`Oficina Asignada: ${expedient.assignedOffice}`, margin, yPosition);
       yPosition += 10;
-      
       doc.text(`Fecha de Creación: ${expedient.createdAt.toLocaleDateString('es-ES')}`, margin, yPosition);
       yPosition += 10;
-      
       doc.text(`Última Modificación: ${expedient.updatedAt.toLocaleDateString('es-ES')}`, margin, yPosition);
       yPosition += 20;
 
@@ -504,20 +404,16 @@ export function ExpedientView({
       doc.setFont('helvetica', 'bold');
       doc.text('RESUMEN DE ACTUACIONES', margin, yPosition);
       yPosition += 15;
-
       doc.setFontSize(10);
       doc.setFont('helvetica', 'normal');
       doc.text(`Total de Actuaciones: ${actuaciones.length}`, margin, yPosition);
       yPosition += 10;
-
       actuaciones.forEach((act, index) => {
         if (yPosition > pageHeight - 40) {
           doc.addPage();
           yPosition = margin;
         }
-        
-        const status = act.status === 'firmado' ? 'Firmado' : 
-                      act.status === 'para-firmar' ? 'Para Firmar' : 'Borrador';
+        const status = act.status === 'firmado' ? 'Firmado' : act.status === 'para-firmar' ? 'Para Firmar' : 'Borrador';
         doc.text(`${index + 1}. ${act.title} - ${status}`, margin, yPosition);
         yPosition += 7;
       });
@@ -525,47 +421,41 @@ export function ExpedientView({
       // === ACTUACIONES (cada una en página nueva) ===
       actuaciones.forEach((actuacion, index) => {
         doc.addPage();
-        
+
         // Encabezado de actuación
         doc.setFontSize(14);
         doc.setFont('helvetica', 'bold');
-        doc.text(`ACTUACIÓN #${actuacion.number}`, pageWidth / 2, 30, { align: 'center' });
-        
+        doc.text(`ACTUACIÓN #${actuacion.number}`, pageWidth / 2, 30, {
+          align: 'center'
+        });
+
         // Línea separadora
         doc.setLineWidth(0.5);
         doc.line(margin, 40, pageWidth - margin, 40);
-
         let actYPos = 55;
-        
+
         // Información de la actuación
         doc.setFontSize(12);
         doc.setFont('helvetica', 'bold');
         actYPos = addMultiLineText(`Título: ${actuacion.title}`, margin, actYPos, contentWidth, 12);
         actYPos += 5;
-
         doc.setFontSize(10);
         doc.setFont('helvetica', 'normal');
         doc.text(`Creado por: ${actuacion.createdBy}`, margin, actYPos);
         actYPos += 7;
-        
         doc.text(`Fecha de Creación: ${actuacion.createdAt.toLocaleDateString('es-ES')}`, margin, actYPos);
         actYPos += 7;
-        
-        const status = actuacion.status === 'firmado' ? 'Firmado' : 
-                      actuacion.status === 'para-firmar' ? 'Para Firmar' : 'Borrador';
+        const status = actuacion.status === 'firmado' ? 'Firmado' : actuacion.status === 'para-firmar' ? 'Para Firmar' : 'Borrador';
         doc.text(`Estado: ${status}`, margin, actYPos);
         actYPos += 7;
-
         if (actuacion.signedAt) {
           doc.text(`Fecha de Firma: ${actuacion.signedAt.toLocaleDateString('es-ES')}`, margin, actYPos);
           actYPos += 7;
         }
-        
         if (actuacion.signedBy) {
           doc.text(`Firmado por: ${actuacion.signedBy}`, margin, actYPos);
           actYPos += 7;
         }
-
         actYPos += 10;
 
         // Línea separadora para contenido
@@ -576,15 +466,14 @@ export function ExpedientView({
         // Contenido de la actuación (extraer texto del HTML)
         doc.setFontSize(11);
         doc.setFont('helvetica', 'normal');
-        
+
         // Crear elemento temporal para extraer texto del HTML
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = actuacion.content;
         const textContent = tempDiv.textContent || tempDiv.innerText || '';
-        
+
         // Añadir contenido con manejo de páginas
         const lines = doc.splitTextToSize(textContent, contentWidth);
-        
         lines.forEach((line: string) => {
           if (actYPos > pageHeight - 30) {
             doc.addPage();
@@ -598,19 +487,18 @@ export function ExpedientView({
       // Guardar el PDF
       const fileName = `Expediente_${expedient.number}_${new Date().toLocaleDateString('es-ES').replace(/\//g, '-')}.pdf`;
       doc.save(fileName);
-    }).catch((error) => {
+    }).catch(error => {
       console.error('Error al generar PDF:', error);
       alert('Error al generar el PDF. Por favor intente nuevamente.');
     });
   };
-
   const handleRadicacionInterna = async (data: {
     oficina: string;
     fechaRegreso: string;
     actuacionesSeleccionadas: string[];
   }) => {
     console.log('Procesando radicación interna:', data);
-    
+
     // Crear nueva radicación interna
     const nuevaRadicacionInterna = {
       id: crypto.randomUUID(),
@@ -630,77 +518,60 @@ export function ExpedientView({
       const radicaciones = savedRadicaciones ? JSON.parse(savedRadicaciones) : [];
       radicaciones.push(nuevaRadicacionInterna);
       localStorage.setItem('radicacionesInternasPendientes', JSON.stringify(radicaciones));
-      
+
       // Actualizar estado local
-      const radicacionesExpediente = radicaciones.filter(
-        (d: any) => d.expedientId === expedientId && !d.devuelta
-      );
+      const radicacionesExpediente = radicaciones.filter((d: any) => d.expedientId === expedientId && !d.devuelta);
       setRadicacionesInternasPendientes(radicacionesExpediente);
     } catch (error) {
       console.error('Error saving radicación interna:', error);
     }
-    
     const oficinaLabel = data.oficina.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     const fechaRegreso = data.fechaRegreso ? new Date(data.fechaRegreso).toLocaleString('es-ES') : 'No especificada';
     const cantidadActuaciones = data.actuacionesSeleccionadas.length;
-    
     alert(`Radicación interna enviada exitosamente:
 - Expediente: ${expedient.number}
 - Oficina destino: ${oficinaLabel}
 - Fecha de regreso: ${fechaRegreso}
 - Actuaciones enviadas: ${cantidadActuaciones}`);
   };
-
   const handleRegresarRadicacionInterna = async (data: {
     fechaRegreso: string;
   }) => {
     console.log('Procesando regreso de radicación interna:', data);
-    
+
     // Marcar radicación interna como devuelta
     try {
       const savedRadicaciones = localStorage.getItem('radicacionesInternasPendientes');
       if (savedRadicaciones) {
         const radicaciones = JSON.parse(savedRadicaciones);
         const oficinaActual = user?.department || user?.name;
-        
+
         // Encontrar y actualizar la radicación interna correspondiente
-        const radicacionIndex = radicaciones.findIndex(
-          (d: any) => d.expedientId === expedientId && 
-                      d.oficinaDestino === oficinaActual && 
-                      !d.devuelta
-        );
-        
+        const radicacionIndex = radicaciones.findIndex((d: any) => d.expedientId === expedientId && d.oficinaDestino === oficinaActual && !d.devuelta);
         if (radicacionIndex !== -1) {
           radicaciones[radicacionIndex].devuelta = true;
           radicaciones[radicacionIndex].fechaDevolucion = data.fechaRegreso;
           localStorage.setItem('radicacionesInternasPendientes', JSON.stringify(radicaciones));
-          
+
           // Actualizar estado local
-          const radicacionesExpediente = radicaciones.filter(
-            (d: any) => d.expedientId === expedientId && !d.devuelta
-          );
+          const radicacionesExpediente = radicaciones.filter((d: any) => d.expedientId === expedientId && !d.devuelta);
           setRadicacionesInternasPendientes(radicacionesExpediente);
         }
       }
     } catch (error) {
       console.error('Error updating radicación interna:', error);
     }
-    
     alert(`Radicación interna devuelta exitosamente:
 - Expediente: ${expedient.number}
 - Fecha de regreso: ${data.fechaRegreso}
 - La radicación interna ha sido devuelta a la oficina remitente`);
   };
-
   const statusColors = getStatusColors(expedient.status);
-  const latestActuacion = actuaciones.sort((a, b) => 
-    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  )[0];
+  const latestActuacion = actuaciones.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
 
   // Show ActuacionNavigator if requested
   if (showNavigator) {
-    return (
-      <>
+    return <>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <Button variant="outline" onClick={() => setShowNavigator(false)}>
@@ -711,110 +582,46 @@ export function ExpedientView({
               Navegador de Actuaciones - {expedient.number}
             </h2>
           </div>
-          <ActuacionNavigator 
-            actuaciones={actuaciones}
-            expedientNumber={expedient.number}
-            expedientTitle={expedient.title}
-          />
+          <ActuacionNavigator actuaciones={actuaciones} expedientNumber={expedient.number} expedientTitle={expedient.title} />
         </div>
 
         {/* Diálogos disponibles en vista de navegación */}
-        <RadicacionInternaDialog
-          open={showRadicacionInternaDialog}
-          onOpenChange={setShowRadicacionInternaDialog}
-          expedientNumber={expedient.number}
-          actuaciones={actuaciones}
-          onConfirm={handleRadicacionInterna}
-        />
+        <RadicacionInternaDialog open={showRadicacionInternaDialog} onOpenChange={setShowRadicacionInternaDialog} expedientNumber={expedient.number} actuaciones={actuaciones} onConfirm={handleRadicacionInterna} />
 
-        <RegresarRadicacionInternaDialog
-          open={showRegresarRadicacionInternaDialog}
-          onOpenChange={setShowRegresarRadicacionInternaDialog}
-          expedientNumber={expedient.number}
-          oficinaRemitente="Mesa de Entrada"
-          onConfirm={handleRegresarRadicacionInterna}
-        />
+        <RegresarRadicacionInternaDialog open={showRegresarRadicacionInternaDialog} onOpenChange={setShowRegresarRadicacionInternaDialog} expedientNumber={expedient.number} oficinaRemitente="Mesa de Entrada" onConfirm={handleRegresarRadicacionInterna} />
 
-        <SelectEstadoDialog
-          open={showSelectEstado}
-          onOpenChange={setShowSelectEstado}
-          currentStatus={expedient.status as 'en_tramite' | 'paralizado' | 'archivado'}
-          onSelect={handleStatusSelected}
-        />
+        <SelectEstadoDialog open={showSelectEstado} onOpenChange={setShowSelectEstado} currentStatus={expedient.status as 'en_tramite' | 'paralizado' | 'archivado'} onSelect={handleStatusSelected} />
         
-        <StatusChangeConfirmDialog
-          open={showStatusConfirm}
-          onOpenChange={setShowStatusConfirm}
-          onConfirm={handleConfirmStatusChange}
-        />
-      </>
-    );
+        <StatusChangeConfirmDialog open={showStatusConfirm} onOpenChange={setShowStatusConfirm} onConfirm={handleConfirmStatusChange} />
+      </>;
   }
 
   // Show OficioView if requested
   if (showOficioView) {
-    return (
-      <ExpedientOficioView 
-        expedientId={expedientId || ''}
-        expedientNumber={expedient.number}
-        expedientTitle={expedient.title}
-        onBack={() => setShowOficioView(false)}
-      />
-    );
+    return <ExpedientOficioView expedientId={expedientId || ''} expedientNumber={expedient.number} expedientTitle={expedient.title} onBack={() => setShowOficioView(false)} />;
   }
 
   // Show TramiteList if requested
   if (showTramiteList) {
-    return (
-      <TramiteList 
-        tramites={tramites}
-        onCreateTramite={handleCreateTramite}
-        onBack={handleBackFromTramiteList}
-        onTramiteUpdated={handleTramiteUpdated}
-      />
-    );
+    return <TramiteList tramites={tramites} onCreateTramite={handleCreateTramite} onBack={handleBackFromTramiteList} onTramiteUpdated={handleTramiteUpdated} />;
   }
 
   // Show TramiteEditor if requested
   if (showTramiteEditor) {
-    return (
-      <TramiteEditor 
-        expedientId={expedientId || ''}
-        onBack={handleBackFromTramiteEditor}
-      />
-    );
+    return <TramiteEditor expedientId={expedientId || ''} onBack={handleBackFromTramiteEditor} />;
   }
-
   if (showActuacionEditor) {
-    return (
-      <ActuacionEditor 
-        expedientId={expedientId || ''}
-        actuacionId={editingActuacionId || undefined}
-        actuacion={selectedActuacion || undefined}
-        onBack={() => {
-          setShowActuacionEditor(false);
-          setEditingActuacionId(null);
-          setSelectedActuacion(null);
-        }}
-        onSave={handleSaveActuacion}
-        onStatusChange={handleStatusChange}
-      />
-    );
+    return <ActuacionEditor expedientId={expedientId || ''} actuacionId={editingActuacionId || undefined} actuacion={selectedActuacion || undefined} onBack={() => {
+      setShowActuacionEditor(false);
+      setEditingActuacionId(null);
+      setSelectedActuacion(null);
+    }} onSave={handleSaveActuacion} onStatusChange={handleStatusChange} />;
   }
-
   if (showEditor) {
-    return (
-      <ExpedientEditor 
-        expedientId={expedientId}
-        onBack={() => setShowEditor(false)}
-        onSave={handleSaveActuacion}
-      />
-    );
+    return <ExpedientEditor expedientId={expedientId} onBack={() => setShowEditor(false)} onSave={handleSaveActuacion} />;
   }
-
   if (selectedActuacion) {
-    return (
-      <div className="min-h-screen p-6 space-y-6">
+    return <div className="min-h-screen p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -833,33 +640,19 @@ export function ExpedientView({
           </div>
           <div className="flex items-center space-x-3">
             <Badge variant={selectedActuacion.status === 'firmado' ? 'default' : 'secondary'} className="px-4 py-2">
-              {selectedActuacion.status === 'firmado' ? 'Firmado' : 
-               selectedActuacion.status === 'para-firmar' ? 'Para Firma' : 'Borrador'}
+              {selectedActuacion.status === 'firmado' ? 'Firmado' : selectedActuacion.status === 'para-firmar' ? 'Para Firma' : 'Borrador'}
             </Badge>
             
             {/* Status change button */}
-            {selectedActuacion.status === 'borrador' && (
-              <Button
-                variant="default"
-                size="sm"
-                onClick={() => handleStatusChange(selectedActuacion.id, 'para-firmar')}
-                className="bg-orange-500 hover:bg-orange-600 text-white"
-              >
+            {selectedActuacion.status === 'borrador' && <Button variant="default" size="sm" onClick={() => handleStatusChange(selectedActuacion.id, 'para-firmar')} className="bg-orange-500 hover:bg-orange-600 text-white">
                 <AlertTriangle className="w-4 h-4 mr-1" />
                 PARA FIRMA
-              </Button>
-            )}
+              </Button>}
             
-            {selectedActuacion.status === 'para-firmar' && (
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => handleStatusChange(selectedActuacion.id, 'firmado')}
-              >
+            {selectedActuacion.status === 'para-firmar' && <Button variant="secondary" size="sm" onClick={() => handleStatusChange(selectedActuacion.id, 'firmado')}>
                 <CheckCircle className="w-4 h-4 mr-1" />
                 Firmar
-              </Button>
-            )}
+              </Button>}
           </div>
         </div>
 
@@ -892,8 +685,7 @@ export function ExpedientView({
                     </p>
                   </div>
                 </div>
-                {selectedActuacion.signedAt && (
-                  <div className="flex items-center space-x-3">
+                {selectedActuacion.signedAt && <div className="flex items-center space-x-3">
                     <Clock className="w-5 h-5 text-muted-foreground" />
                     <div>
                       <p className="font-medium text-sm">Fecha de Firma</p>
@@ -901,31 +693,25 @@ export function ExpedientView({
                         {selectedActuacion.signedAt.toLocaleDateString('es-ES')}
                       </p>
                     </div>
-                  </div>
-                )}
+                  </div>}
               </div>
               
               <div className="prose prose-lg max-w-none p-6 border rounded-lg bg-white">
-                <div dangerouslySetInnerHTML={{ __html: selectedActuacion.content }} />
+                <div dangerouslySetInnerHTML={{
+                __html: selectedActuacion.content
+              }} />
               </div>
             </div>
           </CardContent>
         </Card>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       {/* Header unificado con mejor espaciado */}
       <div className="bg-card rounded-lg border shadow-sm">
         <div className={`flex items-start justify-between p-6 border-l-4 ${statusColors.border}`}>
           <div className="flex items-start space-x-6">
-            <Button 
-              variant="outline" 
-              onClick={onBack} 
-              className="px-4 py-2 h-auto"
-            >
+            <Button variant="outline" onClick={onBack} className="px-4 py-2 h-auto">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Volver a Expedientes
             </Button>
@@ -943,32 +729,26 @@ export function ExpedientView({
                   </span>
                 </div>
 
-                {tramites.length > 0 && !tramites.every(t => t.finalizado) && (
-                  <div className="bg-primary/10 rounded-md px-4 py-2 flex items-center space-x-2 shadow-sm border border-primary/20">
+                {tramites.length > 0 && !tramites.every(t => t.finalizado) && <div className="bg-primary/10 rounded-md px-4 py-2 flex items-center space-x-2 shadow-sm border border-primary/20">
                     <FileText className="w-5 h-5 text-primary" />
                     <span className="text-sm font-semibold text-primary">
                       Trámite: {tramites.find(t => !t.finalizado)?.referencia || 'En Trámite'}
                     </span>
-                  </div>
-                )}
+                  </div>}
               </div>
               
               <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                {expedient.oficina && (
-                  <span className="flex items-center space-x-1">
+                {expedient.oficina && <span className="flex items-center space-x-1">
                     <Building2 className="w-4 h-4" />
                     <span>Oficina: {expedient.oficina}</span>
-                  </span>
-                )}
-                {(expedient.derivadoPor || expedient.recibidoPor) && (
-                  <span className="flex items-center space-x-1">
+                  </span>}
+                {(expedient.derivadoPor || expedient.recibidoPor) && <span className="flex items-center space-x-1">
                     <User className="w-4 h-4" />
                   <span>
                     {expedient.derivadoPor && `Derivado por: ${expedient.derivadoPor}`}
                     {expedient.recibidoPor && ` | Recibido por: ${expedient.recibidoPor}`}
                   </span>
-                </span>
-              )}
+                </span>}
               </div>
             </div>
           </div>
@@ -983,7 +763,7 @@ export function ExpedientView({
             <span>Resumen del Expediente</span>
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-x-1 ">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p className="text-sm font-medium text-muted-foreground">Referencia</p>
@@ -992,6 +772,15 @@ export function ExpedientView({
             <div>
               <p className="text-sm font-medium text-muted-foreground">Tipo de Proceso</p>
               <p className="text-sm capitalize">{expedient.tipoProceso || 'administrativo'}</p>
+            </div>
+          </div>
+          <Separator />
+          <div>
+            <p className="text-sm font-medium text-muted-foreground mb-2">Descripción del Expediente</p>
+            <div className="prose prose-sm max-w-none p-3 border rounded-lg bg-muted/30">
+              <div dangerouslySetInnerHTML={{
+              __html: expedient.content || '<p>Sin contenido especificado</p>'
+            }} />
             </div>
           </div>
         </CardContent>
@@ -1013,7 +802,7 @@ export function ExpedientView({
               <div className="space-y-3">
                 <div className="flex items-center justify-between py-2 border-b border-border/50">
                   <span className="text-sm font-medium">Número</span>
-                  <span className="text-sm text-muted-foreground">{expedient.number.split('-').pop()}</span>
+                  <span className="text-sm text-muted-foreground">{expedient.number}</span>
                 </div>
                 <div className="flex flex-col space-y-2 py-2 border-b border-border/50">
                   <span className="text-sm font-medium">Estado</span>
@@ -1050,59 +839,21 @@ export function ExpedientView({
           
 
           {/* Lista completa de actuaciones */}
-          <ActuacionList
-            expedientId={expedient.id}
-            actuaciones={actuaciones}
-            onViewActuacion={handleViewActuacion}
-            onEditActuacion={handleEditActuacion}
-            onCreateActuacion={handleAddActuacion}
-            onChangeStatus={handleStatusChange}
-          />
+          <ActuacionList expedientId={expedient.id} actuaciones={actuaciones} onViewActuacion={handleViewActuacion} onEditActuacion={handleEditActuacion} onCreateActuacion={handleAddActuacion} onChangeStatus={handleStatusChange} />
 
         </div>
       </div>
 
       {/* Diálogo de Radicación Interna */}
-      <RadicacionInternaDialog
-        open={showRadicacionInternaDialog}
-        onOpenChange={setShowRadicacionInternaDialog}
-        expedientNumber={expedient.number}
-        actuaciones={actuaciones}
-        onConfirm={handleRadicacionInterna}
-      />
+      <RadicacionInternaDialog open={showRadicacionInternaDialog} onOpenChange={setShowRadicacionInternaDialog} expedientNumber={expedient.number} actuaciones={actuaciones} onConfirm={handleRadicacionInterna} />
 
       {/* Diálogo de Regresar Radicación Interna */}
-      <RegresarRadicacionInternaDialog
-        open={showRegresarRadicacionInternaDialog}
-        onOpenChange={setShowRegresarRadicacionInternaDialog}
-        expedientNumber={expedient.number}
-        oficinaRemitente="Mesa de Entrada" // Esto debería venir de los datos del expediente
-        onConfirm={handleRegresarRadicacionInterna}
-      />
+      <RegresarRadicacionInternaDialog open={showRegresarRadicacionInternaDialog} onOpenChange={setShowRegresarRadicacionInternaDialog} expedientNumber={expedient.number} oficinaRemitente="Mesa de Entrada" // Esto debería venir de los datos del expediente
+    onConfirm={handleRegresarRadicacionInterna} />
 
       {/* Diálogos de Cambio de Estado */}
-      <SelectEstadoDialog
-        open={showSelectEstado}
-        onOpenChange={setShowSelectEstado}
-        currentStatus={expedient.status as 'en_tramite' | 'paralizado' | 'archivado'}
-        onSelect={handleStatusSelected}
-      />
+      <SelectEstadoDialog open={showSelectEstado} onOpenChange={setShowSelectEstado} currentStatus={expedient.status as 'en_tramite' | 'paralizado' | 'archivado'} onSelect={handleStatusSelected} />
       
-      <StatusChangeConfirmDialog
-        open={showStatusConfirm}
-        onOpenChange={setShowStatusConfirm}
-        onConfirm={handleConfirmStatusChange}
-        title="Confirmar cambio de estado"
-        message={`¿Está seguro de que desea cambiar el expediente a ${getStatusLabel(pendingNewStatus)}?`}
-      />
-
-      {/* Diálogo de Cambio de Estado de Actuación */}
-      <SelectActuacionEstadoDialog
-        open={showSelectActuacionEstado}
-        onOpenChange={setShowSelectActuacionEstado}
-        currentStatus={currentActuacionForStatusChange?.status || 'para-firmar'}
-        onSelect={handleActuacionStatusSelected}
-      />
-    </div>
-  );
+      <StatusChangeConfirmDialog open={showStatusConfirm} onOpenChange={setShowStatusConfirm} onConfirm={handleConfirmStatusChange} title="Confirmar cambio de estado" message={`¿Está seguro de que desea cambiar el expediente a ${getStatusLabel(pendingNewStatus)}?`} />
+    </div>;
 }
