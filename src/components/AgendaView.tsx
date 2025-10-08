@@ -15,6 +15,8 @@ import type { CitaAgenda, AgendaView } from '@/types/agenda';
 import { agendaStorage } from '@/utils/agendaStorage';
 import { useUser } from '@/contexts/UserContext';
 import { useToast } from '@/hooks/use-toast';
+import { usePagination } from '@/hooks/usePagination';
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 
 interface AgendaViewProps {
   onNavigateToExpedient?: (expedientId: string) => void;
@@ -144,6 +146,30 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
   };
 
   const { citasProximas, citasPasadas } = getFilteredCitas();
+
+  // Pagination for Citas Próximas
+  const {
+    currentPage: currentPageProximas,
+    totalPages: totalPagesProximas,
+    paginatedItems: paginatedCitasProximas,
+    goToPage: goToPageProximas,
+    nextPage: nextPageProximas,
+    previousPage: previousPageProximas,
+    canGoNext: canGoNextProximas,
+    canGoPrevious: canGoPreviousProximas,
+  } = usePagination({ items: citasProximas, itemsPerPage: 5 });
+
+  // Pagination for Historial
+  const {
+    currentPage: currentPageHistorial,
+    totalPages: totalPagesHistorial,
+    paginatedItems: paginatedCitasPasadas,
+    goToPage: goToPageHistorial,
+    nextPage: nextPageHistorial,
+    previousPage: previousPageHistorial,
+    canGoNext: canGoNextHistorial,
+    canGoPrevious: canGoPreviousHistorial,
+  } = usePagination({ items: citasPasadas, itemsPerPage: 5 });
 
   return (
     <div className="space-y-6">
@@ -283,7 +309,8 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                   </p>
                 </div>
               ) : (
-                citasProximas.map((cita) => (
+                <>
+                  {paginatedCitasProximas.map((cita) => (
                   <div 
                     key={cita.id} 
                     className="flex items-center justify-between p-4 bg-card border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
@@ -333,7 +360,43 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                       )}
                     </div>
                   </div>
-                ))
+                  ))}
+
+                  {/* Pagination for Citas Próximas */}
+                  {totalPagesProximas > 1 && (
+                    <div className="mt-4 flex justify-center">
+                      <Pagination>
+                        <PaginationContent>
+                          <PaginationItem>
+                            <PaginationPrevious 
+                              onClick={previousPageProximas}
+                              className={!canGoPreviousProximas ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                            />
+                          </PaginationItem>
+                          
+                          {Array.from({ length: totalPagesProximas }, (_, i) => i + 1).map((page) => (
+                            <PaginationItem key={page}>
+                              <PaginationLink
+                                onClick={() => goToPageProximas(page)}
+                                isActive={currentPageProximas === page}
+                                className="cursor-pointer"
+                              >
+                                {page}
+                              </PaginationLink>
+                            </PaginationItem>
+                          ))}
+                          
+                          <PaginationItem>
+                            <PaginationNext 
+                              onClick={nextPageProximas}
+                              className={!canGoNextProximas ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                            />
+                          </PaginationItem>
+                        </PaginationContent>
+                      </Pagination>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -360,8 +423,9 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
               </p>
             </div>
           ) : (
-            <div className="divide-y">
-              {citasPasadas.map((cita) => (
+            <>
+              <div className="divide-y">
+                {paginatedCitasPasadas.map((cita) => (
                 <div 
                   key={cita.id} 
                   className="px-4 py-3 grid grid-cols-12 gap-4 items-center hover:bg-muted/30 transition-colors cursor-pointer"
@@ -396,8 +460,44 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                     )}
                   </div>
                 </div>
-              ))}
-            </div>
+                ))}
+              </div>
+
+              {/* Pagination for Historial */}
+              {totalPagesHistorial > 1 && (
+                <div className="mt-4 flex justify-center py-3">
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious 
+                          onClick={previousPageHistorial}
+                          className={!canGoPreviousHistorial ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                        />
+                      </PaginationItem>
+                      
+                      {Array.from({ length: totalPagesHistorial }, (_, i) => i + 1).map((page) => (
+                        <PaginationItem key={page}>
+                          <PaginationLink
+                            onClick={() => goToPageHistorial(page)}
+                            isActive={currentPageHistorial === page}
+                            className="cursor-pointer"
+                          >
+                            {page}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))}
+                      
+                      <PaginationItem>
+                        <PaginationNext 
+                          onClick={nextPageHistorial}
+                          className={!canGoNextHistorial ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

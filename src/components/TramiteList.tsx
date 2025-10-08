@@ -15,6 +15,8 @@ import {
 import { Tramite } from "@/types/tramite";
 import { tramiteStorage } from "@/utils/tramiteStorage";
 import { toast } from "sonner";
+import { usePagination } from "@/hooks/usePagination";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
 interface TramiteListProps {
   tramites: Tramite[];
@@ -54,6 +56,18 @@ export function TramiteList({ tramites, onCreateTramite, onBack, onTramiteUpdate
   const sortedTramites = [...filteredTramites].sort((a, b) => 
     b.fechaCreacion.getTime() - a.fechaCreacion.getTime()
   );
+
+  // Pagination
+  const {
+    currentPage,
+    totalPages,
+    paginatedItems: paginatedTramites,
+    goToPage,
+    nextPage,
+    previousPage,
+    canGoNext,
+    canGoPrevious,
+  } = usePagination({ items: sortedTramites, itemsPerPage: 5 });
 
   return (
     <div className="space-y-4">
@@ -138,7 +152,7 @@ export function TramiteList({ tramites, onCreateTramite, onBack, onTramiteUpdate
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedTramites.map((tramite) => (
+                  {paginatedTramites.map((tramite) => (
                     <tr 
                       key={tramite.id} 
                       className="border-b hover:bg-muted/20 transition-colors"
@@ -192,10 +206,44 @@ export function TramiteList({ tramites, onCreateTramite, onBack, onTramiteUpdate
         </Card>
       )}
 
-      {/* Results Count */}
+      {/* Results Count and Pagination */}
       {sortedTramites.length > 0 && (
-        <div className="text-sm text-muted-foreground text-right">
-          {sortedTramites.length} {sortedTramites.length === 1 ? 'trámite' : 'trámites'}
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
+            {sortedTramites.length} {sortedTramites.length === 1 ? 'trámite' : 'trámites'} | Página {currentPage} de {totalPages || 1}
+          </div>
+          
+          {totalPages > 1 && (
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious 
+                    onClick={previousPage}
+                    className={!canGoPrevious ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                  />
+                </PaginationItem>
+                
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      onClick={() => goToPage(page)}
+                      isActive={currentPage === page}
+                      className="cursor-pointer"
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                
+                <PaginationItem>
+                  <PaginationNext 
+                    onClick={nextPage}
+                    className={!canGoNext ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          )}
         </div>
       )}
     </div>

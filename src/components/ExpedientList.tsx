@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { ExpedientSummary } from "@/types/expedient";
 import { useUser } from "@/contexts/UserContext";
+import { usePagination } from "@/hooks/usePagination";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, PaginationEllipsis } from "@/components/ui/pagination";
 
 interface ExpedientListProps {
   expedients: ExpedientSummary[];
@@ -85,6 +87,18 @@ export function ExpedientList({
     
     return sortDirection === 'asc' ? comparison : -comparison;
   });
+
+  // Pagination
+  const {
+    currentPage,
+    totalPages,
+    paginatedItems: paginatedExpedients,
+    goToPage,
+    nextPage,
+    previousPage,
+    canGoNext,
+    canGoPrevious,
+  } = usePagination({ items: sortedExpedients, itemsPerPage: 5 });
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -199,7 +213,7 @@ export function ExpedientList({
 
               {/* Results Count */}
               <div className="text-sm text-muted-foreground whitespace-nowrap lg:ml-auto">
-                {sortedExpedients.length} de {expedients.length}
+                {sortedExpedients.length} de {expedients.length} | Página {currentPage} de {totalPages || 1}
               </div>
             </div>
           </div>
@@ -249,7 +263,7 @@ export function ExpedientList({
                     </tr>
                   </thead>
                   <tbody>
-                    {sortedExpedients.map((expedient) => (
+                    {paginatedExpedients.map((expedient) => (
                       <tr 
                         key={expedient.id} 
                         className="border-b hover:bg-muted/20 transition-colors cursor-pointer"
@@ -292,6 +306,39 @@ export function ExpedientList({
             </ScrollArea>
           </CardContent>
         </Card>
+      )}
+
+      {/* Pagination */}
+      {sortedExpedients.length > 0 && totalPages > 1 && (
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious 
+                onClick={previousPage}
+                className={!canGoPrevious ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+              />
+            </PaginationItem>
+            
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <PaginationItem key={page}>
+                <PaginationLink
+                  onClick={() => goToPage(page)}
+                  isActive={currentPage === page}
+                  className="cursor-pointer"
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            
+            <PaginationItem>
+              <PaginationNext 
+                onClick={nextPage}
+                className={!canGoNext ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       )}
     </div>
   );

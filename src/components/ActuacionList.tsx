@@ -16,6 +16,8 @@ import { Actuacion } from "@/types/actuacion";
 import { useUser } from "@/contexts/UserContext";
 import { StatusChangeConfirmDialog } from "./StatusChangeConfirmDialog";
 import { SelectActuacionEstadoDialog } from "./SelectActuacionEstadoDialog";
+import { usePagination } from "@/hooks/usePagination";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
 interface ActuacionListProps {
   expedientId: string;
@@ -41,6 +43,18 @@ export function ActuacionList({
   const canCreate = true; // Ambos perfiles pueden crear
   const [selectEstadoOpen, setSelectEstadoOpen] = useState(false);
   const [selectedActuacionId, setSelectedActuacionId] = useState<string | null>(null);
+
+  // Pagination
+  const {
+    currentPage,
+    totalPages,
+    paginatedItems: paginatedActuaciones,
+    goToPage,
+    nextPage,
+    previousPage,
+    canGoNext,
+    canGoPrevious,
+  } = usePagination({ items: actuaciones, itemsPerPage: 5 });
 
   const canRevertFromFirmado = (actuacion: Actuacion): boolean => {
     if (actuacion.status !== 'firmado' || !actuacion.signedAt) return false;
@@ -192,8 +206,9 @@ export function ActuacionList({
             )}
           </div>
         ) : (
-          <div className="space-y-3">
-            {actuaciones.map((actuacion) => {
+          <>
+            <div className="space-y-3">
+              {paginatedActuaciones.map((actuacion) => {
               const borderColor = 
                 actuacion.status === 'borrador' ? 'border-orange-500' :
                 actuacion.status === 'para-firmar' ? 'border-blue-500' :
@@ -242,8 +257,44 @@ export function ActuacionList({
                 </div>
               </div>
               );
-            })}
-          </div>
+              })}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="mt-4">
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={previousPage}
+                        className={!canGoPrevious ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                      />
+                    </PaginationItem>
+                    
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          onClick={() => goToPage(page)}
+                          isActive={currentPage === page}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                    
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={nextPage}
+                        className={!canGoNext ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            )}
+          </>
         )}
       </CardContent>
       

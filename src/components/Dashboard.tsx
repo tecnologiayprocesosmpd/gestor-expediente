@@ -24,6 +24,8 @@ import { useState, useEffect } from "react";
 import { ExpedientesParaRecibir } from "./ExpedientesParaRecibir";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { usePagination } from "@/hooks/usePagination";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
 interface DashboardProps {
   expedients: ExpedientSummary[];
@@ -183,6 +185,18 @@ export function Dashboard({
     return borderColors[status];
   };
 
+  // Pagination for Novedades
+  const {
+    currentPage,
+    totalPages,
+    paginatedItems: paginatedNovedades,
+    goToPage,
+    nextPage,
+    previousPage,
+    canGoNext,
+    canGoPrevious,
+  } = usePagination({ items: novedades, itemsPerPage: 5 });
+
   return (
     <div className="space-y-6">
       {/* Funciones Principales */}
@@ -309,8 +323,9 @@ export function Dashboard({
               <p className="text-muted-foreground">No hay novedades recientes en la agenda</p>
             </div>
           ) : (
-            <div className="space-y-3">
-              {novedades.map((novedad) => {
+            <>
+              <div className="space-y-3">
+                {paginatedNovedades.map((novedad) => {
                 const getBorderColor = (tipo: string, estado: string) => {
                   if (tipo === 'cita') {
                     switch (estado) {
@@ -420,8 +435,44 @@ export function Dashboard({
                     </div>
                   </div>
                 );
-              })}
-            </div>
+                })}
+              </div>
+
+              {/* Pagination for Novedades */}
+              {totalPages > 1 && (
+                <div className="mt-4 flex justify-center">
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious 
+                          onClick={previousPage}
+                          className={!canGoPrevious ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                        />
+                      </PaginationItem>
+                      
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                        <PaginationItem key={page}>
+                          <PaginationLink
+                            onClick={() => goToPage(page)}
+                            isActive={currentPage === page}
+                            className="cursor-pointer"
+                          >
+                            {page}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))}
+                      
+                      <PaginationItem>
+                        <PaginationNext 
+                          onClick={nextPage}
+                          className={!canGoNext ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              )}
+            </>
           )}
         </CardContent>
       </Card>

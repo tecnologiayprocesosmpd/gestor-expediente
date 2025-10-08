@@ -28,6 +28,8 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import jsPDF from 'jspdf';
+import { usePagination } from "@/hooks/usePagination";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
 interface OficioManagerProps {
   expedients: ExpedientSummary[];
@@ -242,6 +244,30 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
   const activeOficios = oficios.filter(o => !o.finished);
   const finishedOficios = oficios.filter(o => o.finished);
 
+  // Pagination for Oficios Activos
+  const {
+    currentPage: currentPageActivos,
+    totalPages: totalPagesActivos,
+    paginatedItems: paginatedActiveOficios,
+    goToPage: goToPageActivos,
+    nextPage: nextPageActivos,
+    previousPage: previousPageActivos,
+    canGoNext: canGoNextActivos,
+    canGoPrevious: canGoPreviousActivos,
+  } = usePagination({ items: activeOficios, itemsPerPage: 5 });
+
+  // Pagination for Oficios Finalizados
+  const {
+    currentPage: currentPageFinalizados,
+    totalPages: totalPagesFinalizados,
+    paginatedItems: paginatedFinishedOficios,
+    goToPage: goToPageFinalizados,
+    nextPage: nextPageFinalizados,
+    previousPage: previousPageFinalizados,
+    canGoNext: canGoNextFinalizados,
+    canGoPrevious: canGoPreviousFinalizados,
+  } = usePagination({ items: finishedOficios, itemsPerPage: 5 });
+
   const handlePrintOficio = (oficio: OficioItem) => {
     const printContent = `
       <div style="font-family: Arial, sans-serif; padding: 20px;">
@@ -332,8 +358,9 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
               <p>No hay oficios activos</p>
             </div>
           ) : (
-            <div className="space-y-3">
-              {activeOficios.map((oficio) => (
+            <>
+              <div className="space-y-3">
+                {paginatedActiveOficios.map((oficio) => (
                 <div key={oficio.id} className="border rounded-lg p-4 hover:bg-muted/50">
                   <div className="flex justify-between items-start">
                     <div className="space-y-2">
@@ -365,8 +392,44 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
                     </Button>
                   </div>
                 </div>
-              ))}
-            </div>
+                ))}
+              </div>
+
+              {/* Pagination for Oficios Activos */}
+              {totalPagesActivos > 1 && (
+                <div className="mt-4 flex justify-center">
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious 
+                          onClick={previousPageActivos}
+                          className={!canGoPreviousActivos ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                        />
+                      </PaginationItem>
+                      
+                      {Array.from({ length: totalPagesActivos }, (_, i) => i + 1).map((page) => (
+                        <PaginationItem key={page}>
+                          <PaginationLink
+                            onClick={() => goToPageActivos(page)}
+                            isActive={currentPageActivos === page}
+                            className="cursor-pointer"
+                          >
+                            {page}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))}
+                      
+                      <PaginationItem>
+                        <PaginationNext 
+                          onClick={nextPageActivos}
+                          className={!canGoNextActivos ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              )}
+            </>
           )}
         </CardContent>
       </Card>
@@ -381,8 +444,9 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {finishedOficios.map((oficio) => (
+            <>
+              <div className="space-y-3">
+                {paginatedFinishedOficios.map((oficio) => (
                 <div key={oficio.id} className="border rounded-lg p-4 bg-muted/30">
                   <div className="flex justify-between items-start">
                     <div className="space-y-2">
@@ -420,8 +484,44 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
                     </Button>
                   </div>
                 </div>
-              ))}
-            </div>
+                ))}
+              </div>
+
+              {/* Pagination for Oficios Finalizados */}
+              {totalPagesFinalizados > 1 && (
+                <div className="mt-4 flex justify-center">
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious 
+                          onClick={previousPageFinalizados}
+                          className={!canGoPreviousFinalizados ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                        />
+                      </PaginationItem>
+                      
+                      {Array.from({ length: totalPagesFinalizados }, (_, i) => i + 1).map((page) => (
+                        <PaginationItem key={page}>
+                          <PaginationLink
+                            onClick={() => goToPageFinalizados(page)}
+                            isActive={currentPageFinalizados === page}
+                            className="cursor-pointer"
+                          >
+                            {page}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))}
+                      
+                      <PaginationItem>
+                        <PaginationNext 
+                          onClick={nextPageFinalizados}
+                          className={!canGoNextFinalizados ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              )}
+            </>
           </CardContent>
         </Card>
       )}
