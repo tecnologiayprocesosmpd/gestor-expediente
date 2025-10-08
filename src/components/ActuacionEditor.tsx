@@ -336,7 +336,7 @@ export function ActuacionEditor({
       <div className="bg-card rounded-lg border shadow-sm">
         <div className={`flex items-start justify-between p-6 border-l-4 ${statusColors.border}`}>
           <div className="flex items-start space-x-6">
-            <Button variant="ghost" onClick={onBack}>
+            <Button variant="outline" onClick={onBack}>
               <ArrowLeft className="w-4 h-4 mr-2" />
               Volver al Expediente
             </Button>
