@@ -18,8 +18,7 @@ import {
   Square,
   ArrowLeft,
   FileCheck,
-  X,
-  Eye
+  X
 } from "lucide-react";
 import { ExpedientSummary } from "@/types/expedient";
 import { Actuacion } from "@/types/actuacion";
@@ -361,35 +360,29 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
             <>
               <div className="space-y-3">
                 {paginatedActiveOficios.map((oficio) => (
-                <div key={oficio.id} className="border rounded-lg p-4 hover:bg-muted/50">
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-2">
-                      <h3 className="font-semibold">{oficio.expedientNumber}</h3>
-                      <p className="text-sm text-muted-foreground">{oficio.expedientTitle}</p>
-                      <div className="flex gap-2 flex-wrap">
-                        <Badge variant="outline">
-                          Expediente: {oficio.expedientNumber}
-                        </Badge>
-                        <Badge variant="secondary">
-                          Destinatario: {oficio.destinatario}
-                        </Badge>
-                        {oficio.pdfAttached && (
-                          <Badge variant="secondary">PDF adjunto</Badge>
-                        )}
-                        <Badge variant="default">Activo</Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Creado: {format(oficio.createdAt, "dd/MM/yyyy HH:mm", { locale: es })}
-                      </p>
+                <div 
+                  key={oficio.id} 
+                  className="border rounded-lg p-4 hover:bg-muted/50 cursor-pointer transition-colors"
+                  onClick={() => handleSelectOficio(oficio)}
+                >
+                  <div className="space-y-2">
+                    <h3 className="font-semibold">{oficio.expedientNumber}</h3>
+                    <p className="text-sm text-muted-foreground">{oficio.expedientTitle}</p>
+                    <div className="flex gap-2 flex-wrap">
+                      <Badge variant="outline">
+                        Expediente: {oficio.expedientNumber}
+                      </Badge>
+                      <Badge variant="secondary">
+                        Destinatario: {oficio.destinatario}
+                      </Badge>
+                      {oficio.pdfAttached && (
+                        <Badge variant="secondary">PDF adjunto</Badge>
+                      )}
+                      <Badge variant="default">Activo</Badge>
                     </div>
-                    <Button 
-                      onClick={() => handleSelectOficio(oficio)}
-                      size="sm"
-                      variant="default"
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      VER
-                    </Button>
+                    <p className="text-xs text-muted-foreground">
+                      Creado: {format(oficio.createdAt, "dd/MM/yyyy HH:mm", { locale: es })}
+                    </p>
                   </div>
                 </div>
                 ))}
