@@ -41,6 +41,7 @@ interface ExpedientViewProps {
     onChangeStatus?: () => void;
     onOficio?: () => void;
     showRegresarRadicacionInterna?: boolean;
+    isActuacionView?: boolean;
   }) => void;
 }
 export function ExpedientView({
@@ -213,6 +214,7 @@ export function ExpedientView({
   // Register actions with parent component - ALWAYS execute before any conditional returns
   useEffect(() => {
     if (onRegisterActions) {
+      const isActuacionView = showActuacionEditor || showNavigator || selectedActuacion !== null;
       onRegisterActions({
         onRadicacionInterna: () => setShowRadicacionInternaDialog(true),
         onRegresarRadicacionInterna: () => setShowRegresarRadicacionInternaDialog(true),
@@ -222,10 +224,11 @@ export function ExpedientView({
         onNavegar: handleNavegar,
         onChangeStatus: () => setShowSelectEstado(true),
         onOficio: handleShowOficio,
-        showRegresarRadicacionInterna: hayRadicacionInternaPendiente()
+        showRegresarRadicacionInterna: hayRadicacionInternaPendiente(),
+        isActuacionView
       });
     }
-  }, [onRegisterActions, radicacionesInternasPendientes, showActuacionEditor, showNavigator, showTramiteList, showOficioView, showTramiteEditor]);
+  }, [onRegisterActions, radicacionesInternasPendientes, showActuacionEditor, showNavigator, selectedActuacion, showTramiteList, showOficioView, showTramiteEditor]);
   const getStatusColors = (status: string) => {
     const colors = {
       draft: {
