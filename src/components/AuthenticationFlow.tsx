@@ -93,7 +93,7 @@ export function AuthenticationFlow() {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-60 h-60 mx-auto mb-4">
+          <div className="w-60 h-60 mx-auto mb-2">
             <img 
               src="/assets/logo-mpd.png" 
               alt="Logo MPD" 
