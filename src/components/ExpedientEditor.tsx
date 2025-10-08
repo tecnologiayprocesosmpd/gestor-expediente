@@ -27,9 +27,14 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
   const [expedientNumber, setExpedientNumber] = useState(() => {
     // Auto-generate expedient number if creating new
     if (!propExpedient?.number) {
-      const currentYear = new Date().getFullYear();
-      const randomId = Math.floor(Math.random() * 900000) + 100000; // 6 digit random number
-      return `EXP-${currentYear}-${randomId}`;
+      // Get all existing expedients from localStorage to calculate next number
+      const storedExpedients = localStorage.getItem('expedients');
+      const existingExpedients = storedExpedients ? JSON.parse(storedExpedients) : [];
+      const maxNumber = existingExpedients.reduce((max: number, exp: any) => {
+        const num = parseInt(exp.number);
+        return !isNaN(num) && num > max ? num : max;
+      }, 0);
+      return String(maxNumber + 1);
     }
     return propExpedient.number;
   });

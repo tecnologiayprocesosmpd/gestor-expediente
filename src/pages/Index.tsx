@@ -15,7 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 const mockExpedients: ExpedientSummary[] = [
   {
     id: '1',
-    number: 'EXP-2024-001',
+    number: '1',
     title: 'Solicitud de Amparo - Caso García',
     createdAt: new Date('2024-01-15'),
     updatedAt: new Date('2024-01-20'),
@@ -32,7 +32,7 @@ const mockExpedients: ExpedientSummary[] = [
   },
   {
     id: '2', 
-    number: 'EXP-2024-002',
+    number: '2',
     title: 'Defensa Penal - Proceso Rodríguez',
     createdAt: new Date('2024-01-18'),
     updatedAt: new Date('2024-01-18'),
@@ -49,7 +49,7 @@ const mockExpedients: ExpedientSummary[] = [
   },
   {
     id: '3',
-    number: 'EXP-2024-003', 
+    number: '3', 
     title: 'Consulta Legal - Derechos Laborales',
     createdAt: new Date('2024-01-22'),
     updatedAt: new Date('2024-01-25'),
@@ -66,7 +66,7 @@ const mockExpedients: ExpedientSummary[] = [
   },
   {
     id: '4',
-    number: 'EXP-2024-004',
+    number: '4',
     title: 'Recurso de Inconstitucionalidad - Ley Provincial',
     createdAt: new Date('2024-01-10'),
     updatedAt: new Date('2024-01-28'),
@@ -83,7 +83,7 @@ const mockExpedients: ExpedientSummary[] = [
   },
   {
     id: '5',
-    number: 'EXP-2024-005',
+    number: '5',
     title: 'Asesoramiento Civil - Divorcio',
     createdAt: new Date('2024-01-25'),
     updatedAt: new Date('2024-01-25'),
@@ -100,7 +100,7 @@ const mockExpedients: ExpedientSummary[] = [
   },
   {
     id: '6',
-    number: 'EXP-2024-006',
+    number: '6',
     title: 'Amparo Colectivo - Medio Ambiente',
     createdAt: new Date('2024-01-26'),
     updatedAt: new Date('2024-01-26'),
