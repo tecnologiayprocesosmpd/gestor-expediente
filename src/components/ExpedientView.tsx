@@ -714,7 +714,7 @@ export function ExpedientView({
       <div className="bg-card rounded-lg border shadow-sm">
         <div className={`flex items-start justify-between p-6 border-l-4 ${statusColors.border}`}>
           <div className="flex items-start space-x-6">
-            <Button variant="outline" onClick={onBack} className="px-4 py-2 h-auto">
+            <Button variant="outline" onClick={onBack} className="h-auto px-0 py-[10px]">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Volver a Expedientes
             </Button>
