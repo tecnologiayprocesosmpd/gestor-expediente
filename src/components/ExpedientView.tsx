@@ -28,6 +28,7 @@ import { TramiteEditor } from "./TramiteEditor";
 import { TramiteList } from "./TramiteList";
 import { ActuacionNavigator } from "./ActuacionNavigator";
 import { SelectEstadoDialog } from "./SelectEstadoDialog";
+import { SelectActuacionEstadoDialog } from "./SelectActuacionEstadoDialog";
 import { StatusChangeConfirmDialog } from "./StatusChangeConfirmDialog";
 import { ExpedientOficioView } from "./ExpedientOficioView";
 import {
@@ -63,6 +64,7 @@ interface ExpedientViewProps {
     onNavegar?: () => void;
     onChangeStatus?: () => void;
     onOficio?: () => void;
+    onChangeActuacionStatus?: () => void;
     showRegresarRadicacionInterna?: boolean;
     isActuacionView?: boolean;
   }) => void;
@@ -95,6 +97,8 @@ export function ExpedientView({
   const [showStatusConfirm, setShowStatusConfirm] = useState(false);
   const [pendingNewStatus, setPendingNewStatus] = useState<'en_tramite' | 'paralizado' | 'archivado'>('en_tramite');
   const [showOficioView, setShowOficioView] = useState(false);
+  const [showSelectActuacionEstado, setShowSelectActuacionEstado] = useState(false);
+  const [currentActuacionForStatusChange, setCurrentActuacionForStatusChange] = useState<Actuacion | null>(null);
   
   const { user } = useUser();
 
@@ -250,6 +254,41 @@ export function ExpedientView({
     setSelectedActuacion(null);
   };
 
+  const handleChangeActuacionStatus = () => {
+    // Find the current actuacion being edited or viewed
+    if (editingActuacionId) {
+      const actuacion = actuaciones.find(a => a.id === editingActuacionId);
+      setCurrentActuacionForStatusChange(actuacion || null);
+    } else if (selectedActuacion) {
+      setCurrentActuacionForStatusChange(selectedActuacion);
+    } else if (actuaciones.length > 0) {
+      // If in navigator, use the first one or latest
+      setCurrentActuacionForStatusChange(actuaciones[0]);
+    }
+    setShowSelectActuacionEstado(true);
+  };
+
+  const handleActuacionStatusSelected = (newStatus: Actuacion['status']) => {
+    if (!currentActuacionForStatusChange) return;
+    
+    // Update the actuacion status
+    const updatedActuaciones = actuaciones.map(a => 
+      a.id === currentActuacionForStatusChange.id 
+        ? { ...a, status: newStatus, updatedAt: new Date() }
+        : a
+    );
+    
+    setActuaciones(updatedActuaciones);
+    onUpdateActuaciones?.(updatedActuaciones);
+    
+    // Save to storage
+    const updatedActuacion = { ...currentActuacionForStatusChange, status: newStatus, updatedAt: new Date() };
+    actuacionStorage.saveActuacion(updatedActuacion);
+    
+    setShowSelectActuacionEstado(false);
+    setCurrentActuacionForStatusChange(null);
+  };
+
   // Register actions with parent component - ALWAYS execute before any conditional returns
   useEffect(() => {
     if (onRegisterActions) {
@@ -262,6 +301,7 @@ export function ExpedientView({
         onNavegar: handleNavegar,
         onChangeStatus: () => setShowSelectEstado(true),
         onOficio: handleShowOficio,
+        onChangeActuacionStatus: handleChangeActuacionStatus,
         showRegresarRadicacionInterna: hayRadicacionInternaPendiente(),
         isActuacionView: showActuacionEditor || showNavigator
       });
@@ -273,7 +313,10 @@ export function ExpedientView({
     showNavigator, 
     showTramiteList, 
     showOficioView, 
-    showTramiteEditor
+    showTramiteEditor,
+    editingActuacionId,
+    selectedActuacion,
+    actuaciones
   ]);
 
   
@@ -1051,6 +1094,14 @@ export function ExpedientView({
         onConfirm={handleConfirmStatusChange}
         title="Confirmar cambio de estado"
         message={`¿Está seguro de que desea cambiar el expediente a ${getStatusLabel(pendingNewStatus)}?`}
+      />
+
+      {/* Diálogo de Cambio de Estado de Actuación */}
+      <SelectActuacionEstadoDialog
+        open={showSelectActuacionEstado}
+        onOpenChange={setShowSelectActuacionEstado}
+        currentStatus={currentActuacionForStatusChange?.status || 'para-firmar'}
+        onSelect={handleActuacionStatusSelected}
       />
     </div>
   );

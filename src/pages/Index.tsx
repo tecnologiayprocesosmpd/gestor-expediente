@@ -139,6 +139,7 @@ function AppContent() {
     onNavegar?: () => void;
     onChangeStatus?: () => void;
     onOficio?: () => void;
+    onChangeActuacionStatus?: () => void;
     showRegresarRadicacionInterna?: boolean;
     isActuacionView?: boolean;
   }>({});
@@ -426,6 +427,7 @@ function AppContent() {
       onNavegar={expedientViewActions.onNavegar}
       onChangeStatus={expedientViewActions.onChangeStatus}
       onOficio={expedientViewActions.onOficio}
+      onChangeActuacionStatus={expedientViewActions.onChangeActuacionStatus}
       showRegresarRadicacionInterna={expedientViewActions.showRegresarRadicacionInterna}
     >
       {renderCurrentView()}

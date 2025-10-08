@@ -27,6 +27,7 @@ interface LayoutProps {
   onNavegar?: () => void;
   onChangeStatus?: () => void;
   onOficio?: () => void;
+  onChangeActuacionStatus?: () => void;
   showRegresarRadicacionInterna?: boolean;
 }
 
@@ -45,6 +46,7 @@ export function Layout({
   onNavegar,
   onChangeStatus,
   onOficio,
+  onChangeActuacionStatus,
   showRegresarRadicacionInterna = false
 }: LayoutProps) {
   const { user } = useUser();
@@ -124,6 +126,7 @@ export function Layout({
             onNavegar={onNavegar}
             onChangeStatus={onChangeStatus}
             onOficio={onOficio}
+            onChangeActuacionStatus={onChangeActuacionStatus}
             showRegresarRadicacionInterna={showRegresarRadicacionInterna}
           />
         </div>
