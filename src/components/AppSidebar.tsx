@@ -33,6 +33,7 @@ interface AppSidebarProps {
   onNavigate?: (view: 'dashboard' | 'expedientes' | 'agenda') => void;
   onCreateExpedient?: () => void;
   isExpedientView?: boolean;
+  isActuacionView?: boolean;
   onRadicacionInterna?: () => void;
   onRegresarRadicacionInterna?: () => void;
   onExportPDF?: () => void;
@@ -40,6 +41,7 @@ interface AppSidebarProps {
   onNuevaActuacion?: () => void;
   onNavegar?: () => void;
   onChangeStatus?: () => void;
+  onChangeActuacionStatus?: () => void;
   onOficio?: () => void;
   showRegresarRadicacionInterna?: boolean;
 }
@@ -49,6 +51,7 @@ export function AppSidebar({
   onNavigate, 
   onCreateExpedient,
   isExpedientView = false,
+  isActuacionView = false,
   onRadicacionInterna,
   onRegresarRadicacionInterna,
   onExportPDF,
@@ -56,6 +59,7 @@ export function AppSidebar({
   onNuevaActuacion,
   onNavegar,
   onChangeStatus,
+  onChangeActuacionStatus,
   onOficio,
   showRegresarRadicacionInterna = false
 }: AppSidebarProps) {
@@ -100,6 +104,57 @@ export function AppSidebar({
 
 
 
+  // Si estamos en vista de actuación, mostrar solo 3 botones
+  if (isActuacionView) {
+    return (
+      <div 
+        className="bg-background border-r flex-shrink-0"
+        style={{ width: '100px' }}
+      >
+        <div className="flex flex-col">
+          <div className="pt-6 flex flex-col">
+            <div className="px-2 mb-4">
+              <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider text-center">
+                Acciones
+              </h3>
+            </div>
+            <nav className="space-y-3 px-2 pb-6">
+              <button
+                onClick={() => onNavigate?.('dashboard')}
+                className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-primary hover:text-primary-foreground bg-muted/50 text-foreground"
+              >
+                <Home className="w-6 h-6 mb-2" />
+                <span className="text-xs text-center">
+                  Inicio
+                </span>
+              </button>
+
+              <button
+                onClick={onNuevaActuacion}
+                className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-primary hover:text-primary-foreground bg-muted/50 text-foreground"
+              >
+                <Plus className="w-6 h-6 mb-2" />
+                <span className="text-xs text-center">
+                  Nueva Actuación
+                </span>
+              </button>
+
+              <button
+                onClick={onChangeActuacionStatus}
+                className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-orange-600 hover:text-white bg-muted/50 text-foreground"
+              >
+                <RefreshCw className="w-6 h-6 mb-2" />
+                <span className="text-xs text-center">
+                  Estado Actuación
+                </span>
+              </button>
+            </nav>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Si estamos en vista de expediente, mostrar botones de acciones
   if (isExpedientView) {
     return (
@@ -115,6 +170,16 @@ export function AppSidebar({
               </h3>
             </div>
             <nav className="space-y-3 px-2 pb-6">
+              <button
+                onClick={() => onNavigate?.('dashboard')}
+                className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-primary hover:text-primary-foreground bg-muted/50 text-foreground"
+              >
+                <Home className="w-6 h-6 mb-2" />
+                <span className="text-xs text-center">
+                  Inicio
+                </span>
+              </button>
+
               <button
                 onClick={onNuevaActuacion}
                 className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-primary hover:text-primary-foreground bg-muted/50 text-foreground"
