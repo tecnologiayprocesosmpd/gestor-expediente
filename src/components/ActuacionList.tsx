@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { 
   FileText, 
   Edit3, 
-  Eye, 
   CheckCircle, 
   Clock,
   AlertTriangle,
@@ -197,7 +196,8 @@ export function ActuacionList({
             {actuaciones.map((actuacion) => (
               <div 
                 key={actuacion.id}
-                className="flex items-center justify-between p-4 rounded-lg border hover:shadow-soft transition-all"
+                className="flex items-center justify-between p-4 rounded-lg border hover:bg-muted/20 transition-colors cursor-pointer"
+                onClick={() => onViewActuacion?.(actuacion.id)}
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
@@ -220,16 +220,7 @@ export function ActuacionList({
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onViewActuacion?.(actuacion.id)}
-                  >
-                    <Eye className="w-4 h-4 mr-1" />
-                    Ver
-                  </Button>
-                  
+                <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                   {canEdit && (actuacion.status === 'borrador' || actuacion.status === 'para-firmar') && (
                     <Button
                       variant="outline"

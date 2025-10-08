@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { format, isSameDay, isToday, isTomorrow, startOfDay, endOfDay, addDays, differenceInDays } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Plus, Calendar as CalendarIcon, Clock, MapPin, Users, FileText, Eye } from 'lucide-react';
+import { Plus, Calendar as CalendarIcon, Clock, MapPin, Users, FileText } from 'lucide-react';
 import type { CitaAgenda, AgendaView } from '@/types/agenda';
 import { agendaStorage } from '@/utils/agendaStorage';
 import { useUser } from '@/contexts/UserContext';
@@ -286,7 +286,8 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                 citasProximas.map((cita) => (
                   <div 
                     key={cita.id} 
-                    className="flex items-center justify-between p-4 bg-card border rounded-lg hover:bg-muted/50 transition-colors"
+                    className="flex items-center justify-between p-4 bg-card border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
+                    onClick={() => cita.descripcion && handleViewDetails(cita)}
                   >
                     <div className="flex items-center gap-4 flex-1">
                       <div className="flex items-center gap-2">
@@ -318,18 +319,8 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                         </div>
                       </div>
                       
-                      <div className="flex gap-2">
-                        {cita.descripcion && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleViewDetails(cita)}
-                          >
-                            <Eye className="h-4 w-4 mr-1" />
-                            Ver
-                          </Button>
-                        )}
-                        {cita.expedientId && (
+                      {cita.expedientId && (
+                        <div onClick={(e) => e.stopPropagation()}>
                           <Button
                             variant="ghost"
                             size="sm"
@@ -338,8 +329,8 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                             <FileText className="h-4 w-4 mr-1" />
                             Ver Expediente
                           </Button>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))
@@ -373,7 +364,8 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
               {citasPasadas.map((cita) => (
                 <div 
                   key={cita.id} 
-                  className="px-4 py-3 grid grid-cols-12 gap-4 items-center hover:bg-muted/30 transition-colors"
+                  className="px-4 py-3 grid grid-cols-12 gap-4 items-center hover:bg-muted/30 transition-colors cursor-pointer"
+                  onClick={() => cita.descripcion && handleViewDetails(cita)}
                 >
                   <div className="col-span-1">
                     {getTipoIcon(cita.tipo)}
@@ -392,16 +384,7 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                       {cita.estado}
                     </Badge>
                   </div>
-                  <div className="col-span-2 flex gap-2">
-                    {cita.descripcion && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleViewDetails(cita)}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    )}
+                  <div className="col-span-2 flex gap-2" onClick={(e) => e.stopPropagation()}>
                     {cita.expedientId && (
                       <Button
                         variant="ghost"
