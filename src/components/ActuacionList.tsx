@@ -193,12 +193,18 @@ export function ActuacionList({
           </div>
         ) : (
           <div className="space-y-3">
-            {actuaciones.map((actuacion) => (
-              <div 
-                key={actuacion.id}
-                className="flex items-center justify-between p-4 rounded-lg border hover:bg-muted/20 transition-colors cursor-pointer"
-                onClick={() => onViewActuacion?.(actuacion.id)}
-              >
+            {actuaciones.map((actuacion) => {
+              const borderColor = 
+                actuacion.status === 'borrador' ? 'border-orange-500' :
+                actuacion.status === 'para-firmar' ? 'border-blue-500' :
+                'border-green-500';
+              
+              return (
+                <div 
+                  key={actuacion.id}
+                  className={`flex items-center justify-between p-4 rounded-lg border-2 hover:bg-muted/20 transition-colors cursor-pointer ${borderColor}`}
+                  onClick={() => onViewActuacion?.(actuacion.id)}
+                >
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="font-medium text-sm text-muted-foreground">
@@ -235,7 +241,8 @@ export function ActuacionList({
                   {canEdit && getStatusButton(actuacion)}
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </CardContent>
