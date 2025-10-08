@@ -116,12 +116,22 @@ export function AppSidebar({
             </div>
             <nav className="space-y-3 px-2 pb-6">
               <button
-                onClick={onChangeStatus}
-                className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-orange-600 hover:text-white bg-muted/50 text-foreground"
+                onClick={onNuevaActuacion}
+                className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-primary hover:text-primary-foreground bg-muted/50 text-foreground"
               >
-                <RefreshCw className="w-6 h-6 mb-2" />
+                <Plus className="w-6 h-6 mb-2" />
                 <span className="text-xs text-center">
-                  Estado Expediente
+                  Nueva Actuación
+                </span>
+              </button>
+
+              <button
+                onClick={onNavegar}
+                className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-primary hover:text-primary-foreground bg-muted/50 text-foreground"
+              >
+                <Navigation className="w-6 h-6 mb-2" />
+                <span className="text-xs text-center">
+                  Navegación
                 </span>
               </button>
 
@@ -136,22 +146,12 @@ export function AppSidebar({
               </button>
 
               <button
-                onClick={onNavegar}
-                className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-primary hover:text-primary-foreground bg-muted/50 text-foreground"
+                onClick={onChangeStatus}
+                className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-orange-600 hover:text-white bg-muted/50 text-foreground"
               >
-                <Navigation className="w-6 h-6 mb-2" />
+                <RefreshCw className="w-6 h-6 mb-2" />
                 <span className="text-xs text-center">
-                  Navegar
-                </span>
-              </button>
-
-              <button
-                onClick={onNuevaActuacion}
-                className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-primary hover:text-primary-foreground bg-muted/50 text-foreground"
-              >
-                <Plus className="w-6 h-6 mb-2" />
-                <span className="text-xs text-center">
-                  Nueva Actuación
+                  Estado Expediente
                 </span>
               </button>
 
