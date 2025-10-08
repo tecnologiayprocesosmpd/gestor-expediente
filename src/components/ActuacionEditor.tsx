@@ -338,7 +338,7 @@ export function ActuacionEditor({
           <div className="flex items-start space-x-6">
             <Button variant="ghost" onClick={onBack}>
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Volver
+              Volver al Expediente
             </Button>
             <div className="flex items-center space-x-4">
               <div>

@@ -729,7 +729,7 @@ export function ExpedientView({
           <div className="flex items-center space-x-4">
             <Button variant="outline" onClick={() => setSelectedActuacion(null)}>
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Volver
+              Volver al Expediente
             </Button>
             <div>
               <h1 className="text-3xl font-bold text-foreground">
@@ -836,7 +836,7 @@ export function ExpedientView({
               className="px-4 py-2 h-auto"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Volver
+              Volver a Expedientes
             </Button>
             
             <div className="space-y-2">
