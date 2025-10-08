@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,10 @@ import {
   AlertTriangle,
   Plus,
   Undo2,
-  RefreshCw
+  RefreshCw,
+  CalendarIcon,
+  Filter,
+  X
 } from "lucide-react";
 import { Actuacion } from "@/types/actuacion";
 import { useUser } from "@/contexts/UserContext";
@@ -18,6 +21,12 @@ import { StatusChangeConfirmDialog } from "./StatusChangeConfirmDialog";
 import { SelectActuacionEstadoDialog } from "./SelectActuacionEstadoDialog";
 import { usePagination } from "@/hooks/usePagination";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 
 interface ActuacionListProps {
   expedientId: string;
@@ -43,6 +52,37 @@ export function ActuacionList({
   const canCreate = true; // Ambos perfiles pueden crear
   const [selectEstadoOpen, setSelectEstadoOpen] = useState(false);
   const [selectedActuacionId, setSelectedActuacionId] = useState<string | null>(null);
+  
+  // Filter states
+  const [fechaDesde, setFechaDesde] = useState<Date | undefined>(undefined);
+  const [fechaHasta, setFechaHasta] = useState<Date | undefined>(undefined);
+  const [estadoFiltro, setEstadoFiltro] = useState<Actuacion['status'] | 'todos'>('todos');
+
+  // Apply filters
+  const actuacionesFiltradas = useMemo(() => {
+    return actuaciones.filter(actuacion => {
+      // Filter by fecha desde
+      if (fechaDesde && actuacion.createdAt < fechaDesde) {
+        return false;
+      }
+      
+      // Filter by fecha hasta
+      if (fechaHasta) {
+        const fechaHastaEnd = new Date(fechaHasta);
+        fechaHastaEnd.setHours(23, 59, 59, 999);
+        if (actuacion.createdAt > fechaHastaEnd) {
+          return false;
+        }
+      }
+      
+      // Filter by status
+      if (estadoFiltro !== 'todos' && actuacion.status !== estadoFiltro) {
+        return false;
+      }
+      
+      return true;
+    });
+  }, [actuaciones, fechaDesde, fechaHasta, estadoFiltro]);
 
   // Pagination
   const {
@@ -54,7 +94,15 @@ export function ActuacionList({
     previousPage,
     canGoNext,
     canGoPrevious,
-  } = usePagination({ items: actuaciones, itemsPerPage: 5 });
+  } = usePagination({ items: actuacionesFiltradas, itemsPerPage: 4 });
+
+  const hasActiveFilters = fechaDesde || fechaHasta || estadoFiltro !== 'todos';
+
+  const clearFilters = () => {
+    setFechaDesde(undefined);
+    setFechaHasta(undefined);
+    setEstadoFiltro('todos');
+  };
 
   const canRevertFromFirmado = (actuacion: Actuacion): boolean => {
     if (actuacion.status !== 'firmado' || !actuacion.signedAt) return false;
@@ -190,6 +238,102 @@ export function ActuacionList({
         </CardTitle>
       </CardHeader>
       <CardContent>
+        {/* Filters */}
+        {actuaciones.length > 0 && (
+          <div className="mb-4 space-y-3">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Filter className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm font-medium">Filtros:</span>
+              
+              {/* Fecha Desde */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className={cn(
+                      "justify-start text-left font-normal",
+                      !fechaDesde && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {fechaDesde ? format(fechaDesde, "PPP", { locale: es }) : "Desde"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={fechaDesde}
+                    onSelect={setFechaDesde}
+                    initialFocus
+                    className={cn("p-3 pointer-events-auto")}
+                    locale={es}
+                  />
+                </PopoverContent>
+              </Popover>
+
+              {/* Fecha Hasta */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className={cn(
+                      "justify-start text-left font-normal",
+                      !fechaHasta && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {fechaHasta ? format(fechaHasta, "PPP", { locale: es }) : "Hasta"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={fechaHasta}
+                    onSelect={setFechaHasta}
+                    initialFocus
+                    className={cn("p-3 pointer-events-auto")}
+                    locale={es}
+                  />
+                </PopoverContent>
+              </Popover>
+
+              {/* Estado Filter */}
+              <Select value={estadoFiltro} onValueChange={(value) => setEstadoFiltro(value as Actuacion['status'] | 'todos')}>
+                <SelectTrigger className="w-[180px] h-9">
+                  <SelectValue placeholder="Estado" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos los estados</SelectItem>
+                  <SelectItem value="borrador">Borrador</SelectItem>
+                  <SelectItem value="para-firmar">Para Firma</SelectItem>
+                  <SelectItem value="firmado">Firmado</SelectItem>
+                </SelectContent>
+              </Select>
+
+              {/* Clear Filters */}
+              {hasActiveFilters && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearFilters}
+                  className="h-9"
+                >
+                  <X className="w-4 h-4 mr-1" />
+                  Limpiar filtros
+                </Button>
+              )}
+            </div>
+            
+            {hasActiveFilters && (
+              <p className="text-sm text-muted-foreground">
+                Mostrando {actuacionesFiltradas.length} de {actuaciones.length} actuaciones
+              </p>
+            )}
+          </div>
+        )}
+
         {actuaciones.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <FileText className="w-12 h-12 mx-auto mb-4 opacity-30" />
