@@ -142,11 +142,6 @@ function AppContent() {
     showRegresarRadicacionInterna?: boolean;
   }>({});
   
-  // Reset scroll to top when view or expedient changes
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [currentView, currentExpedientId]);
-  
   // Get current expedient data
   const getCurrentExpedient = () => {
     if (!currentExpedientId) return null;

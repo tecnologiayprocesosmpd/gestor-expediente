@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -47,6 +47,14 @@ export function Layout({
 }: LayoutProps) {
   const { user } = useUser();
   const { logout: securityLogout } = useSecurity();
+  const mainContentRef = useRef<HTMLDivElement>(null);
+
+  // Reset scroll to top when view changes
+  useEffect(() => {
+    if (mainContentRef.current) {
+      mainContentRef.current.scrollTop = 0;
+    }
+  }, [currentView]);
 
   const handleLogout = () => {
     securityLogout(); // Clear SecurityContext - UserContext will clear automatically
@@ -117,7 +125,7 @@ export function Layout({
           />
         </div>
         
-        <div className="flex-1 flex flex-col min-w-0 overflow-y-auto h-[calc(100vh-5rem)]">
+        <div ref={mainContentRef} className="flex-1 flex flex-col min-w-0 overflow-y-auto h-[calc(100vh-5rem)]">
           {/* Main Content */}
           <main className="p-6">
             {children}
