@@ -144,6 +144,13 @@ function AppContent() {
     isActuacionView?: boolean;
   }>({});
   
+  // Reset expedient view actions when navigating away from expedient view
+  useEffect(() => {
+    if (currentView !== 'view') {
+      setExpedientViewActions({});
+    }
+  }, [currentView]);
+  
   // Get current expedient data
   const getCurrentExpedient = () => {
     if (!currentExpedientId) return null;
