@@ -721,7 +721,7 @@ export function ExpedientView({
             
             <div className="space-y-2">
               <div className="flex items-center gap-6">
-                <h1 className="text-2xl font-bold text-foreground">
+                <h1 className="text-2xl font-bold text-foreground px-[10px] py-[15px]">
                   {expedient.title}
                 </h1>
                 
