@@ -213,7 +213,7 @@ export function ExpedientList({
 
               {/* Results Count */}
               <div className="text-sm text-muted-foreground whitespace-nowrap lg:ml-auto">
-                {sortedExpedients.length} de {expedients.length} | Página {currentPage} de {totalPages || 1}
+                {sortedExpedients.length} de {filteredExpedients.length} | Página {currentPage} de {totalPages || 1}
               </div>
             </div>
           </div>
@@ -271,7 +271,7 @@ export function ExpedientList({
                       >
                         <td className="p-4">
                           <span className="text-sm font-mono text-primary">
-                            {expedient.number}
+                            {expedient.number.split('-').pop()}
                           </span>
                         </td>
                         <td className="p-4">

@@ -949,15 +949,6 @@ export function ExpedientView({
               <p className="text-sm capitalize">{expedient.tipoProceso || 'administrativo'}</p>
             </div>
           </div>
-          <Separator />
-          <div>
-            <p className="text-sm font-medium text-muted-foreground mb-2">Descripción del Expediente</p>
-            <div className="prose prose-sm max-w-none p-3 border rounded-lg bg-muted/30">
-              <div dangerouslySetInnerHTML={{ 
-                __html: expedient.content || '<p>Sin contenido especificado</p>' 
-              }} />
-            </div>
-          </div>
         </CardContent>
       </Card>
 
@@ -977,7 +968,7 @@ export function ExpedientView({
               <div className="space-y-3">
                 <div className="flex items-center justify-between py-2 border-b border-border/50">
                   <span className="text-sm font-medium">Número</span>
-                  <span className="text-sm text-muted-foreground">{expedient.number}</span>
+                  <span className="text-sm text-muted-foreground">{expedient.number.split('-').pop()}</span>
                 </div>
                 <div className="flex flex-col space-y-2 py-2 border-b border-border/50">
                   <span className="text-sm font-medium">Estado</span>
