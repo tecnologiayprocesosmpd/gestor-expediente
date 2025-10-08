@@ -18,13 +18,13 @@ export function ActuacionNavigator({ actuaciones, expedientNumber, expedientTitl
 
   const getStatusBadge = (status: Actuacion['status']) => {
     const variants = {
-      'borrador': { label: 'Borrador', className: 'bg-slate-500' },
-      'para-firmar': { label: 'Para Firmar', className: 'bg-amber-500' },
-      'firmado': { label: 'Firmado', className: 'bg-emerald-500' }
+      'borrador': { label: 'Borrador', className: 'border-orange-500 text-orange-600' },
+      'para-firmar': { label: 'Para Firmar', className: 'border-blue-500 text-blue-600' },
+      'firmado': { label: 'Firmado', className: 'border-green-500 text-green-600' }
     };
     
     const variant = variants[status];
-    return <Badge className={variant.className}>{variant.label}</Badge>;
+    return <Badge variant="outline" className={variant.className}>{variant.label}</Badge>;
   };
 
   const renderPDFPreview = (actuacion: Actuacion) => {
