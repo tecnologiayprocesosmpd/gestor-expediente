@@ -44,7 +44,7 @@ export function LoginForm() {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 mx-auto mb-4">
+          <div className="w-40 h-40 mx-auto mb-4">
             <img 
               src="/assets/logo-mpd.png" 
               alt="Logo MPD" 
@@ -54,12 +54,6 @@ export function LoginForm() {
           <h1 className="text-3xl font-bold text-foreground mb-2">
             MPD Sistema
           </h1>
-          <p className="text-muted-foreground">
-            Ministerio Público de la Defensa
-          </p>
-          <p className="text-sm text-muted-foreground mt-1">
-            Sistema de Gestión de Expedientes y Legajos
-          </p>
         </div>
 
         {/* Login Card */}
