@@ -18,7 +18,6 @@ interface LayoutProps {
   onNavigate?: (view: 'dashboard' | 'expedientes' | 'agenda' | 'oficios') => void;
   onCreateExpedient?: () => void;
   isExpedientView?: boolean;
-  isActuacionView?: boolean;
   onRadicacionInterna?: () => void;
   onRegresarRadicacionInterna?: () => void;
   onExportPDF?: () => void;
@@ -36,7 +35,6 @@ export function Layout({
   onNavigate, 
   onCreateExpedient,
   isExpedientView = false,
-  isActuacionView = false,
   onRadicacionInterna,
   onRegresarRadicacionInterna,
   onExportPDF,
@@ -115,7 +113,6 @@ export function Layout({
             onNavigate={onNavigate}
             onCreateExpedient={onCreateExpedient}
             isExpedientView={isExpedientView}
-            isActuacionView={isActuacionView}
             onRadicacionInterna={onRadicacionInterna}
             onRegresarRadicacionInterna={onRegresarRadicacionInterna}
             onExportPDF={onExportPDF}

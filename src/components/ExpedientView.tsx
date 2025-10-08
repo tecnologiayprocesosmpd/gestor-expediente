@@ -64,7 +64,6 @@ interface ExpedientViewProps {
     onChangeStatus?: () => void;
     onOficio?: () => void;
     showRegresarRadicacionInterna?: boolean;
-    isShowingActuacionView?: boolean;
   }) => void;
 }
 
@@ -253,8 +252,6 @@ export function ExpedientView({
   // Register actions with parent component - ALWAYS execute before any conditional returns
   useEffect(() => {
     if (onRegisterActions) {
-      const isShowingActuacionView = showActuacionEditor || showNavigator;
-      
       onRegisterActions({
         onRadicacionInterna: () => setShowRadicacionInternaDialog(true),
         onRegresarRadicacionInterna: () => setShowRegresarRadicacionInternaDialog(true),
@@ -264,8 +261,7 @@ export function ExpedientView({
         onNavegar: handleNavegar,
         onChangeStatus: () => setShowSelectEstado(true),
         onOficio: handleShowOficio,
-        showRegresarRadicacionInterna: hayRadicacionInternaPendiente(),
-        isShowingActuacionView
+        showRegresarRadicacionInterna: hayRadicacionInternaPendiente()
       });
     }
   }, [

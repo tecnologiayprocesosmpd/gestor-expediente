@@ -186,7 +186,7 @@ export function ActuacionList({
         <CardTitle className="flex items-center gap-2">
           <FileText className="w-5 h-5" />
           <span>Actuaciones</span>
-          <Badge variant="default">{actuaciones.length}</Badge>
+          <Badge variant="secondary">{actuaciones.length}</Badge>
         </CardTitle>
       </CardHeader>
       <CardContent>
