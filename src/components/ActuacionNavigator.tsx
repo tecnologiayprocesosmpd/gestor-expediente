@@ -13,12 +13,13 @@ interface ActuacionNavigatorProps {
 }
 
 export function ActuacionNavigator({ actuaciones, expedientNumber, expedientTitle }: ActuacionNavigatorProps) {
-  const [filterStatus, setFilterStatus] = useState<'default' | 'todos' | 'para-firmar' | 'firmado'>('default');
+  const [filterStatus, setFilterStatus] = useState<'todos' | 'para-firmar' | 'firmado'>('todos');
   
-  // Filtrar actuaciones según el estado seleccionado
+  // Filtrar actuaciones según el estado seleccionado (excluir siempre borradores)
   const filteredActuaciones = useMemo(() => {
     if (filterStatus === 'todos') {
-      return actuaciones;
+      // Mostrar solo para-firmar y firmado (nunca borradores)
+      return actuaciones.filter(a => a.status === 'para-firmar' || a.status === 'firmado');
     }
     if (filterStatus === 'para-firmar') {
       return actuaciones.filter(a => a.status === 'para-firmar');
@@ -26,7 +27,6 @@ export function ActuacionNavigator({ actuaciones, expedientNumber, expedientTitl
     if (filterStatus === 'firmado') {
       return actuaciones.filter(a => a.status === 'firmado');
     }
-    // Por defecto: mostrar solo para-firmar y firmado (excluir borrador)
     return actuaciones.filter(a => a.status === 'para-firmar' || a.status === 'firmado');
   }, [actuaciones, filterStatus]);
   
@@ -93,7 +93,6 @@ export function ActuacionNavigator({ actuaciones, expedientNumber, expedientTitl
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="default">Listos para ver</SelectItem>
                 <SelectItem value="todos">Todos</SelectItem>
                 <SelectItem value="para-firmar">Para Firma</SelectItem>
                 <SelectItem value="firmado">Firmado</SelectItem>
