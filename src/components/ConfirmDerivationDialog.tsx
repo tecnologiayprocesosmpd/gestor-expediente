@@ -9,13 +9,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertTriangle, Building2 } from "lucide-react";
+import { AlertTriangle, Building2, FileText } from "lucide-react";
 
 interface ConfirmDerivationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   oficina: string;
-  expedientNumber: string;
+  title: string;
   onConfirm: () => void;
 }
 
@@ -23,7 +23,7 @@ export function ConfirmDerivationDialog({
   open,
   onOpenChange,
   oficina,
-  expedientNumber,
+  title,
   onConfirm
 }: ConfirmDerivationDialogProps) {
   const [isConfirming, setIsConfirming] = useState(false);
@@ -67,10 +67,15 @@ export function ConfirmDerivationDialog({
             </AlertDescription>
           </Alert>
 
+          <p className="text-sm text-muted-foreground">
+            Esta acción enviará el expediente a la oficina seleccionada y no se podrá deshacer.
+          </p>
+
           <div className="bg-muted/50 rounded-lg p-4 space-y-3">
             <div className="flex items-center gap-2 text-sm">
-              <span className="font-medium text-muted-foreground">Expediente:</span>
-              <span className="font-mono text-primary">{expedientNumber}</span>
+              <FileText className="w-4 h-4 text-muted-foreground" />
+              <span className="font-medium text-muted-foreground">Título:</span>
+              <span className="font-semibold text-foreground">{title}</span>
             </div>
             
             <div className="flex items-center gap-2 text-sm">
@@ -79,11 +84,6 @@ export function ConfirmDerivationDialog({
               <span className="font-semibold text-foreground">{getOficinaLabel(oficina)}</span>
             </div>
           </div>
-
-          <p className="text-sm text-muted-foreground">
-            Una vez derivado, el expediente aparecerá en la lista "EXPEDIENTES Para recibir" 
-            de la oficina seleccionada y deberá ser recibido antes de poder trabajar en él.
-          </p>
         </div>
 
         <DialogFooter className="gap-2">

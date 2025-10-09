@@ -322,7 +322,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
         onOpenChange={setShowDerivationDialog}
         onConfirm={confirmDerivation}
         oficina={assignedOffice}
-        expedientNumber={expedientNumber}
+        title={title}
       />
     </div>
   );
