@@ -282,19 +282,19 @@ export function ActuacionEditor({
   const getStatusColors = (currentStatus: Actuacion['status']) => {
     const colors = {
       borrador: {
-        bg: 'bg-[hsl(var(--status-draft))]',
-        border: 'border-[hsl(var(--status-draft))]',
-        text: 'text-[hsl(var(--status-draft-foreground))]'
+        bg: 'bg-orange-500',
+        border: 'border-orange-500',
+        text: 'text-white'
       },
       'para-firmar': {
-        bg: 'bg-[hsl(var(--status-pausado))]',
-        border: 'border-[hsl(var(--status-pausado))]',
-        text: 'text-[hsl(var(--status-pausado-foreground))]'
+        bg: 'bg-blue-500',
+        border: 'border-blue-500',
+        text: 'text-white'
       },
       firmado: {
-        bg: 'bg-[hsl(var(--status-archivado))]',
-        border: 'border-[hsl(var(--status-archivado))]',
-        text: 'text-[hsl(var(--status-archivado-foreground))]'
+        bg: 'bg-green-500',
+        border: 'border-green-500',
+        text: 'text-white'
       }
     };
     

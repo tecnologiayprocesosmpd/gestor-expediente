@@ -263,6 +263,27 @@ export function ExpedientView({
     };
     return colors[status as keyof typeof colors] || colors.draft;
   };
+
+  const getActuacionStatusBadge = (status: Actuacion['status']) => {
+    if (status === 'borrador') {
+      return <Badge className="border-orange-500 text-orange-600 bg-white px-4 py-2" variant="outline">
+        <AlertTriangle className="w-3 h-3 mr-1" />
+        Borrador
+      </Badge>;
+    }
+    if (status === 'para-firmar') {
+      return <Badge className="border-blue-500 text-blue-600 bg-white px-4 py-2" variant="outline">
+        <Clock className="w-3 h-3 mr-1" />
+        Para Firma
+      </Badge>;
+    }
+    if (status === 'firmado') {
+      return <Badge className="border-green-500 text-green-600 bg-white px-4 py-2" variant="outline">
+        <CheckCircle className="w-3 h-3 mr-1" />
+        Firmado
+      </Badge>;
+    }
+  };
   const handleAddActuacion = () => {
     setShowActuacionEditor(true);
   };
@@ -651,9 +672,7 @@ export function ExpedientView({
             </div>
           </div>
           <div className="flex items-center space-x-3">
-            <Badge variant={selectedActuacion.status === 'firmado' ? 'default' : 'secondary'} className="px-4 py-2">
-              {selectedActuacion.status === 'firmado' ? 'Firmado' : selectedActuacion.status === 'para-firmar' ? 'Para Firma' : 'Borrador'}
-            </Badge>
+            {getActuacionStatusBadge(selectedActuacion.status)}
             
             {/* Status change button */}
             {selectedActuacion.status === 'borrador' && <Button variant="default" size="sm" onClick={() => handleStatusChange(selectedActuacion.id, 'para-firmar')} className="bg-orange-500 hover:bg-orange-600 text-white">

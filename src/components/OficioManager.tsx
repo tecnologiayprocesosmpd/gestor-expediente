@@ -51,6 +51,30 @@ interface OficioItem {
   responseDescription?: string;
 }
 
+const getExpedientStatusBadge = (status: 'draft' | 'en_tramite' | 'paralizado' | 'archivado') => {
+  const statusConfig = {
+    draft: {
+      className: 'bg-[hsl(var(--status-draft))] text-[hsl(var(--status-draft-foreground))] border-[hsl(var(--status-draft))]',
+      label: 'Borrador'
+    },
+    en_tramite: {
+      className: 'bg-[hsl(var(--status-en-tramite))] text-[hsl(var(--status-en-tramite-foreground))] border-[hsl(var(--status-en-tramite))]',
+      label: 'En Trámite'
+    },
+    paralizado: {
+      className: 'bg-amber-500 text-white border-amber-500',
+      label: 'Paralizado'
+    },
+    archivado: {
+      className: 'bg-[hsl(var(--status-archivado))] text-[hsl(var(--status-archivado-foreground))] border-[hsl(var(--status-archivado))]',
+      label: 'Archivado'
+    }
+  };
+
+  const config = statusConfig[status] || statusConfig.draft;
+  return <Badge className={config.className}>{config.label}</Badge>;
+};
+
 export function OficioManager({ expedients, onBack }: OficioManagerProps) {
   const [oficios, setOficios] = useState<OficioItem[]>([]);
   const [showExpedientSelector, setShowExpedientSelector] = useState(false);
@@ -628,11 +652,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
                         <p className="text-sm text-muted-foreground mt-1">{expedient.title}</p>
                         <div className="flex gap-2 mt-2">
                           <Badge variant="outline">{expedient.tipoTramite}</Badge>
-                          <Badge variant={expedient.status === 'en_tramite' ? 'default' : 'secondary'}>
-                            {expedient.status === 'en_tramite' ? 'En Trámite' : 
-                             expedient.status === 'draft' ? 'Borrador' : 
-                             expedient.status === 'archivado' ? 'Archivado' : 'Estado desconocido'}
-                          </Badge>
+                          {getExpedientStatusBadge(expedient.status)}
                         </div>
                       </div>
                     </div>
