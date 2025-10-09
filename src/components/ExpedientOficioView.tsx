@@ -13,7 +13,6 @@ import {
   Upload,
   ArrowLeft,
   FileCheck,
-  Eye,
   Printer
 } from "lucide-react";
 import { toast } from "sonner";
@@ -316,7 +315,11 @@ export function ExpedientOficioView({
           ) : (
             <div className="space-y-2">
               {activeOficios.map((oficio) => (
-                <div key={oficio.id} className="border rounded-lg p-2 hover:bg-muted/50">
+                <div 
+                  key={oficio.id} 
+                  onClick={() => handleSelectOficio(oficio)}
+                  className="border rounded-lg p-4 hover:bg-muted/50 cursor-pointer transition-colors"
+                >
                   <div className="flex justify-between items-center gap-3">
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-sm truncate">{oficio.expedientTitle}</h3>
@@ -329,18 +332,9 @@ export function ExpedientOficioView({
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      <p className="text-xs text-muted-foreground">
-                        {format(oficio.createdAt, "dd/MM/yyyy", { locale: es })}
-                      </p>
-                      <Button 
-                        onClick={() => handleSelectOficio(oficio)}
-                        size="sm"
-                        variant="default"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                    </div>
+                    <p className="text-xs text-muted-foreground flex-shrink-0">
+                      {format(oficio.createdAt, "dd/MM/yyyy", { locale: es })}
+                    </p>
                   </div>
                 </div>
               ))}
