@@ -190,6 +190,13 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
     return icons[tipo] || icons.otro;
   };
 
+  // Obtener días que tienen citas programadas
+  const getDaysWithCitas = () => {
+    return citas.map(cita => startOfDay(new Date(cita.fechaInicio)));
+  };
+
+  const daysWithCitas = getDaysWithCitas();
+
   const { citasProximas, citasPasadas } = getFilteredCitas();
 
   // Pagination for Citas Próximas
@@ -325,6 +332,12 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
               onSelect={(date) => date && setSelectedDate(date)}
               locale={es}
               className="pointer-events-auto p-3"
+              modifiers={{
+                hasCita: daysWithCitas
+              }}
+              modifiersClassNames={{
+                hasCita: "relative after:content-[''] after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-primary"
+              }}
               classNames={{
                 months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
                 month: "space-y-4 w-fit",
