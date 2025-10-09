@@ -18,14 +18,11 @@ import {
 } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
 import { ExpedientSummary } from "@/types/expedient";
-import { agendaStorage, fechasCitacionStorage } from "@/utils/agendaStorage";
 import { actuacionStorage } from "@/utils/actuacionStorage";
 import { useState, useEffect } from "react";
 import { ExpedientesParaRecibir } from "./ExpedientesParaRecibir";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { usePagination } from "@/hooks/usePagination";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
 interface DashboardProps {
   expedients: ExpedientSummary[];
@@ -53,9 +50,8 @@ export function Dashboard({
   onNavigateToOficios
 }: DashboardProps) {
   const { user } = useUser();
-  const [novedades, setNovedades] = useState<any[]>([]);
+  const [novedades] = useState<any[]>([]); // Funcionalidad desactivada temporalmente
   const [actuacionesParaFirma, setActuacionesParaFirma] = useState<number>(0);
-  const [notificacionesActuaciones, setNotificacionesActuaciones] = useState<any[]>([]);
   const [showExpedientSelector, setShowExpedientSelector] = useState(false);
   const [showActuacionesParaFirma, setShowActuacionesParaFirma] = useState(false);
   const [actuacionesParaFirmaList, setActuacionesParaFirmaList] = useState<any[]>([]);
@@ -63,70 +59,23 @@ export function Dashboard({
 
   if (!user) return null;
 
-  // Cargar novedades de agenda y actuaciones
+  // Cargar actuaciones para firma
   useEffect(() => {
-    const cargarNovedades = () => {
-      const citas = agendaStorage.getCitas();
-      const fechasCitacion = fechasCitacionStorage.getFechasCitacion();
-      const notificacionesActuaciones = actuacionStorage.getNotifications();
-      
-      // Actualizar contador de actuaciones para firma
+    const cargarActuacionesParaFirma = () => {
       const paraFirma = actuacionStorage.getActuacionesParaFirma();
       setActuacionesParaFirma(paraFirma.length);
       setActuacionesParaFirmaList(paraFirma);
-      
-      // Combinar y ordenar por fecha más reciente
-      const todasNovedades = [
-        ...citas.map(cita => ({
-          id: cita.id,
-          tipo: 'cita',
-          titulo: cita.titulo,
-          descripcion: cita.descripcion,
-          fecha: cita.updatedAt || cita.createdAt,
-          estado: cita.estado,
-          expedientId: cita.expedientId
-        })),
-        ...fechasCitacion.map(fecha => ({
-          id: fecha.id,
-          tipo: 'citacion',
-          titulo: `Citación programada - ${fecha.descripcion}`,
-          descripcion: `Fecha: ${format(fecha.fecha, "dd 'de' MMMM, HH:mm 'hs'", { locale: es })}`,
-          fecha: fecha.createdAt,
-          estado: fecha.completada ? 'completada' : 'programada',
-          expedientId: fecha.expedientId
-        })),
-        ...notificacionesActuaciones.map(notif => ({
-          id: notif.id,
-          tipo: 'actuacion',
-          titulo: notif.title,
-          descripcion: `Cambió de ${notif.previousStatus} a ${notif.newStatus}`,
-          fecha: notif.createdAt,
-          estado: notif.read ? 'leida' : 'nueva',
-          expedientId: notif.expedientId
-        }))
-      ];
-      
-      // Ordenar por fecha más reciente y tomar los primeros 5
-      const novedadesOrdenadas = todasNovedades
-        .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
-        .slice(0, 5);
-      
-      setNovedades(novedadesOrdenadas);
-      setNotificacionesActuaciones(notificacionesActuaciones);
     };
 
-    // Cargar datos inicialmente
-    cargarNovedades();
+    cargarActuacionesParaFirma();
 
-    // Event listener para actualizaciones en tiempo real
     const handleActuacionChange = () => {
-      cargarNovedades();
+      cargarActuacionesParaFirma();
     };
 
     window.addEventListener('actuacionStatusChanged', handleActuacionChange);
     
-    // Actualizar cada 30 segundos como respaldo
-    const interval = setInterval(cargarNovedades, 30000);
+    const interval = setInterval(cargarActuacionesParaFirma, 30000);
     
     return () => {
       window.removeEventListener('actuacionStatusChanged', handleActuacionChange);
@@ -185,17 +134,7 @@ export function Dashboard({
     return borderColors[status];
   };
 
-  // Pagination for Novedades
-  const {
-    currentPage,
-    totalPages,
-    paginatedItems: paginatedNovedades,
-    goToPage,
-    nextPage,
-    previousPage,
-    canGoNext,
-    canGoPrevious,
-  } = usePagination({ items: novedades, itemsPerPage: 5 });
+  // Pagination desactivada - novedades sin funcionalidad
 
   return (
     <div className="space-y-6">
@@ -308,7 +247,7 @@ export function Dashboard({
         </Card>
       )}
 
-      {/* NOVEDADES */}
+      {/* NOVEDADES - Funcionalidad desactivada temporalmente */}
       <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -317,163 +256,10 @@ export function Dashboard({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {novedades.length === 0 ? (
-            <div className="text-center py-8">
-              <Calendar className="w-12 h-12 mx-auto mb-3 text-muted-foreground/30" />
-              <p className="text-muted-foreground">No hay novedades recientes en la agenda</p>
-            </div>
-          ) : (
-            <>
-              <div className="space-y-3">
-                {paginatedNovedades.map((novedad) => {
-                const getBorderColor = (tipo: string, estado: string) => {
-                  if (tipo === 'cita') {
-                    switch (estado) {
-                      case 'programada': return 'border-green-100';
-                      case 'completada': return 'border-blue-100';
-                      case 'cancelada': return 'border-red-100';
-                      default: return 'border-gray-100';
-                    }
-                  } else if (tipo === 'actuacion') {
-                    return estado === 'leida' ? 'border-purple-100' : 'border-orange-100';
-                  } else {
-                    return estado === 'completada' ? 'border-purple-100' : 'border-orange-100';
-                  }
-                };
-
-                const getTextColor = (tipo: string, estado: string) => {
-                  if (tipo === 'cita') {
-                    switch (estado) {
-                      case 'programada': return 'text-green-900';
-                      case 'completada': return 'text-blue-900';
-                      case 'cancelada': return 'text-red-900';
-                      default: return 'text-gray-900';
-                    }
-                  } else if (tipo === 'actuacion') {
-                    return estado === 'leida' ? 'text-purple-900' : 'text-orange-900';
-                  } else {
-                    return estado === 'completada' ? 'text-purple-900' : 'text-orange-900';
-                  }
-                };
-
-                const getDescColor = (tipo: string, estado: string) => {
-                  if (tipo === 'cita') {
-                    switch (estado) {
-                      case 'programada': return 'text-green-700';
-                      case 'completada': return 'text-blue-700';
-                      case 'cancelada': return 'text-red-700';
-                      default: return 'text-gray-700';
-                    }
-                  } else if (tipo === 'actuacion') {
-                    return estado === 'leida' ? 'text-purple-700' : 'text-orange-700';
-                  } else {
-                    return estado === 'completada' ? 'text-purple-700' : 'text-orange-700';
-                  }
-                };
-
-                const getBadgeStyle = (tipo: string, estado: string) => {
-                  if (tipo === 'cita') {
-                    switch (estado) {
-                      case 'programada': return 'border-green-300 text-green-700';
-                      case 'completada': return 'border-blue-300 text-blue-700';
-                      case 'cancelada': return 'border-red-300 text-red-700';
-                      default: return 'border-gray-300 text-gray-700';
-                    }
-                  } else if (tipo === 'actuacion') {
-                    return estado === 'leida' ? 'border-purple-300 text-purple-700' : 'border-orange-300 text-orange-700';
-                  } else {
-                    return estado === 'completada' ? 'border-purple-300 text-purple-700' : 'border-orange-300 text-orange-700';
-                  }
-                };
-
-                const getEstadoLabel = (tipo: string, estado: string) => {
-                  if (tipo === 'cita') {
-                    switch (estado) {
-                      case 'programada': return 'Programada';
-                      case 'completada': return 'Completada';
-                      case 'cancelada': return 'Cancelada';
-                      default: return 'Pendiente';
-                    }
-                  } else if (tipo === 'actuacion') {
-                    return estado === 'leida' ? 'Leída' : 'Nueva';
-                  } else {
-                    return estado === 'completada' ? 'Completada' : 'Programada';
-                  }
-                };
-
-                const timeAgo = (date: Date) => {
-                  const now = new Date();
-                  const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-                  
-                  if (diffInHours < 1) return 'Hace menos de 1 hora';
-                  if (diffInHours < 24) return `Hace ${diffInHours} hora${diffInHours > 1 ? 's' : ''}`;
-                  
-                  const diffInDays = Math.floor(diffInHours / 24);
-                  if (diffInDays === 1) return 'Ayer';
-                  if (diffInDays < 7) return `Hace ${diffInDays} días`;
-                  
-                  return format(date, "dd/MM/yyyy", { locale: es });
-                };
-
-                return (
-                  <div key={novedad.id} className={`p-3 bg-white rounded-lg border ${getBorderColor(novedad.tipo, novedad.estado)}`}>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className={`font-medium text-sm ${getTextColor(novedad.tipo, novedad.estado)}`}>
-                          {novedad.titulo}
-                        </h4>
-                        <p className={`text-xs mt-1 ${getDescColor(novedad.tipo, novedad.estado)}`}>
-                          {novedad.descripcion}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {timeAgo(new Date(novedad.fecha))}
-                        </p>
-                      </div>
-                      <Badge variant="outline" className={`text-xs ${getBadgeStyle(novedad.tipo, novedad.estado)}`}>
-                        {getEstadoLabel(novedad.tipo, novedad.estado)}
-                      </Badge>
-                    </div>
-                  </div>
-                );
-                })}
-              </div>
-
-              {/* Pagination for Novedades */}
-              {totalPages > 1 && (
-                <div className="mt-4 flex justify-center">
-                  <Pagination>
-                    <PaginationContent>
-                      <PaginationItem>
-                        <PaginationPrevious 
-                          onClick={previousPage}
-                          className={!canGoPrevious ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
-                        />
-                      </PaginationItem>
-                      
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                        <PaginationItem key={page}>
-                          <PaginationLink
-                            onClick={() => goToPage(page)}
-                            isActive={currentPage === page}
-                            className="cursor-pointer"
-                          >
-                            {page}
-                          </PaginationLink>
-                        </PaginationItem>
-                      ))}
-                      
-                      <PaginationItem>
-                        <PaginationNext 
-                          onClick={nextPage}
-                          className={!canGoNext ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
-                        />
-                      </PaginationItem>
-                    </PaginationContent>
-                  </Pagination>
-                </div>
-              )}
-            </>
-          )}
+          <div className="text-center py-8">
+            <Calendar className="w-12 h-12 mx-auto mb-3 text-muted-foreground/30" />
+            <p className="text-muted-foreground">Funcionalidad en desarrollo</p>
+          </div>
         </CardContent>
       </Card>
 
