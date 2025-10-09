@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { FileText } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { FileText, Filter } from 'lucide-react';
 import type { Actuacion } from '@/types/actuacion';
 
 interface ActuacionNavigatorProps {
@@ -12,8 +13,25 @@ interface ActuacionNavigatorProps {
 }
 
 export function ActuacionNavigator({ actuaciones, expedientNumber, expedientTitle }: ActuacionNavigatorProps) {
+  const [filterStatus, setFilterStatus] = useState<'default' | 'todos' | 'para-firmar' | 'firmado'>('default');
+  
+  // Filtrar actuaciones según el estado seleccionado
+  const filteredActuaciones = useMemo(() => {
+    if (filterStatus === 'todos') {
+      return actuaciones;
+    }
+    if (filterStatus === 'para-firmar') {
+      return actuaciones.filter(a => a.status === 'para-firmar');
+    }
+    if (filterStatus === 'firmado') {
+      return actuaciones.filter(a => a.status === 'firmado');
+    }
+    // Por defecto: mostrar solo para-firmar y firmado (excluir borrador)
+    return actuaciones.filter(a => a.status === 'para-firmar' || a.status === 'firmado');
+  }, [actuaciones, filterStatus]);
+  
   const [selectedActuacion, setSelectedActuacion] = useState<Actuacion | null>(
-    actuaciones.length > 0 ? actuaciones[0] : null
+    filteredActuaciones.length > 0 ? filteredActuaciones[0] : null
   );
 
   const getStatusBadge = (status: Actuacion['status']) => {
@@ -61,12 +79,31 @@ export function ActuacionNavigator({ actuaciones, expedientNumber, expedientTitl
         <CardContent className="p-4">
           <h3 className="font-semibold mb-4 flex items-center gap-2">
             <FileText className="h-5 w-5" />
-            Actuaciones ({actuaciones.length})
+            Actuaciones ({filteredActuaciones.length})
           </h3>
           
-          <ScrollArea className="h-[calc(100vh-14rem)]">
+          {/* Filtro de estado */}
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Filter className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">Filtrar por estado</span>
+            </div>
+            <Select value={filterStatus} onValueChange={(value: any) => setFilterStatus(value)}>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="default">Listos para ver</SelectItem>
+                <SelectItem value="todos">Todos</SelectItem>
+                <SelectItem value="para-firmar">Para Firma</SelectItem>
+                <SelectItem value="firmado">Firmado</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <ScrollArea className="h-[calc(100vh-18rem)]">
             <div className="space-y-2">
-              {actuaciones.map((actuacion) => (
+              {filteredActuaciones.map((actuacion) => (
                 <button
                   key={actuacion.id}
                   onClick={() => setSelectedActuacion(actuacion)}
