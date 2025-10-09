@@ -48,6 +48,7 @@ interface OficioItem {
   finishedAt?: Date;
   responsePdfAttached?: boolean;
   responsePdfFileName?: string;
+  responseDescription?: string;
 }
 
 export function OficioManager({ expedients, onBack }: OficioManagerProps) {
@@ -65,6 +66,11 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<string[]>(['en_tramite', 'paralizado', 'archivado']);
   const [filterTipoTramite, setFilterTipoTramite] = useState<string>('todos');
+  
+  // Estados para filtrado de oficios
+  const [filterActivosDestinatario, setFilterActivosDestinatario] = useState('');
+  const [filterFinalizadosDestinatario, setFilterFinalizadosDestinatario] = useState('');
+  const [responseDescription, setResponseDescription] = useState('');
 
   // Cargar oficios desde localStorage
   useEffect(() => {
@@ -187,13 +193,14 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
   };
 
   const handleFinishOficio = () => {
-    if (selectedOficio && responsePdfFile) {
+    if (selectedOficio) {
       const updatedOficio = {
         ...selectedOficio,
         finished: true,
         finishedAt: new Date(),
-        responsePdfAttached: true,
-        responsePdfFileName: responsePdfFile.name
+        responsePdfAttached: !!responsePdfFile,
+        responsePdfFileName: responsePdfFile?.name,
+        responseDescription: responseDescription
       };
 
       const updatedOficios = oficios.map(o => 
@@ -204,6 +211,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
       setShowOficioDetails(false);
       setSelectedOficio(null);
       setResponsePdfFile(null);
+      setResponseDescription('');
       
       toast.success('Oficio finalizado exitosamente');
     }
@@ -239,9 +247,14 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
   // Obtener tipos de trámite únicos
   const uniqueTipoTramites = Array.from(new Set(expedients.map(e => e.tipoTramite)));
 
-  // Separar oficios activos y finalizados
-  const activeOficios = oficios.filter(o => !o.finished);
-  const finishedOficios = oficios.filter(o => o.finished);
+  // Separar oficios activos y finalizados con filtrado
+  const activeOficios = oficios
+    .filter(o => !o.finished)
+    .filter(o => !filterActivosDestinatario || o.destinatario.toLowerCase().includes(filterActivosDestinatario.toLowerCase()));
+  
+  const finishedOficios = oficios
+    .filter(o => o.finished)
+    .filter(o => !filterFinalizadosDestinatario || o.destinatario.toLowerCase().includes(filterFinalizadosDestinatario.toLowerCase()));
 
   // Pagination for Oficios Activos
   const {
@@ -324,30 +337,30 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
       </div>
 
       {/* Botón para crear nuevo oficio */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Plus className="w-5 h-5" />
-            Crear Nuevo Oficio
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Button 
-            onClick={() => setShowExpedientSelector(true)}
-            className="w-full"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Seleccionar Expediente para Oficio
-          </Button>
-        </CardContent>
-      </Card>
+      <div className="flex justify-start">
+        <Button 
+          onClick={() => setShowExpedientSelector(true)}
+          size="lg"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Crear Oficio
+        </Button>
+      </div>
 
       {/* Lista de oficios activos */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="w-5 h-5" />
-            Oficios Activos ({activeOficios.length})
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <FileText className="w-5 h-5" />
+              Oficios Activos ({activeOficios.length})
+            </div>
+            <Input
+              placeholder="Filtrar por destinatario..."
+              value={filterActivosDestinatario}
+              onChange={(e) => setFilterActivosDestinatario(e.target.value)}
+              className="max-w-xs"
+            />
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -358,31 +371,31 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
             </div>
           ) : (
             <>
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {paginatedActiveOficios.map((oficio) => (
                 <div 
                   key={oficio.id} 
-                  className="border rounded-lg p-4 hover:bg-muted/50 cursor-pointer transition-colors"
+                  className="border rounded-lg p-2 hover:bg-muted/50 cursor-pointer transition-colors"
                   onClick={() => handleSelectOficio(oficio)}
                 >
-                  <div className="space-y-2">
-                    <h3 className="font-semibold">{oficio.expedientNumber}</h3>
-                    <p className="text-sm text-muted-foreground">{oficio.expedientTitle}</p>
-                    <div className="flex gap-2 flex-wrap">
-                      <Badge variant="outline">
-                        Expediente: {oficio.expedientNumber}
-                      </Badge>
-                      <Badge variant="secondary">
-                        Destinatario: {oficio.destinatario}
-                      </Badge>
-                      {oficio.pdfAttached && (
-                        <Badge variant="secondary">PDF adjunto</Badge>
-                      )}
-                      <Badge variant="default">Activo</Badge>
+                  <div className="flex justify-between items-center gap-3">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-sm truncate">{oficio.expedientTitle}</h3>
+                      <div className="flex gap-2 flex-wrap mt-1">
+                        <Badge variant="secondary" className="text-xs">
+                          {oficio.destinatario}
+                        </Badge>
+                        {oficio.pdfAttached && (
+                          <Badge variant="outline" className="text-xs">PDF</Badge>
+                        )}
+                      </div>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Creado: {format(oficio.createdAt, "dd/MM/yyyy HH:mm", { locale: es })}
-                    </p>
+                    <div className="text-right flex-shrink-0">
+                      <p className="text-xs text-muted-foreground">
+                        {format(oficio.createdAt, "dd/MM/yyyy", { locale: es })}
+                      </p>
+                      <Badge variant="default" className="text-xs mt-1">Activo</Badge>
+                    </div>
                   </div>
                 </div>
                 ))}
@@ -431,40 +444,40 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
       {finishedOficios.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileCheck className="w-5 h-5" />
-              Oficios Finalizados ({finishedOficios.length})
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <FileCheck className="w-5 h-5" />
+                Oficios Finalizados ({finishedOficios.length})
+              </div>
+              <Input
+                placeholder="Filtrar por destinatario..."
+                value={filterFinalizadosDestinatario}
+                onChange={(e) => setFilterFinalizadosDestinatario(e.target.value)}
+                className="max-w-xs"
+              />
             </CardTitle>
           </CardHeader>
           <CardContent>
             <>
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {paginatedFinishedOficios.map((oficio) => (
-                <div key={oficio.id} className="border rounded-lg p-4 bg-muted/30">
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-2">
-                      <h3 className="font-semibold">{oficio.expedientNumber}</h3>
-                      <p className="text-sm text-muted-foreground">{oficio.expedientTitle}</p>
-                      <div className="flex gap-2 flex-wrap">
-                        <Badge variant="outline">
-                          Expediente: {oficio.expedientNumber}
-                        </Badge>
-                        <Badge variant="secondary">
-                          Destinatario: {oficio.destinatario}
+                <div key={oficio.id} className="border rounded-lg p-2 bg-muted/30">
+                  <div className="flex justify-between items-center gap-3">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-sm truncate">{oficio.expedientTitle}</h3>
+                      <div className="flex gap-2 flex-wrap mt-1">
+                        <Badge variant="secondary" className="text-xs">
+                          {oficio.destinatario}
                         </Badge>
                         {oficio.pdfAttached && (
-                          <Badge variant="secondary">PDF adjunto</Badge>
+                          <Badge variant="outline" className="text-xs">PDF</Badge>
                         )}
                         {oficio.responsePdfAttached && (
-                          <Badge variant="secondary">PDF respuesta</Badge>
+                          <Badge variant="outline" className="text-xs">PDF respuesta</Badge>
                         )}
-                        <Badge variant="default" className="bg-green-600">Finalizado</Badge>
                       </div>
-                      <div className="text-xs text-muted-foreground space-y-1">
-                        <p>Creado: {format(oficio.createdAt, "dd/MM/yyyy HH:mm", { locale: es })}</p>
-                        {oficio.finishedAt && (
-                          <p>Finalizado: {format(oficio.finishedAt, "dd/MM/yyyy HH:mm", { locale: es })}</p>
-                        )}
+                      <div className="text-xs text-muted-foreground mt-1">
+                        <span>Finalizado: {format(oficio.finishedAt!, "dd/MM/yyyy", { locale: es })}</span>
                       </div>
                     </div>
                     <Button 
@@ -472,8 +485,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
                       size="sm"
                       variant="outline"
                     >
-                      <Download className="w-4 h-4 mr-2" />
-                      Exportar PDF
+                      <Download className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
@@ -755,9 +767,21 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
 
               <Separator />
 
+              {/* Descripción de respuesta */}
+              <div className="space-y-3">
+                <Label className="text-sm font-medium">Descripción de la Respuesta (opcional)</Label>
+                <Input
+                  type="text"
+                  placeholder="Ingrese una descripción de la respuesta..."
+                  value={responseDescription}
+                  onChange={(e) => setResponseDescription(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+
               {/* Adjuntar PDF de respuesta */}
               <div className="space-y-3">
-                <Label className="text-sm font-medium">Adjuntar PDF de Respuesta</Label>
+                <Label className="text-sm font-medium">Adjuntar PDF de Respuesta (opcional)</Label>
                 <div className="flex items-center gap-3">
                   <Input
                     type="file"
@@ -776,13 +800,16 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
 
               {/* Botones de acción */}
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setShowOficioDetails(false)}>
+                <Button variant="outline" onClick={() => {
+                  setShowOficioDetails(false);
+                  setResponseDescription('');
+                  setResponsePdfFile(null);
+                }}>
                   <X className="w-4 h-4 mr-2" />
                   Cancelar
                 </Button>
                 <Button 
                   onClick={handleFinishOficio}
-                  disabled={!responsePdfFile}
                   className="bg-green-600 hover:bg-green-700"
                 >
                   <FileCheck className="w-4 h-4 mr-2" />

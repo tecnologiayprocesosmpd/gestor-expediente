@@ -34,6 +34,7 @@ interface OficioItem {
   finishedAt?: Date;
   responsePdfAttached?: boolean;
   responsePdfFileName?: string;
+  responseDescription?: string;
 }
 
 interface ExpedientOficioViewProps {
@@ -56,6 +57,7 @@ export function ExpedientOficioView({
   const [showOficioDetails, setShowOficioDetails] = useState(false);
   const [selectedOficio, setSelectedOficio] = useState<OficioItem | null>(null);
   const [responsePdfFile, setResponsePdfFile] = useState<File | null>(null);
+  const [responseDescription, setResponseDescription] = useState('');
 
   // Cargar oficios desde localStorage
   useEffect(() => {
@@ -185,13 +187,14 @@ export function ExpedientOficioView({
   };
 
   const handleFinishOficio = () => {
-    if (selectedOficio && responsePdfFile) {
+    if (selectedOficio) {
       const updatedOficio = {
         ...selectedOficio,
         finished: true,
         finishedAt: new Date(),
-        responsePdfAttached: true,
-        responsePdfFileName: responsePdfFile.name
+        responsePdfAttached: !!responsePdfFile,
+        responsePdfFileName: responsePdfFile?.name,
+        responseDescription: responseDescription
       };
 
       const updatedOficios = oficios.map(o => 
@@ -202,6 +205,7 @@ export function ExpedientOficioView({
       setShowOficioDetails(false);
       setSelectedOficio(null);
       setResponsePdfFile(null);
+      setResponseDescription('');
       
       toast.success('Oficio finalizado exitosamente');
     }
@@ -310,33 +314,33 @@ export function ExpedientOficioView({
               <p>No hay oficios activos</p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {activeOficios.map((oficio) => (
-                <div key={oficio.id} className="border rounded-lg p-4 hover:bg-muted/50">
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-2">
-                      <h3 className="font-semibold">{oficio.expedientNumber}</h3>
-                      <div className="flex gap-2 flex-wrap">
-                        <Badge variant="secondary">
-                          Destinatario: {oficio.destinatario}
+                <div key={oficio.id} className="border rounded-lg p-2 hover:bg-muted/50">
+                  <div className="flex justify-between items-center gap-3">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-sm truncate">{oficio.expedientTitle}</h3>
+                      <div className="flex gap-2 flex-wrap mt-1">
+                        <Badge variant="secondary" className="text-xs">
+                          {oficio.destinatario}
                         </Badge>
                         {oficio.pdfAttached && (
-                          <Badge variant="secondary">PDF adjunto</Badge>
+                          <Badge variant="outline" className="text-xs">PDF</Badge>
                         )}
-                        <Badge variant="default">Activo</Badge>
                       </div>
-                      <p className="text-xs text-muted-foreground">
-                        Creado: {format(oficio.createdAt, "dd/MM/yyyy HH:mm", { locale: es })}
-                      </p>
                     </div>
-                    <Button 
-                      onClick={() => handleSelectOficio(oficio)}
-                      size="sm"
-                      variant="default"
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      VER
-                    </Button>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <p className="text-xs text-muted-foreground">
+                        {format(oficio.createdAt, "dd/MM/yyyy", { locale: es })}
+                      </p>
+                      <Button 
+                        onClick={() => handleSelectOficio(oficio)}
+                        size="sm"
+                        variant="default"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -355,32 +359,28 @@ export function ExpedientOficioView({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {finishedOficios.map((oficio) => (
-                <div key={oficio.id} className="border rounded-lg p-4 bg-muted/30">
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-2">
-                      <h3 className="font-semibold">{oficio.expedientNumber}</h3>
-                      <div className="flex gap-2 flex-wrap">
-                        <Badge variant="secondary">
-                          Destinatario: {oficio.destinatario}
+                <div key={oficio.id} className="border rounded-lg p-2 bg-muted/30">
+                  <div className="flex justify-between items-center gap-3">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-sm truncate">{oficio.expedientTitle}</h3>
+                      <div className="flex gap-2 flex-wrap mt-1">
+                        <Badge variant="secondary" className="text-xs">
+                          {oficio.destinatario}
                         </Badge>
                         {oficio.pdfAttached && (
-                          <Badge variant="secondary">PDF adjunto</Badge>
+                          <Badge variant="outline" className="text-xs">PDF</Badge>
                         )}
                         {oficio.responsePdfAttached && (
-                          <Badge variant="secondary">PDF respuesta</Badge>
-                        )}
-                        <Badge variant="default" className="bg-green-600">Finalizado</Badge>
-                      </div>
-                      <div className="text-xs text-muted-foreground space-y-1">
-                        <p>Creado: {format(oficio.createdAt, "dd/MM/yyyy HH:mm", { locale: es })}</p>
-                        {oficio.finishedAt && (
-                          <p>Finalizado: {format(oficio.finishedAt, "dd/MM/yyyy HH:mm", { locale: es })}</p>
+                          <Badge variant="outline" className="text-xs">PDF respuesta</Badge>
                         )}
                       </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Finalizado: {format(oficio.finishedAt!, "dd/MM/yyyy", { locale: es })}
+                      </p>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-shrink-0">
                       <Button 
                         onClick={() => handlePrintOficio(oficio)}
                         size="sm"
@@ -513,8 +513,22 @@ export function ExpedientOficioView({
               <Separator />
 
               <div className="space-y-2">
+                <Label htmlFor="response-description" className="text-sm font-medium">
+                  Descripción de la Respuesta (opcional)
+                </Label>
+                <Input
+                  id="response-description"
+                  type="text"
+                  placeholder="Ingrese una descripción de la respuesta..."
+                  value={responseDescription}
+                  onChange={(e) => setResponseDescription(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="response-pdf" className="text-sm font-medium">
-                  Adjuntar PDF de Respuesta *
+                  Adjuntar PDF de Respuesta (opcional)
                 </Label>
                 <div className="flex gap-2">
                   <Input
@@ -534,9 +548,6 @@ export function ExpedientOficioView({
                     {responsePdfFile ? responsePdfFile.name : 'Seleccionar PDF de Respuesta'}
                   </Button>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Es necesario adjuntar un PDF de respuesta para finalizar el oficio
-                </p>
               </div>
 
               <div className="flex gap-2">
@@ -545,6 +556,7 @@ export function ExpedientOficioView({
                     setShowOficioDetails(false);
                     setSelectedOficio(null);
                     setResponsePdfFile(null);
+                    setResponseDescription('');
                   }}
                   variant="outline"
                   className="flex-1"
@@ -553,7 +565,6 @@ export function ExpedientOficioView({
                 </Button>
                 <Button
                   onClick={handleFinishOficio}
-                  disabled={!responsePdfFile}
                   className="flex-1"
                 >
                   Finalizar Oficio

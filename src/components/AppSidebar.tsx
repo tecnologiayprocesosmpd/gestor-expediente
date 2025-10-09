@@ -30,7 +30,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 
 interface AppSidebarProps {
   currentView: string;
-  onNavigate?: (view: 'dashboard' | 'expedientes' | 'agenda') => void;
+  onNavigate?: (view: 'dashboard' | 'expedientes' | 'agenda' | 'oficios') => void;
   onCreateExpedient?: () => void;
   isExpedientView?: boolean;
   isActuacionView?: boolean;
@@ -99,6 +99,12 @@ export function AppSidebar({
       title: 'Agenda', 
       icon: Calendar,
       onClick: () => onNavigate?.('agenda')
+    },
+    { 
+      id: 'oficios', 
+      title: 'Oficios', 
+      icon: FileCheck,
+      onClick: () => onNavigate?.('oficios')
     }
   ];
 
