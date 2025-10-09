@@ -342,9 +342,9 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
         </div>
 
         {/* Citas Próximas */}
-        <div className="flex-1">
+        <div className="flex-1 min-w-0 max-w-[800px]">
           <h2 className="text-2xl font-bold tracking-tight mb-4">Citas Próximas</h2>
-          <div className="border rounded-lg bg-card h-[400px] overflow-y-auto">
+          <div className="border rounded-lg bg-card h-[400px] overflow-y-auto overflow-x-hidden">
             <div className="p-3 space-y-2">
               {citasProximas.length === 0 ? (
                 <div className="text-center py-8 bg-muted/30 rounded-lg">
@@ -445,8 +445,8 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
       {/* Historial de Citas Pasadas */}
       <div className="mt-6">
         <h2 className="text-2xl font-bold tracking-tight mb-4">Historial</h2>
-        <div className="border rounded-lg overflow-hidden">
-          <div className="bg-muted/50 px-4 py-2 grid grid-cols-12 gap-4 text-sm font-medium">
+        <div className="border rounded-lg overflow-hidden overflow-x-auto">
+          <div className="bg-muted/50 px-4 py-2 grid grid-cols-12 gap-4 text-sm font-medium min-w-[900px]">
             <div className="col-span-1">Tipo</div>
             <div className="col-span-3">Título</div>
             <div className="col-span-2">Fecha</div>
@@ -467,27 +467,27 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                 {paginatedCitasPasadas.map((cita) => (
                 <div 
                   key={cita.id} 
-                  className="px-4 py-3 grid grid-cols-12 gap-4 items-center hover:bg-muted/30 transition-colors cursor-pointer h-[52px]"
+                  className="px-4 py-3 grid grid-cols-12 gap-4 items-center hover:bg-muted/30 transition-colors cursor-pointer h-[52px] min-w-[900px]"
                   onClick={() => handleViewDetails(cita, false)}
                 >
-                  <div className="col-span-1 flex items-center">
+                  <div className="col-span-1 flex items-center flex-shrink-0">
                     {getTipoIcon(cita.tipo)}
                   </div>
-                  <div className="col-span-3 min-w-0">
+                  <div className="col-span-3 min-w-0 overflow-hidden">
                     <p className="font-medium text-muted-foreground truncate">{cita.titulo}</p>
                   </div>
-                  <div className="col-span-2 text-sm text-muted-foreground">
+                  <div className="col-span-2 text-sm text-muted-foreground flex-shrink-0">
                     {format(cita.fechaInicio, 'dd/MM/yyyy HH:mm', { locale: es })}
                   </div>
-                  <div className="col-span-2 text-sm text-muted-foreground truncate">
-                    {cita.ubicacion || '-'}
+                  <div className="col-span-2 text-sm text-muted-foreground min-w-0 overflow-hidden">
+                    <span className="truncate block">{cita.ubicacion || '-'}</span>
                   </div>
-                  <div className="col-span-2">
+                  <div className="col-span-2 flex-shrink-0">
                     <Badge className={getStatusColor(cita.estado)} variant="outline">
                       {cita.estado}
                     </Badge>
                   </div>
-                  <div className="col-span-2 flex gap-2" onClick={(e) => e.stopPropagation()}>
+                  <div className="col-span-2 flex gap-2 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
                     {cita.expedientId && (
                       <Button
                         variant="ghost"
