@@ -222,6 +222,7 @@ export function ExpedientView({
   useEffect(() => {
     if (onRegisterActions) {
       const isActuacionView = showActuacionEditor || showNavigator || selectedActuacion !== null;
+      const showActuacionStatusButton = selectedActuacion !== null && !showActuacionEditor;
       onRegisterActions({
         onRadicacionInterna: () => setShowRadicacionInternaDialog(true),
         onRegresarRadicacionInterna: () => setShowRegresarRadicacionInternaDialog(true),
@@ -230,7 +231,7 @@ export function ExpedientView({
         onTramites: handleShowTramites,
         onNavegar: handleNavegar,
         onChangeStatus: () => setShowSelectEstado(true),
-        onChangeActuacionStatus: handleChangeActuacionStatus,
+        onChangeActuacionStatus: showActuacionStatusButton ? handleChangeActuacionStatus : undefined,
         onOficio: handleShowOficio,
         showRegresarRadicacionInterna: hayRadicacionInternaPendiente(),
         isActuacionView
@@ -715,6 +716,17 @@ export function ExpedientView({
             </div>
           </CardContent>
         </Card>
+
+        {/* Diálogo de Cambio de Estado de Actuación */}
+        <SelectActuacionEstadoDialog 
+          open={showSelectActuacionEstado} 
+          onOpenChange={setShowSelectActuacionEstado} 
+          currentStatus={selectedActuacion.status} 
+          onSelect={(newStatus) => {
+            handleStatusChange(selectedActuacion.id, newStatus);
+            setShowSelectActuacionEstado(false);
+          }} 
+        />
       </div>;
   }
   return <div className="space-y-6">
