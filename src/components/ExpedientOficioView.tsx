@@ -316,7 +316,11 @@ export function ExpedientOficioView({
           ) : (
             <div className="space-y-2">
               {activeOficios.map((oficio) => (
-                <div key={oficio.id} className="border rounded-lg p-2 hover:bg-muted/50">
+                <div 
+                  key={oficio.id} 
+                  className="border rounded-lg p-2 hover:bg-muted/50 cursor-pointer transition-colors"
+                  onClick={() => handleSelectOficio(oficio)}
+                >
                   <div className="flex justify-between items-center gap-3">
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-sm truncate">{oficio.expedientTitle}</h3>
@@ -333,13 +337,7 @@ export function ExpedientOficioView({
                       <p className="text-xs text-muted-foreground">
                         {format(oficio.createdAt, "dd/MM/yyyy", { locale: es })}
                       </p>
-                      <Button 
-                        onClick={() => handleSelectOficio(oficio)}
-                        size="sm"
-                        variant="default"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </Button>
+                      <Eye className="w-4 h-4 text-muted-foreground" />
                     </div>
                   </div>
                 </div>
