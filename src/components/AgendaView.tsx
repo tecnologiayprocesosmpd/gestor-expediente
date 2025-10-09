@@ -368,7 +368,7 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                 hasCita: daysWithCitas
               }}
               modifiersClassNames={{
-                hasCita: "relative after:content-[''] after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-primary"
+                hasCita: "relative after:content-[''] after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-[hsl(var(--warning))] after:z-10"
               }}
               classNames={{
                 months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
