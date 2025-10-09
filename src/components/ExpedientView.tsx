@@ -732,48 +732,53 @@ export function ExpedientView({
   return <div className="space-y-6">
       {/* Header unificado con mejor espaciado */}
       <div className="bg-card rounded-lg border shadow-sm">
-        <div className={`flex items-start justify-between p-6 border-l-4 ${statusColors.border}`}>
-          <div className="flex items-start space-x-6">
-            <Button variant="outline" onClick={onBack} className="h-auto py-[10px] px-[5px]">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Volver a Expedientes
-            </Button>
-            
-            <div className="space-y-2">
-              <div className="flex items-center gap-6">
-                <h1 className="text-2xl font-bold text-foreground px-[10px] py-[15px]">
-                  {expedient.title}
-                </h1>
-                
-                <div className={`${statusColors.bg} rounded-md px-4 py-2 flex items-center space-x-2 shadow-sm border border-white/20`}>
-                  <div className={`w-2.5 h-2.5 rounded-full ${statusColors.text === 'text-[hsl(var(--status-draft-foreground))]' ? 'bg-white' : 'bg-white'} animate-pulse`}></div>
-                  <span className={`text-sm font-semibold ${statusColors.text}`}>
-                    {getStatusLabel(expedient.status)}
-                  </span>
-                </div>
-
-                {tramites.length > 0 && !tramites.every(t => t.finalizado) && <div className="bg-primary/10 rounded-md px-4 py-2 flex items-center space-x-2 shadow-sm border border-primary/20">
-                    <FileText className="w-5 h-5 text-primary" />
-                    <span className="text-sm font-semibold text-primary">
-                      Trámite: {tramites.find(t => !t.finalizado)?.referencia || 'En Trámite'}
-                    </span>
-                  </div>}
-              </div>
+        <div className={`p-6 border-l-4 ${statusColors.border}`}>
+          {/* Primera fila: Botón volver + Título + Estado */}
+          <div className="flex items-center justify-between gap-4 mb-3">
+            <div className="flex items-center gap-4 min-w-0 flex-1">
+              <Button variant="outline" onClick={onBack} className="h-auto py-2 px-4 shrink-0">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Volver a Expedientes
+              </Button>
               
-              <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                {expedient.oficina && <span className="flex items-center space-x-1">
-                    <Building2 className="w-4 h-4" />
-                    <span>Oficina: {expedient.oficina}</span>
-                  </span>}
-                {(expedient.derivadoPor || expedient.recibidoPor) && <span className="flex items-center space-x-1">
-                    <User className="w-4 h-4" />
-                  <span>
-                    {expedient.derivadoPor && `Derivado por: ${expedient.derivadoPor}`}
-                    {expedient.recibidoPor && ` | Recibido por: ${expedient.recibidoPor}`}
-                  </span>
-                </span>}
+              <h1 className="text-2xl font-bold text-foreground truncate max-w-[500px]" title={expedient.title}>
+                {expedient.title}
+              </h1>
+            </div>
+            
+            <div className={`${statusColors.bg} rounded-md px-4 py-2 flex items-center space-x-2 shadow-sm border border-white/20 shrink-0 w-[160px] justify-center`}>
+              <div className={`w-2.5 h-2.5 rounded-full ${statusColors.text === 'text-[hsl(var(--status-draft-foreground))]' ? 'bg-white' : 'bg-white'} animate-pulse`}></div>
+              <span className={`text-sm font-semibold ${statusColors.text} whitespace-nowrap`}>
+                {getStatusLabel(expedient.status)}
+              </span>
+            </div>
+          </div>
+          
+          {/* Segunda fila: Trámite */}
+          {tramites.length > 0 && !tramites.every(t => t.finalizado) && (
+            <div className="ml-[152px] mb-3">
+              <div className="bg-primary/10 rounded-md px-4 py-2 flex items-center space-x-2 shadow-sm border border-primary/20 max-w-[500px]">
+                <FileText className="w-5 h-5 text-primary shrink-0" />
+                <span className="text-sm font-semibold text-primary truncate" title={`Trámite: ${tramites.find(t => !t.finalizado)?.referencia || 'En Trámite'}`}>
+                  Trámite: {tramites.find(t => !t.finalizado)?.referencia || 'En Trámite'}
+                </span>
               </div>
             </div>
+          )}
+          
+          {/* Tercera fila: Información adicional */}
+          <div className={`flex items-center space-x-4 text-sm text-muted-foreground ${tramites.length > 0 && !tramites.every(t => t.finalizado) ? '' : 'ml-[152px]'}`}>
+            {expedient.oficina && <span className="flex items-center space-x-1">
+                <Building2 className="w-4 h-4" />
+                <span>Oficina: {expedient.oficina}</span>
+              </span>}
+            {(expedient.derivadoPor || expedient.recibidoPor) && <span className="flex items-center space-x-1">
+                <User className="w-4 h-4" />
+              <span>
+                {expedient.derivadoPor && `Derivado por: ${expedient.derivadoPor}`}
+                {expedient.recibidoPor && ` | Recibido por: ${expedient.recibidoPor}`}
+              </span>
+            </span>}
           </div>
         </div>
       </div>
