@@ -15,6 +15,7 @@ import { TramiteEditor } from "./TramiteEditor";
 import { TramiteList } from "./TramiteList";
 import { ActuacionNavigator } from "./ActuacionNavigator";
 import { SelectEstadoDialog } from "./SelectEstadoDialog";
+import { SelectActuacionEstadoDialog } from "./SelectActuacionEstadoDialog";
 import { StatusChangeConfirmDialog } from "./StatusChangeConfirmDialog";
 import { ExpedientOficioView } from "./ExpedientOficioView";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -39,6 +40,7 @@ interface ExpedientViewProps {
     onTramites?: () => void;
     onNavegar?: () => void;
     onChangeStatus?: () => void;
+    onChangeActuacionStatus?: () => void;
     onOficio?: () => void;
     showRegresarRadicacionInterna?: boolean;
     isActuacionView?: boolean;
@@ -71,6 +73,7 @@ export function ExpedientView({
   const [showStatusConfirm, setShowStatusConfirm] = useState(false);
   const [pendingNewStatus, setPendingNewStatus] = useState<'en_tramite' | 'paralizado' | 'archivado'>('en_tramite');
   const [showOficioView, setShowOficioView] = useState(false);
+  const [showSelectActuacionEstado, setShowSelectActuacionEstado] = useState(false);
   const {
     user
   } = useUser();
@@ -211,6 +214,10 @@ export function ExpedientView({
     setSelectedActuacion(null);
   };
 
+  const handleChangeActuacionStatus = () => {
+    setShowSelectActuacionEstado(true);
+  };
+
   // Register actions with parent component - ALWAYS execute before any conditional returns
   useEffect(() => {
     if (onRegisterActions) {
@@ -223,6 +230,7 @@ export function ExpedientView({
         onTramites: handleShowTramites,
         onNavegar: handleNavegar,
         onChangeStatus: () => setShowSelectEstado(true),
+        onChangeActuacionStatus: handleChangeActuacionStatus,
         onOficio: handleShowOficio,
         showRegresarRadicacionInterna: hayRadicacionInternaPendiente(),
         isActuacionView
@@ -849,5 +857,15 @@ export function ExpedientView({
       <SelectEstadoDialog open={showSelectEstado} onOpenChange={setShowSelectEstado} currentStatus={expedient.status as 'en_tramite' | 'paralizado' | 'archivado'} onSelect={handleStatusSelected} />
       
       <StatusChangeConfirmDialog open={showStatusConfirm} onOpenChange={setShowStatusConfirm} onConfirm={handleConfirmStatusChange} title="Confirmar cambio de estado" message={`¿Está seguro de que desea cambiar el expediente a ${getStatusLabel(pendingNewStatus)}?`} />
+      
+      {/* Diálogo de Cambio de Estado de Actuación */}
+      {selectedActuacion && (
+        <SelectActuacionEstadoDialog 
+          open={showSelectActuacionEstado} 
+          onOpenChange={setShowSelectActuacionEstado} 
+          currentStatus={selectedActuacion.status} 
+          onSelect={(newStatus) => handleStatusChange(selectedActuacion.id, newStatus)} 
+        />
+      )}
     </div>;
 }
