@@ -8,9 +8,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { format, isSameDay, isToday, isTomorrow, startOfDay, endOfDay, addDays, differenceInDays } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Plus, Calendar as CalendarIcon, Clock, MapPin, Users, FileText } from 'lucide-react';
+import { Plus, Calendar as CalendarIcon, Clock, MapPin, Users, FileText, Pencil, X } from 'lucide-react';
 import type { CitaAgenda, AgendaView } from '@/types/agenda';
 import { agendaStorage } from '@/utils/agendaStorage';
 import { useUser } from '@/contexts/UserContext';
@@ -40,6 +41,10 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
   });
   const [selectedCita, setSelectedCita] = useState<CitaAgenda | null>(null);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [editCita, setEditCita] = useState<CitaAgenda | null>(null);
+  const [isCitaProxima, setIsCitaProxima] = useState(false);
 
   useEffect(() => {
     loadCitas();
@@ -129,9 +134,49 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
     return colors[estado] || colors.programado;
   };
 
-  const handleViewDetails = (cita: CitaAgenda) => {
+  const handleViewDetails = (cita: CitaAgenda, isProxima: boolean = false) => {
     setSelectedCita(cita);
+    setIsCitaProxima(isProxima);
     setShowDetailsDialog(true);
+  };
+
+  const handleEditCita = () => {
+    setEditCita(selectedCita);
+    setShowDetailsDialog(false);
+    setShowEditDialog(true);
+  };
+
+  const handleSaveEdit = () => {
+    if (!editCita) return;
+
+    agendaStorage.updateCita(editCita.id, editCita);
+    loadCitas();
+    setShowEditDialog(false);
+    setEditCita(null);
+    
+    toast({
+      title: "Cita actualizada",
+      description: "Los cambios se han guardado correctamente"
+    });
+  };
+
+  const handleCancelCita = () => {
+    setShowDetailsDialog(false);
+    setShowCancelDialog(true);
+  };
+
+  const confirmCancelCita = () => {
+    if (!selectedCita) return;
+
+    agendaStorage.deleteCita(selectedCita.id);
+    loadCitas();
+    setShowCancelDialog(false);
+    setSelectedCita(null);
+    
+    toast({
+      title: "Cita cancelada",
+      description: "La cita ha sido eliminada de la agenda"
+    });
   };
 
   const getTipoIcon = (tipo: CitaAgenda['tipo']) => {
@@ -313,41 +358,35 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                   {paginatedCitasProximas.map((cita) => (
                   <div 
                     key={cita.id} 
-                    className="flex items-center justify-between p-4 bg-card border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
-                    onClick={() => cita.descripcion && handleViewDetails(cita)}
+                    className="flex items-center justify-between p-4 bg-card border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer h-[72px]"
+                    onClick={() => handleViewDetails(cita, true)}
                   >
-                    <div className="flex items-center gap-4 flex-1">
-                      <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-shrink-0">
                         {getTipoIcon(cita.tipo)}
                         <Badge className={getStatusColor(cita.estado)} variant="outline">
                           {cita.estado}
                         </Badge>
                       </div>
                       
-                      <div className="flex-1">
-                        <h3 className="font-medium">{cita.titulo}</h3>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium truncate">{cita.titulo}</h3>
                         <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-1 flex-shrink-0">
                             <Clock className="h-3 w-3" />
                             {format(cita.fechaInicio, 'dd/MM/yyyy HH:mm', { locale: es })}
                           </div>
                           {cita.ubicacion && (
-                            <div className="flex items-center gap-1">
-                              <MapPin className="h-3 w-3" />
-                              {cita.ubicacion}
-                            </div>
-                          )}
-                          {cita.participantes && cita.participantes.length > 0 && (
-                            <div className="flex items-center gap-1">
-                              <Users className="h-3 w-3" />
-                              {cita.participantes.length} participante{cita.participantes.length > 1 ? 's' : ''}
+                            <div className="flex items-center gap-1 truncate">
+                              <MapPin className="h-3 w-3 flex-shrink-0" />
+                              <span className="truncate">{cita.ubicacion}</span>
                             </div>
                           )}
                         </div>
                       </div>
                       
                       {cita.expedientId && (
-                        <div onClick={(e) => e.stopPropagation()}>
+                        <div onClick={(e) => e.stopPropagation()} className="flex-shrink-0">
                           <Button
                             variant="ghost"
                             size="sm"
@@ -428,19 +467,19 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                 {paginatedCitasPasadas.map((cita) => (
                 <div 
                   key={cita.id} 
-                  className="px-4 py-3 grid grid-cols-12 gap-4 items-center hover:bg-muted/30 transition-colors cursor-pointer"
-                  onClick={() => cita.descripcion && handleViewDetails(cita)}
+                  className="px-4 py-3 grid grid-cols-12 gap-4 items-center hover:bg-muted/30 transition-colors cursor-pointer h-[52px]"
+                  onClick={() => handleViewDetails(cita, false)}
                 >
-                  <div className="col-span-1">
+                  <div className="col-span-1 flex items-center">
                     {getTipoIcon(cita.tipo)}
                   </div>
-                  <div className="col-span-3">
-                    <p className="font-medium text-muted-foreground">{cita.titulo}</p>
+                  <div className="col-span-3 min-w-0">
+                    <p className="font-medium text-muted-foreground truncate">{cita.titulo}</p>
                   </div>
                   <div className="col-span-2 text-sm text-muted-foreground">
                     {format(cita.fechaInicio, 'dd/MM/yyyy HH:mm', { locale: es })}
                   </div>
-                  <div className="col-span-2 text-sm text-muted-foreground">
+                  <div className="col-span-2 text-sm text-muted-foreground truncate">
                     {cita.ubicacion || '-'}
                   </div>
                   <div className="col-span-2">
@@ -566,15 +605,130 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                 </div>
               )}
 
-              <div className="flex justify-end pt-4">
-                <Button onClick={() => setShowDetailsDialog(false)}>
-                  Cerrar
+              <div className="flex justify-end gap-2 pt-4">
+                {isCitaProxima && (
+                  <>
+                    <Button variant="outline" onClick={handleCancelCita}>
+                      <X className="h-4 w-4 mr-2" />
+                      Cancelar Cita
+                    </Button>
+                    <Button onClick={handleEditCita}>
+                      <Pencil className="h-4 w-4 mr-2" />
+                      Editar
+                    </Button>
+                  </>
+                )}
+                {!isCitaProxima && (
+                  <Button onClick={() => setShowDetailsDialog(false)}>
+                    Cerrar
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Diálogo de edición de cita */}
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Editar Cita</DialogTitle>
+          </DialogHeader>
+          {editCita && (
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="edit-titulo">Título *</Label>
+                <Input
+                  id="edit-titulo"
+                  value={editCita.titulo}
+                  onChange={(e) => setEditCita(prev => prev ? { ...prev, titulo: e.target.value } : null)}
+                  placeholder="Título de la cita"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="edit-tipo">Tipo</Label>
+                <Select 
+                  value={editCita.tipo} 
+                  onValueChange={(value) => setEditCita(prev => prev ? { ...prev, tipo: value as any } : null)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="audiencia">Audiencia</SelectItem>
+                    <SelectItem value="citacion">Citación</SelectItem>
+                    <SelectItem value="reunion">Reunión</SelectItem>
+                    <SelectItem value="vencimiento">Vencimiento</SelectItem>
+                    <SelectItem value="otro">Otro</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="edit-fecha">Fecha y Hora</Label>
+                <Input
+                  id="edit-fecha"
+                  type="datetime-local"
+                  value={format(editCita.fechaInicio, "yyyy-MM-dd'T'HH:mm")}
+                  onChange={(e) => setEditCita(prev => prev ? { 
+                    ...prev, 
+                    fechaInicio: new Date(e.target.value) 
+                  } : null)}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="edit-ubicacion">Ubicación</Label>
+                <Input
+                  id="edit-ubicacion"
+                  value={editCita.ubicacion || ''}
+                  onChange={(e) => setEditCita(prev => prev ? { ...prev, ubicacion: e.target.value } : null)}
+                  placeholder="Lugar de la cita"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="edit-descripcion">Descripción</Label>
+                <Textarea
+                  id="edit-descripcion"
+                  value={editCita.descripcion || ''}
+                  onChange={(e) => setEditCita(prev => prev ? { ...prev, descripcion: e.target.value } : null)}
+                  placeholder="Detalles adicionales"
+                />
+              </div>
+
+              <div className="flex justify-end space-x-2">
+                <Button variant="outline" onClick={() => setShowEditDialog(false)}>
+                  Cancelar
+                </Button>
+                <Button onClick={handleSaveEdit}>
+                  Guardar Cambios
                 </Button>
               </div>
             </div>
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Diálogo de confirmación para cancelar cita */}
+      <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Cancelar esta cita?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción eliminará la cita de forma permanente. No se puede deshacer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>No, mantener cita</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmCancelCita}>
+              Sí, cancelar cita
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
