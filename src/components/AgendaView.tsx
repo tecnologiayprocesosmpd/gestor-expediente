@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { format, isSameDay, isToday, isTomorrow, startOfDay, endOfDay, addDays, differenceInDays } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Plus, Calendar as CalendarIcon, Clock, MapPin, Users, FileText, Pencil, X } from 'lucide-react';
+import { Plus, Calendar as CalendarIcon, Clock, MapPin, Users, FileText, Pencil, X, Search } from 'lucide-react';
 import type { CitaAgenda, AgendaView } from '@/types/agenda';
 import { agendaStorage } from '@/utils/agendaStorage';
 import { useUser } from '@/contexts/UserContext';
@@ -45,6 +45,14 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [editCita, setEditCita] = useState<CitaAgenda | null>(null);
   const [isCitaProxima, setIsCitaProxima] = useState(false);
+  
+  // Filtros para Citas Próximas
+  const [searchProximas, setSearchProximas] = useState('');
+  const [fechaProximas, setFechaProximas] = useState('');
+  
+  // Filtros para Historial
+  const [searchHistorial, setSearchHistorial] = useState('');
+  const [fechaHistorial, setFechaHistorial] = useState('');
 
   useEffect(() => {
     loadCitas();
@@ -199,6 +207,30 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
 
   const { citasProximas, citasPasadas } = getFilteredCitas();
 
+  // Aplicar filtros a Citas Próximas
+  const filteredCitasProximas = citasProximas.filter(cita => {
+    const matchesSearch = searchProximas === '' || 
+      cita.titulo.toLowerCase().includes(searchProximas.toLowerCase()) ||
+      (cita.ubicacion && cita.ubicacion.toLowerCase().includes(searchProximas.toLowerCase()));
+    
+    const matchesFecha = fechaProximas === '' || 
+      format(new Date(cita.fechaInicio), 'yyyy-MM-dd') === fechaProximas;
+    
+    return matchesSearch && matchesFecha;
+  });
+
+  // Aplicar filtros a Historial
+  const filteredCitasPasadas = citasPasadas.filter(cita => {
+    const matchesSearch = searchHistorial === '' || 
+      cita.titulo.toLowerCase().includes(searchHistorial.toLowerCase()) ||
+      (cita.ubicacion && cita.ubicacion.toLowerCase().includes(searchHistorial.toLowerCase()));
+    
+    const matchesFecha = fechaHistorial === '' || 
+      format(new Date(cita.fechaInicio), 'yyyy-MM-dd') === fechaHistorial;
+    
+    return matchesSearch && matchesFecha;
+  });
+
   // Pagination for Citas Próximas
   const {
     currentPage: currentPageProximas,
@@ -209,7 +241,7 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
     previousPage: previousPageProximas,
     canGoNext: canGoNextProximas,
     canGoPrevious: canGoPreviousProximas,
-  } = usePagination({ items: citasProximas, itemsPerPage: 5 });
+  } = usePagination({ items: filteredCitasProximas, itemsPerPage: 5 });
 
   // Pagination for Historial
   const {
@@ -221,7 +253,7 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
     previousPage: previousPageHistorial,
     canGoNext: canGoNextHistorial,
     canGoPrevious: canGoPreviousHistorial,
-  } = usePagination({ items: citasPasadas, itemsPerPage: 5 });
+  } = usePagination({ items: filteredCitasPasadas, itemsPerPage: 5 });
 
   return (
     <div className="space-y-6">
@@ -357,13 +389,50 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
         {/* Citas Próximas */}
         <div className="flex-1 min-w-0 max-w-[800px]">
           <h2 className="text-2xl font-bold tracking-tight mb-4">Citas Próximas</h2>
+          
+          {/* Filtros para Citas Próximas */}
+          <div className="bg-background border rounded-lg shadow-sm mb-3 px-4 py-3">
+            <div className="flex flex-col gap-3">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  placeholder="Buscar por título o ubicación..."
+                  value={searchProximas}
+                  onChange={(e) => setSearchProximas(e.target.value)}
+                  className="pl-10 h-9"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Label className="text-sm text-muted-foreground whitespace-nowrap">Fecha:</Label>
+                <Input
+                  type="date"
+                  value={fechaProximas}
+                  onChange={(e) => setFechaProximas(e.target.value)}
+                  className="h-9 flex-1"
+                />
+                {fechaProximas && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setFechaProximas('')}
+                    className="h-9"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+          
           <div className="border rounded-lg bg-card h-[400px] overflow-y-auto overflow-x-hidden">
             <div className="p-3 space-y-2">
-              {citasProximas.length === 0 ? (
+              {filteredCitasProximas.length === 0 ? (
                 <div className="text-center py-8 bg-muted/30 rounded-lg">
                   <CalendarIcon className="mx-auto h-12 w-12 text-muted-foreground" />
                   <p className="mt-2 text-sm text-muted-foreground">
-                    No hay citas programadas
+                    {searchProximas || fechaProximas 
+                      ? 'No se encontraron citas que coincidan con los filtros' 
+                      : 'No hay citas programadas'}
                   </p>
                 </div>
               ) : (
@@ -458,6 +527,41 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
       {/* Historial de Citas Pasadas */}
       <div className="mt-6">
         <h2 className="text-2xl font-bold tracking-tight mb-4">Historial</h2>
+        
+        {/* Filtros para Historial */}
+        <div className="bg-background border rounded-lg shadow-sm mb-3 px-4 py-3">
+          <div className="flex flex-col gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar por título o ubicación..."
+                value={searchHistorial}
+                onChange={(e) => setSearchHistorial(e.target.value)}
+                className="pl-10 h-9"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Label className="text-sm text-muted-foreground whitespace-nowrap">Fecha:</Label>
+              <Input
+                type="date"
+                value={fechaHistorial}
+                onChange={(e) => setFechaHistorial(e.target.value)}
+                className="h-9 flex-1"
+              />
+              {fechaHistorial && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setFechaHistorial('')}
+                  className="h-9"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+        
         <div className="border rounded-lg overflow-hidden overflow-x-auto">
           <div className="bg-muted/50 px-4 py-2 grid grid-cols-12 gap-4 text-sm font-medium min-w-[900px]">
             <div className="col-span-1">Tipo</div>
@@ -467,11 +571,13 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
             <div className="col-span-2">Estado</div>
             <div className="col-span-2">Acciones</div>
           </div>
-          {citasPasadas.length === 0 ? (
+          {filteredCitasPasadas.length === 0 ? (
             <div className="text-center py-8 bg-muted/30">
               <CalendarIcon className="mx-auto h-12 w-12 text-muted-foreground" />
               <p className="mt-2 text-sm text-muted-foreground">
-                No hay citas completadas
+                {searchHistorial || fechaHistorial 
+                  ? 'No se encontraron citas que coincidan con los filtros' 
+                  : 'No hay citas completadas'}
               </p>
             </div>
           ) : (
