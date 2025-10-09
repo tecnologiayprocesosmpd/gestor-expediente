@@ -165,17 +165,23 @@ function AppContent() {
   const handleCreateExpedient = () => {
     setCurrentExpedientId(null);
     setCurrentView('editor');
+    // Reset scroll
+    window.scrollTo(0, 0);
   };
 
   const handleViewExpedient = (id: string, createActuacion: boolean = false) => {
     setCurrentExpedientId(id);
     setAutoCreateActuacion(createActuacion);
     setCurrentView('view');
+    // Reset scroll
+    window.scrollTo(0, 0);
   };
 
   const handleEditExpedient = (id: string) => {
     setCurrentExpedientId(id);
     setCurrentView('editor');
+    // Reset scroll
+    window.scrollTo(0, 0);
   };
 
   const handleSaveExpedient = (data: any) => {
@@ -225,6 +231,8 @@ function AppContent() {
         description: `Nuevo expediente ${newExpedient.number} creado exitosamente`,
       });
     }
+    // Reset scroll después de guardar
+    window.scrollTo(0, 0);
   };
 
   const handleStatusChange = (id: string, newStatus: 'en_tramite' | 'paralizado' | 'archivado') => {
@@ -249,6 +257,8 @@ function AppContent() {
       description: `El expediente ahora está ${statusLabels[newStatus]}`,
       duration: 2000,
     });
+    // Reset scroll después de cambiar estado
+    window.scrollTo(0, 0);
   };
 
   const handleSaveActuacion = (data: any) => {
@@ -311,11 +321,15 @@ function AppContent() {
     setCurrentExpedientId(null);
     setAutoCreateActuacion(false);
     setCurrentView('expedientes');
+    // Reset scroll al volver
+    window.scrollTo(0, 0);
   };
 
   // Dashboard button handlers
   const handleNavigateToExpedients = () => {
     setCurrentView('expedientes');
+    // Reset scroll
+    window.scrollTo(0, 0);
   };
 
   const handleNavigateToActuaciones = () => {
@@ -334,6 +348,8 @@ function AppContent() {
 
   const handleNavigateToOficios = () => {
     setCurrentView('oficios');
+    // Reset scroll
+    window.scrollTo(0, 0);
   };
 
   const handleTramites = () => {

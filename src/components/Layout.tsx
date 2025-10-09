@@ -55,9 +55,12 @@ export function Layout({
 
   // Reset scroll to top when view changes
   useEffect(() => {
+    // Reset scroll del contenedor principal
     if (mainContentRef.current) {
       mainContentRef.current.scrollTop = 0;
     }
+    // Reset scroll de la ventana
+    window.scrollTo(0, 0);
   }, [currentView]);
 
   const handleLogout = () => {
