@@ -290,11 +290,10 @@ export function AppSidebar({
       style={{ width: '100px' }}
     >
       <div className="flex flex-col">
-        {/* Navigation */}
         <div className="pt-6 flex flex-col">
           <div className="px-2 mb-4">
             <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider text-center">
-              Navegación
+              Acciones
             </h3>
           </div>
           <nav className="space-y-3 px-2">
@@ -316,14 +315,8 @@ export function AppSidebar({
             ))}
           </nav>
 
-          {/* Quick Actions */}
           {canCreateExpedients && (
             <div className="mt-6 pb-6">
-              <div className="px-2 mb-4">
-                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider text-center">
-                  Acciones
-                </h3>
-              </div>
               <div className="px-2">
                 <button
                   onClick={onCreateExpedient}
