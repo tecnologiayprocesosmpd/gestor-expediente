@@ -734,7 +734,7 @@ export function ExpedientView({
       <div className="bg-card rounded-lg border shadow-sm">
         <div className={`p-6 border-l-4 ${statusColors.border}`}>
           {/* Primera fila: Botón volver + Título + Estado */}
-          <div className="flex items-center justify-between gap-4 mb-3">
+          <div className="flex items-center justify-between gap-4 mb-6">
             <div className="flex items-center gap-4 min-w-0 flex-1">
               <Button variant="outline" onClick={onBack} className="h-auto py-2 px-4 shrink-0">
                 <ArrowLeft className="w-4 h-4 mr-2" />
@@ -756,7 +756,7 @@ export function ExpedientView({
           
           {/* Segunda fila: Trámite */}
           {tramites.length > 0 && !tramites.every(t => t.finalizado) && (
-            <div className="ml-[152px] mb-3">
+            <div className="mb-4">
               <div className="bg-primary/10 rounded-md px-4 py-2 flex items-center space-x-2 shadow-sm border border-primary/20 max-w-[500px]">
                 <FileText className="w-5 h-5 text-primary shrink-0" />
                 <span className="text-sm font-semibold text-primary truncate" title={`Trámite: ${tramites.find(t => !t.finalizado)?.referencia || 'En Trámite'}`}>
@@ -767,7 +767,7 @@ export function ExpedientView({
           )}
           
           {/* Tercera fila: Información adicional */}
-          <div className={`flex items-center space-x-4 text-sm text-muted-foreground ${tramites.length > 0 && !tramites.every(t => t.finalizado) ? '' : 'ml-[152px]'}`}>
+          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
             {expedient.oficina && <span className="flex items-center space-x-1">
                 <Building2 className="w-4 h-4" />
                 <span>Oficina: {expedient.oficina}</span>
