@@ -71,7 +71,6 @@ import { IndentControls } from "@/components/ui/indent-controls";
 import { MarginControls } from "@/components/ui/margin-controls";
 import { SearchReplaceDialog } from "@/components/ui/search-replace-dialog";
 import { PageSetupDialog } from "@/components/ui/page-setup-dialog";
-import { PrintPreviewDialog } from "@/components/ui/print-preview-dialog";
 import { HeaderFooterDialog } from "@/components/ui/header-footer-dialog";
 import type { Actuacion } from "@/types/actuacion";
 
@@ -108,13 +107,6 @@ export function ActuacionEditor({
   // Handle margins change
   const handleMarginsChange = (newMargins: { top: number; right: number; bottom: number; left: number }) => {
     setMargins(newMargins);
-    if (editor) {
-      // Update editor attributes with new margins
-      const editorElement = document.querySelector('.ProseMirror') as HTMLElement;
-      if (editorElement) {
-        editorElement.style.padding = `${newMargins.top}px ${newMargins.right}px ${newMargins.bottom}px ${newMargins.left}px`;
-      }
-    }
   };
 
   const handleSave = async () => {
@@ -207,8 +199,7 @@ export function ActuacionEditor({
     content: propActuacion?.content || '<p></p>',
     editorProps: {
       attributes: {
-        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[400px] p-6 bg-white',
-        style: `padding: ${margins.top}px ${margins.right}px ${margins.bottom}px ${margins.left}px; line-height: 1.6;`,
+        class: 'editor-content focus:outline-none min-h-[400px] bg-white',
       },
       handleKeyDown: (view, event) => {
         if (event.ctrlKey || event.metaKey) {
@@ -608,20 +599,17 @@ export function ActuacionEditor({
                   onHeaderChange={setHeaderText}
                   onFooterChange={setFooterText}
                 />
-                <PrintPreviewDialog
-                  editor={editor}
-                  pageSize={pageSize}
-                  orientation={orientation}
-                  margins={margins}
-                  headerText={headerText}
-                  footerText={footerText}
-                />
               </div>
             </div>
           )}
 
           {/* Editor Content */}
-          <div className="border rounded-lg overflow-hidden bg-background">
+          <div 
+            className="border rounded-lg overflow-hidden bg-white"
+            style={{
+              padding: `${margins.top}px ${margins.right}px ${margins.bottom}px ${margins.left}px`
+            }}
+          >
             <EditorContent 
               editor={editor} 
               className={canEdit ? '' : 'pointer-events-none opacity-75'}

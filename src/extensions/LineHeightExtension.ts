@@ -36,14 +36,17 @@ const LineHeightExtension = Extension.create<LineHeightOptions>({
         types: this.options.types,
         attributes: {
           lineHeight: {
-            default: null,
-            parseHTML: element => element.style.lineHeight || null,
+            default: '1.5',
+            parseHTML: element => {
+              const lineHeight = element.style.lineHeight;
+              return lineHeight || '1.5';
+            },
             renderHTML: attributes => {
-              if (!attributes.lineHeight) {
+              if (!attributes.lineHeight || attributes.lineHeight === '1.5') {
                 return {};
               }
               return {
-                style: `line-height: ${attributes.lineHeight}`,
+                style: `line-height: ${attributes.lineHeight} !important;`,
               };
             },
           },
@@ -56,19 +59,47 @@ const LineHeightExtension = Extension.create<LineHeightOptions>({
     return {
       setLineHeight:
         (lineHeight: string) =>
-        ({ chain }) => {
-          return chain()
-            .updateAttributes('paragraph', { lineHeight })
-            .updateAttributes('heading', { lineHeight })
-            .run();
+        ({ commands, tr, state }) => {
+          const { from, to } = state.selection;
+          let applied = false;
+
+          state.doc.nodesBetween(from, to, (node, pos) => {
+            if (this.options.types.includes(node.type.name)) {
+              tr.setNodeMarkup(pos, undefined, {
+                ...node.attrs,
+                lineHeight,
+              });
+              applied = true;
+            }
+          });
+
+          if (applied) {
+            commands.focus();
+            return true;
+          }
+          return false;
         },
       unsetLineHeight:
         () =>
-        ({ chain }) => {
-          return chain()
-            .updateAttributes('paragraph', { lineHeight: null })
-            .updateAttributes('heading', { lineHeight: null })
-            .run();
+        ({ commands, tr, state }) => {
+          const { from, to } = state.selection;
+          let applied = false;
+
+          state.doc.nodesBetween(from, to, (node, pos) => {
+            if (this.options.types.includes(node.type.name)) {
+              tr.setNodeMarkup(pos, undefined, {
+                ...node.attrs,
+                lineHeight: '1.5',
+              });
+              applied = true;
+            }
+          });
+
+          if (applied) {
+            commands.focus();
+            return true;
+          }
+          return false;
         },
     };
   },

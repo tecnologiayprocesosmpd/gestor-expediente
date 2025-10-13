@@ -141,8 +141,92 @@ All colors MUST be HSL.
   
   /* Editor styles */
   .ProseMirror {
-    padding: 1rem;
     outline: none;
+    min-height: 400px;
+  }
+
+  .editor-content .ProseMirror {
+    padding: 0;
+  }
+
+  /* Estilos para listas numeradas y con viñetas */
+  .ProseMirror ul,
+  .ProseMirror ol {
+    padding-left: 1.5rem;
+    margin: 0.5rem 0;
+  }
+
+  .ProseMirror ul {
+    list-style-type: disc;
+  }
+
+  .ProseMirror ol {
+    list-style-type: decimal;
+  }
+
+  .ProseMirror li {
+    margin: 0.25rem 0;
+  }
+
+  .ProseMirror li p {
+    margin: 0;
+  }
+
+  /* Estilos para párrafos y espaciado */
+  .ProseMirror p {
+    margin: 0.5rem 0;
+  }
+
+  .ProseMirror h1, 
+  .ProseMirror h2, 
+  .ProseMirror h3, 
+  .ProseMirror h4, 
+  .ProseMirror h5, 
+  .ProseMirror h6 {
+    margin: 1rem 0 0.5rem 0;
+    font-weight: 600;
+  }
+
+  .ProseMirror h1 {
+    font-size: 2rem;
+    line-height: 2.5rem;
+  }
+
+  .ProseMirror h2 {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  .ProseMirror h3 {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+
+  /* Estilos para alineación de texto */
+  .ProseMirror [style*="text-align: left"] {
+    text-align: left;
+  }
+
+  .ProseMirror [style*="text-align: center"] {
+    text-align: center;
+  }
+
+  .ProseMirror [style*="text-align: right"] {
+    text-align: right;
+  }
+
+  .ProseMirror [style*="text-align: justify"] {
+    text-align: justify;
+  }
+
+  /* Estilos para interlineado */
+  .ProseMirror [style*="line-height"] {
+    line-height: inherit;
+  }
+
+  /* Estilos para sangrías */
+  .ProseMirror [style*="margin-left"] {
+    margin-left: inherit;
   }
 
   .ProseMirror img {

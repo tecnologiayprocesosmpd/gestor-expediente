@@ -60,7 +60,7 @@ const IndentExtension = Extension.create<IndentOptions>({
                 return {};
               }
               return {
-                style: `margin-left: ${attributes.indent * 30}px`,
+                style: `margin-left: ${attributes.indent * 30}px !important;`,
               };
             },
           },
@@ -83,32 +83,46 @@ const IndentExtension = Extension.create<IndentOptions>({
       
       increaseIndent:
         () =>
-        ({ editor, chain }) => {
-          const { selection } = editor.state;
-          const { $from } = selection;
-          const node = $from.node();
-          const currentIndent = node.attrs.indent || 0;
-          const newIndent = Math.min(currentIndent + 1, 8);
-          
-          return chain()
-            .updateAttributes('paragraph', { indent: newIndent })
-            .updateAttributes('heading', { indent: newIndent })
-            .run();
+        ({ tr, state, dispatch }) => {
+          const { from, to } = state.selection;
+          let applied = false;
+
+          state.doc.nodesBetween(from, to, (node, pos) => {
+            if (['paragraph', 'heading'].includes(node.type.name)) {
+              const currentIndent = node.attrs.indent || 0;
+              const newIndent = Math.min(currentIndent + 1, 8);
+              tr.setNodeMarkup(pos, undefined, {
+                ...node.attrs,
+                indent: newIndent,
+              });
+              applied = true;
+            }
+          });
+
+          if (dispatch && applied) dispatch(tr);
+          return applied;
         },
         
       decreaseIndent:
         () =>
-        ({ editor, chain }) => {
-          const { selection } = editor.state;
-          const { $from } = selection;
-          const node = $from.node();
-          const currentIndent = node.attrs.indent || 0;
-          const newIndent = Math.max(currentIndent - 1, 0);
-          
-          return chain()
-            .updateAttributes('paragraph', { indent: newIndent })
-            .updateAttributes('heading', { indent: newIndent })
-            .run();
+        ({ tr, state, dispatch }) => {
+          const { from, to } = state.selection;
+          let applied = false;
+
+          state.doc.nodesBetween(from, to, (node, pos) => {
+            if (['paragraph', 'heading'].includes(node.type.name)) {
+              const currentIndent = node.attrs.indent || 0;
+              const newIndent = Math.max(currentIndent - 1, 0);
+              tr.setNodeMarkup(pos, undefined, {
+                ...node.attrs,
+                indent: newIndent,
+              });
+              applied = true;
+            }
+          });
+
+          if (dispatch && applied) dispatch(tr);
+          return applied;
         },
         
       unsetIndent:
