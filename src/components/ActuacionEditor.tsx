@@ -19,6 +19,7 @@ import { CharacterCount } from '@tiptap/extension-character-count';
 import { Placeholder } from '@tiptap/extension-placeholder';
 import { LineHeightExtension } from '@/extensions/LineHeightExtension';
 import { IndentExtension } from '@/extensions/IndentExtension';
+import { PageBreak } from '@/extensions/PageBreakExtension';
 import { useState, useEffect, useMemo } from 'react';
 import { useUser } from "@/contexts/UserContext";
 
@@ -51,7 +52,8 @@ import {
   Undo,
   Redo,
   Clock,
-  CheckCircle
+  CheckCircle,
+  FileInput
 } from "lucide-react";
 
 // Import UI components
@@ -67,6 +69,10 @@ import { ImageInsert } from "@/components/ui/image-insert";
 import { ImageEdit } from "@/components/ui/image-edit";
 import { IndentControls } from "@/components/ui/indent-controls";
 import { MarginControls } from "@/components/ui/margin-controls";
+import { SearchReplaceDialog } from "@/components/ui/search-replace-dialog";
+import { PageSetupDialog } from "@/components/ui/page-setup-dialog";
+import { PrintPreviewDialog } from "@/components/ui/print-preview-dialog";
+import { HeaderFooterDialog } from "@/components/ui/header-footer-dialog";
 import type { Actuacion } from "@/types/actuacion";
 
 interface ActuacionEditorProps {
@@ -91,6 +97,10 @@ export function ActuacionEditor({
   const [status, setStatus] = useState<Actuacion['status']>(propActuacion?.status || 'borrador');
   const [margins, setMargins] = useState({ top: 20, right: 20, bottom: 20, left: 20 });
   const [content, setContent] = useState(propActuacion?.content || '');
+  const [pageSize, setPageSize] = useState('a4');
+  const [orientation, setOrientation] = useState('portrait');
+  const [headerText, setHeaderText] = useState('');
+  const [footerText, setFooterText] = useState('');
   
   const { user } = useUser();
   const canEdit = status !== 'firmado';
@@ -188,6 +198,7 @@ export function ActuacionEditor({
       IndentExtension.configure({
         types: ['paragraph', 'heading'],
       }),
+      PageBreak,
       CharacterCount,
       Placeholder.configure({
         placeholder: 'Redacte el contenido de la actuación aquí...',
@@ -562,9 +573,48 @@ export function ActuacionEditor({
                 <TableControls editor={editor} />
                 <ImageInsert editor={editor} />
                 <ImageEdit editor={editor} />
+                
+                <Separator orientation="vertical" className="h-6 mx-1" />
+                
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => editor.chain().focus().setPageBreak().run()}
+                  title="Insertar salto de página"
+                  className="h-8 px-3 hover:bg-muted"
+                >
+                  <FileInput className="w-4 h-4 mr-1" />
+                  <span className="hidden sm:inline">Salto</span>
+                </Button>
+                
                 <MarginControls 
                   onMarginsChange={handleMarginsChange}
                   currentMargins={margins}
+                />
+              </div>
+
+              {/* Fourth Row - Document Tools */}
+              <div className="flex items-center gap-1 flex-wrap">
+                <SearchReplaceDialog editor={editor} />
+                <PageSetupDialog
+                  pageSize={pageSize}
+                  orientation={orientation}
+                  onPageSizeChange={setPageSize}
+                  onOrientationChange={setOrientation}
+                />
+                <HeaderFooterDialog
+                  headerText={headerText}
+                  footerText={footerText}
+                  onHeaderChange={setHeaderText}
+                  onFooterChange={setFooterText}
+                />
+                <PrintPreviewDialog
+                  editor={editor}
+                  pageSize={pageSize}
+                  orientation={orientation}
+                  margins={margins}
+                  headerText={headerText}
+                  footerText={footerText}
                 />
               </div>
             </div>
