@@ -119,7 +119,7 @@ export function AuthenticationFlow() {
                   opacity: showSuperscript ? 1 : 0,
                   transform: showSuperscript ? 'translateY(0) scale(1)' : 'translateY(0.5em) scale(0.5)',
                 }}
-                className="absolute text-2xl -top-2 -right-1"
+                className="absolute text-2xl -top-2 right-1"
               >
                 ²
               </span>
