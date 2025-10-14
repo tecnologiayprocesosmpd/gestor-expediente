@@ -42,7 +42,6 @@ export function AuthenticationFlow() {
   const {
     toast
   } = useToast();
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSuperscript(true);
@@ -103,29 +102,23 @@ export function AuthenticationFlow() {
           <h1 className="text-3xl font-bold text-foreground mb-2 mt-[-60px]">
             <span className="inline-block relative">
               SIE
-              <span 
-                style={{
-                  transition: 'all 2s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                  opacity: showSuperscript ? 0 : 1,
-                  transform: showSuperscript ? 'translateX(-1em)' : 'translateX(0)',
-                }}
-                className="inline-block"
-              >
+              <span style={{
+              transition: 'all 2s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              opacity: showSuperscript ? 0 : 1,
+              transform: showSuperscript ? 'translateX(-1em)' : 'translateX(0)'
+            }} className="inline-block">
                 E
               </span>
-              <span 
-                style={{
-                  transition: 'all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                  opacity: showSuperscript ? 1 : 0,
-                  transform: showSuperscript ? 'translateY(0) scale(1)' : 'translateY(0.5em) scale(0.5)',
-                }}
-                className="absolute text-2xl -top-2 right-1"
-              >
+              <span style={{
+              transition: 'all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              opacity: showSuperscript ? 1 : 0,
+              transform: showSuperscript ? 'translateY(0) scale(1)' : 'translateY(0.5em) scale(0.5)'
+            }} className="absolute text-2xl -top-2 right-1">
                 ²
               </span>
             </span>
           </h1>
-          <p className="text-sm text-muted-foreground mt-2">
+          <p className="text-muted-foreground mt-2 text-xl">
             Sistema Integral de Empleados y Expedientes
           </p>
         </div>
