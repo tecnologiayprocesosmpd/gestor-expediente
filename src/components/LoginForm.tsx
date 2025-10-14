@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,8 +12,16 @@ export function LoginForm() {
   const [credentials, setCredentials] = useState({ username: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [showSuperscript, setShowSuperscript] = useState(false);
   const { login, isLoading } = useSecurity();
   const { toast } = useToast();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSuperscript(true);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +60,18 @@ export function LoginForm() {
             />
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            MPD Sistema
+            <span className="inline-block">
+              SIE
+              <span 
+                className={`inline-block transition-all duration-500 ${
+                  showSuperscript 
+                    ? 'text-xl align-super -ml-0.5 opacity-100 translate-y-0' 
+                    : 'text-3xl align-baseline opacity-100 translate-y-0'
+                }`}
+              >
+                {showSuperscript ? '²' : 'E'}
+              </span>
+            </span>
           </h1>
         </div>
 
