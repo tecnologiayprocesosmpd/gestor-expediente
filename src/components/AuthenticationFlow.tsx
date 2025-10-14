@@ -101,29 +101,27 @@ export function AuthenticationFlow() {
             <img src="/assets/logo-mpd.png" alt="Logo MPD" className="w-full h-full object-contain" />
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-2 mt-[-60px]">
-            <span className="inline-block">
+            <span className="inline-block relative">
               SIE
-              <span className="relative inline-block w-[1em]">
-                <span 
-                  style={{
-                    transition: 'all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                    opacity: showSuperscript ? 0 : 1,
-                    transform: showSuperscript ? 'scale(0.8) translateY(-0.3em)' : 'scale(1) translateY(0)',
-                  }}
-                  className="absolute left-0 top-0 text-3xl"
-                >
-                  E
-                </span>
-                <span 
-                  style={{
-                    transition: 'all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                    opacity: showSuperscript ? 1 : 0,
-                    transform: showSuperscript ? 'scale(1) translateY(0)' : 'scale(1.2) translateY(0.3em)',
-                  }}
-                  className="absolute left-0 top-0 text-2xl -translate-y-[0.4em]"
-                >
-                  ²
-                </span>
+              <span 
+                style={{
+                  transition: 'all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                  opacity: showSuperscript ? 0 : 1,
+                  transform: showSuperscript ? 'translateX(-1em)' : 'translateX(0)',
+                }}
+                className="inline-block"
+              >
+                E
+              </span>
+              <span 
+                style={{
+                  transition: 'all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                  opacity: showSuperscript ? 1 : 0,
+                  transform: showSuperscript ? 'translateY(0) scale(1)' : 'translateY(0.5em) scale(0.5)',
+                }}
+                className="absolute text-2xl -top-2 -right-3"
+              >
+                ²
               </span>
             </span>
           </h1>
