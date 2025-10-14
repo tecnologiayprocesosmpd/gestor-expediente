@@ -205,6 +205,80 @@ All colors MUST be HSL.
     margin-bottom: 0.25rem;
   }
 
+  /* Estilos para imágenes */
+  .ProseMirror img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+  }
+
+  .ProseMirror img:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .ProseMirror img.ProseMirror-selectednode {
+    outline: 3px solid hsl(var(--primary));
+    outline-offset: 2px;
+  }
+
+  /* Imágenes flotantes con text wrap */
+  .ProseMirror img[style*="float: left"] {
+    float: left;
+    margin-right: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .ProseMirror img[style*="float: right"] {
+    float: right;
+    margin-left: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Imágenes centradas */
+  .ProseMirror img[style*="margin-left: auto"] {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Container para imágenes con resize handles */
+  .image-resize-container {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+  }
+
+  .image-resize-container img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .resize-handle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: hsl(var(--primary));
+    border: 2px solid white;
+    border-radius: 50%;
+    cursor: nwse-resize;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 10;
+  }
+
+  .image-resize-container:hover .resize-handle {
+    opacity: 1;
+  }
+
+  .resize-handle.nw { top: -5px; left: -5px; cursor: nw-resize; }
+  .resize-handle.ne { top: -5px; right: -5px; cursor: ne-resize; }
+  .resize-handle.sw { bottom: -5px; left: -5px; cursor: sw-resize; }
+  .resize-handle.se { bottom: -5px; right: -5px; cursor: se-resize; }
+
   /* Estilos para párrafos y espaciado */
   .ProseMirror p {
     margin: 0.5rem 0;

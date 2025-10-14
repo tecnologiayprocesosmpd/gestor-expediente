@@ -2,7 +2,7 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
-import Image from '@tiptap/extension-image';
+import { ImageExtension } from '@/extensions/ImageExtension';
 import FontFamily from '@tiptap/extension-font-family';
 import { TextStyle } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
@@ -194,12 +194,11 @@ export function ActuacionEditor({
           class: 'border border-gray-300 px-3 py-2',
         },
       }),
-      Image.configure({
-        inline: true,
+      ImageExtension.configure({
+        inline: false,
         allowBase64: true,
         HTMLAttributes: {
-          class: 'max-w-full h-auto rounded-lg shadow-sm cursor-pointer hover:shadow-lg transition-all resizable-image',
-          style: 'resize: both; overflow: hidden; min-width: 50px; min-height: 50px;'
+          class: 'rounded-lg shadow-sm',
         },
       }),
       FontFamily.configure({
@@ -221,6 +220,62 @@ export function ActuacionEditor({
     editorProps: {
       attributes: {
         class: 'editor-content focus:outline-none min-h-[400px] bg-white',
+      },
+      handlePaste: (view, event) => {
+        const items = Array.from(event.clipboardData?.items || []);
+        const imageItems = items.filter(item => item.type.indexOf('image') !== -1);
+
+        if (imageItems.length > 0) {
+          event.preventDefault();
+          imageItems.forEach(item => {
+            const file = item.getAsFile();
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                const result = e.target?.result as string;
+                editor?.chain().focus().setAdvancedImage({ 
+                  src: result,
+                  alt: file.name,
+                }).run();
+              };
+              reader.readAsDataURL(file);
+            }
+          });
+          return true;
+        }
+        return false;
+      },
+      handleDrop: (view, event, slice, moved) => {
+        if (!moved && event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files.length > 0) {
+          event.preventDefault();
+          const files = Array.from(event.dataTransfer.files);
+          const imageFiles = files.filter(file => file.type.startsWith('image/'));
+
+          if (imageFiles.length > 0) {
+            const { schema } = view.state;
+            const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY });
+
+            imageFiles.forEach((file, index) => {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                const result = e.target?.result as string;
+                const node = schema.nodes.image.create({
+                  src: result,
+                  alt: file.name,
+                });
+
+                const transaction = view.state.tr.insert(
+                  coordinates ? coordinates.pos + index : view.state.selection.anchor,
+                  node
+                );
+                view.dispatch(transaction);
+              };
+              reader.readAsDataURL(file);
+            });
+            return true;
+          }
+        }
+        return false;
       },
       handleKeyDown: (view, event) => {
         // Handle Tab key for list indentation

@@ -18,6 +18,7 @@ declare module '@tiptap/core' {
         title?: string;
         width?: string;
         height?: string;
+        style?: string;
       }) => ReturnType;
     };
   }
@@ -57,7 +58,7 @@ export const ImageExtension = Node.create<ImageOptions>({
       },
       width: {
         default: null,
-        parseHTML: element => element.getAttribute('width'),
+        parseHTML: element => element.getAttribute('width') || element.style.width,
         renderHTML: attributes => {
           if (!attributes.width) {
             return {};
@@ -69,7 +70,7 @@ export const ImageExtension = Node.create<ImageOptions>({
       },
       height: {
         default: null,
-        parseHTML: element => element.getAttribute('height'),
+        parseHTML: element => element.getAttribute('height') || element.style.height,
         renderHTML: attributes => {
           if (!attributes.height) {
             return {};
@@ -90,6 +91,16 @@ export const ImageExtension = Node.create<ImageOptions>({
             style: attributes.style,
           };
         },
+      },
+      float: {
+        default: null,
+        parseHTML: element => {
+          const style = element.getAttribute('style') || '';
+          if (style.includes('float: left')) return 'left';
+          if (style.includes('float: right')) return 'right';
+          return null;
+        },
+        renderHTML: () => ({}),
       },
     };
   },

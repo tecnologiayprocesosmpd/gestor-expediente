@@ -9,7 +9,8 @@ import {
   DialogTitle,
   DialogTrigger 
 } from "@/components/ui/dialog";
-import { Image, Upload } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Image, Upload, AlignLeft, AlignCenter, AlignRight } from "lucide-react";
 
 interface ImageInsertProps {
   editor: any;
@@ -18,13 +19,33 @@ interface ImageInsertProps {
 export function ImageInsert({ editor }: ImageInsertProps) {
   const [imageUrl, setImageUrl] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const [alignment, setAlignment] = useState<'left' | 'center' | 'right' | 'inline'>('center');
+  const [width, setWidth] = useState('400');
 
   const insertImage = () => {
     if (imageUrl) {
-      editor.chain().focus().setImage({ src: imageUrl }).run();
+      const style = getImageStyle();
+      editor.chain().focus().setAdvancedImage({ 
+        src: imageUrl,
+        style 
+      }).run();
       setImageUrl('');
       setIsOpen(false);
     }
+  };
+
+  const getImageStyle = () => {
+    let style = `width: ${width}px; height: auto;`;
+    
+    if (alignment === 'left') {
+      style += ' float: left; margin-right: 16px; margin-bottom: 8px;';
+    } else if (alignment === 'right') {
+      style += ' float: right; margin-left: 16px; margin-bottom: 8px;';
+    } else if (alignment === 'center') {
+      style += ' display: block; margin-left: auto; margin-right: auto;';
+    }
+    
+    return style;
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,7 +54,12 @@ export function ImageInsert({ editor }: ImageInsertProps) {
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result as string;
-        editor.chain().focus().setImage({ src: result }).run();
+        const style = getImageStyle();
+        editor.chain().focus().setAdvancedImage({ 
+          src: result,
+          alt: file.name,
+          style 
+        }).run();
         setIsOpen(false);
       };
       reader.readAsDataURL(file);
@@ -60,9 +86,6 @@ export function ImageInsert({ editor }: ImageInsertProps) {
               onChange={(e) => setImageUrl(e.target.value)}
               placeholder="https://ejemplo.com/imagen.jpg"
             />
-            <Button onClick={insertImage} className="w-full">
-              Insertar desde URL
-            </Button>
           </div>
           
           <div className="text-center text-muted-foreground">
@@ -89,6 +112,53 @@ export function ImageInsert({ editor }: ImageInsertProps) {
               </label>
             </div>
           </div>
+
+          <div className="space-y-3 pt-2 border-t">
+            <div className="space-y-2">
+              <Label>Alineación</Label>
+              <RadioGroup value={alignment} onValueChange={(value: any) => setAlignment(value)}>
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="left" id="align-left" />
+                    <Label htmlFor="align-left" className="flex items-center gap-1 cursor-pointer">
+                      <AlignLeft className="w-4 h-4" />
+                      Izquierda
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="center" id="align-center" />
+                    <Label htmlFor="align-center" className="flex items-center gap-1 cursor-pointer">
+                      <AlignCenter className="w-4 h-4" />
+                      Centro
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="right" id="align-right" />
+                    <Label htmlFor="align-right" className="flex items-center gap-1 cursor-pointer">
+                      <AlignRight className="w-4 h-4" />
+                      Derecha
+                    </Label>
+                  </div>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="image-width">Ancho (px)</Label>
+              <Input
+                id="image-width"
+                type="number"
+                value={width}
+                onChange={(e) => setWidth(e.target.value)}
+                min="50"
+                max="1200"
+              />
+            </div>
+          </div>
+
+          <Button onClick={insertImage} className="w-full" disabled={!imageUrl}>
+            Insertar Imagen
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
