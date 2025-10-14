@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,6 +31,7 @@ export function AuthenticationFlow() {
   const [error, setError] = useState('');
   const [isCredentialsValidated, setIsCredentialsValidated] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState<string>('');
+  const [showSuperscript, setShowSuperscript] = useState(false);
   const {
     login,
     isLoading
@@ -41,6 +42,13 @@ export function AuthenticationFlow() {
   const {
     toast
   } = useToast();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSuperscript(true);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
   const handleCredentialsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -93,7 +101,18 @@ export function AuthenticationFlow() {
             <img src="/assets/logo-mpd.png" alt="Logo MPD" className="w-full h-full object-contain" />
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-2 mt-[-60px]">
-            MPD Sistema
+            <span className="inline-block">
+              SIE
+              <span 
+                className={`inline-block transition-all duration-500 ${
+                  showSuperscript 
+                    ? 'text-xl align-super -ml-0.5 opacity-100 translate-y-0' 
+                    : 'text-3xl align-baseline opacity-100 translate-y-0'
+                }`}
+              >
+                {showSuperscript ? '²' : 'E'}
+              </span>
+            </span>
           </h1>
         </div>
 
