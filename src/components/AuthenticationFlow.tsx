@@ -46,7 +46,7 @@ export function AuthenticationFlow() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSuperscript(true);
-    }, 800);
+    }, 1800);
     return () => clearTimeout(timer);
   }, []);
   const handleCredentialsSubmit = async (e: React.FormEvent) => {
@@ -104,10 +104,13 @@ export function AuthenticationFlow() {
             <span className="inline-block">
               SIE
               <span 
-                className={`inline-block transition-all duration-500 ${
+                style={{
+                  transition: 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                }}
+                className={`inline-block ${
                   showSuperscript 
-                    ? 'text-xl align-super -ml-0.5 opacity-100 translate-y-0' 
-                    : 'text-3xl align-baseline opacity-100 translate-y-0'
+                    ? 'text-xl align-super -ml-0.5 scale-90' 
+                    : 'text-3xl align-baseline scale-100'
                 }`}
               >
                 {showSuperscript ? '²' : 'E'}
