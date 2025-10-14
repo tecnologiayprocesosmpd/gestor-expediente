@@ -164,12 +164,45 @@ All colors MUST be HSL.
     list-style-type: decimal;
   }
 
+  /* Estilos para diferentes niveles de anidamiento */
+  .ProseMirror ul ul {
+    list-style-type: circle;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .ProseMirror ul ul ul {
+    list-style-type: square;
+  }
+
+  .ProseMirror ol ol {
+    list-style-type: lower-alpha;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .ProseMirror ol ol ol {
+    list-style-type: lower-roman;
+  }
+
+  .ProseMirror ol ol ol ol {
+    list-style-type: decimal;
+  }
+
   .ProseMirror li {
     margin: 0.25rem 0;
+    padding-left: 0.25rem;
   }
 
   .ProseMirror li p {
     margin: 0;
+  }
+
+  /* Estilos para listas dentro de listas */
+  .ProseMirror li ul,
+  .ProseMirror li ol {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
   }
 
   /* Estilos para párrafos y espaciado */

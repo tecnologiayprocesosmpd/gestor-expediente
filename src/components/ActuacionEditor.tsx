@@ -17,6 +17,7 @@ import { TableHeader } from '@tiptap/extension-table-header';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { CharacterCount } from '@tiptap/extension-character-count';
 import { Placeholder } from '@tiptap/extension-placeholder';
+import { ListKeymap } from '@tiptap/extension-list-keymap';
 import { LineHeightExtension } from '@/extensions/LineHeightExtension';
 import { IndentExtension } from '@/extensions/IndentExtension';
 import { PageBreak } from '@/extensions/PageBreakExtension';
@@ -137,7 +138,27 @@ export function ActuacionEditor({
       StarterKit.configure({
         strike: false,
         link: false,
+        orderedList: {
+          HTMLAttributes: {
+            class: 'list-decimal ml-6 my-2',
+          },
+          keepMarks: true,
+          keepAttributes: true,
+        },
+        bulletList: {
+          HTMLAttributes: {
+            class: 'list-disc ml-6 my-2',
+          },
+          keepMarks: true,
+          keepAttributes: true,
+        },
+        listItem: {
+          HTMLAttributes: {
+            class: 'ml-2 my-1',
+          },
+        },
       }),
+      ListKeymap,
       TextStyle,
       Color,
       Highlight.configure({
@@ -188,7 +209,7 @@ export function ActuacionEditor({
         types: ['paragraph', 'heading'],
       }),
       IndentExtension.configure({
-        types: ['paragraph', 'heading'],
+        types: ['paragraph', 'heading', 'listItem'],
       }),
       PageBreak,
       CharacterCount,
@@ -202,6 +223,27 @@ export function ActuacionEditor({
         class: 'editor-content focus:outline-none min-h-[400px] bg-white',
       },
       handleKeyDown: (view, event) => {
+        // Handle Tab key for list indentation
+        if (event.key === 'Tab' && !event.ctrlKey && !event.metaKey) {
+          const { state } = view;
+          const { $from } = state.selection;
+          
+          // Check if we're in a list
+          if ($from.parent.type.name === 'listItem' || 
+              $from.node(-1)?.type.name === 'listItem') {
+            event.preventDefault();
+            
+            if (event.shiftKey) {
+              // Shift+Tab: decrease indent / lift list item
+              editor?.chain().focus().liftListItem('listItem').run();
+            } else {
+              // Tab: increase indent / sink list item
+              editor?.chain().focus().sinkListItem('listItem').run();
+            }
+            return true;
+          }
+        }
+        
         if (event.ctrlKey || event.metaKey) {
           switch (event.key) {
             case 'b':
