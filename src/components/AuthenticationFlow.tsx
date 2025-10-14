@@ -103,17 +103,27 @@ export function AuthenticationFlow() {
           <h1 className="text-3xl font-bold text-foreground mb-2 mt-[-60px]">
             <span className="inline-block">
               SIE
-              <span 
-                style={{
-                  transition: 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                }}
-                className={`inline-block ${
-                  showSuperscript 
-                    ? 'text-xl align-super -ml-0.5 scale-90' 
-                    : 'text-3xl align-baseline scale-100'
-                }`}
-              >
-                {showSuperscript ? '²' : 'E'}
+              <span className="relative inline-block w-[1em]">
+                <span 
+                  style={{
+                    transition: 'all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                    opacity: showSuperscript ? 0 : 1,
+                    transform: showSuperscript ? 'scale(0.8) translateY(-0.3em)' : 'scale(1) translateY(0)',
+                  }}
+                  className="absolute left-0 top-0 text-3xl"
+                >
+                  E
+                </span>
+                <span 
+                  style={{
+                    transition: 'all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                    opacity: showSuperscript ? 1 : 0,
+                    transform: showSuperscript ? 'scale(1) translateY(0)' : 'scale(1.2) translateY(0.3em)',
+                  }}
+                  className="absolute left-0 top-0 text-2xl -translate-y-[0.4em]"
+                >
+                  ²
+                </span>
               </span>
             </span>
           </h1>
