@@ -105,7 +105,7 @@ export function AuthenticationFlow() {
               SIE
               <span 
                 style={{
-                  transition: 'all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                  transition: 'all 2s cubic-bezier(0.34, 1.56, 0.64, 1)',
                   opacity: showSuperscript ? 0 : 1,
                   transform: showSuperscript ? 'translateX(-1em)' : 'translateX(0)',
                 }}
@@ -125,6 +125,9 @@ export function AuthenticationFlow() {
               </span>
             </span>
           </h1>
+          <p className="text-sm text-muted-foreground mt-2">
+            Sistema Integral de Empleados y Expedientes
+          </p>
         </div>
 
         {/* Login Card */}
