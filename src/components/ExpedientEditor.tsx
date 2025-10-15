@@ -259,17 +259,19 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
-            <div className="space-y-2">
-              <Label htmlFor="expedient-number" className="text-sm font-medium text-muted-foreground">Número de Expediente</Label>
-              <Input
-                id="expedient-number"
-                value={expedientNumber}
-                readOnly
-                disabled
-                className="bg-muted cursor-not-allowed font-mono text-sm"
-                title="Número autogenerado - No modificable"
-              />
-            </div>
+            {expedientId && (
+              <div className="space-y-2">
+                <Label htmlFor="expedient-number" className="text-sm font-medium text-muted-foreground">Número de Expediente</Label>
+                <Input
+                  id="expedient-number"
+                  value={expedientNumber}
+                  readOnly
+                  disabled
+                  className="bg-muted cursor-not-allowed font-mono text-sm"
+                  title="Número autogenerado - No modificable"
+                />
+              </div>
+            )}
             
             <div className="space-y-2">
               <Label htmlFor="fecha-creacion" className="text-sm font-medium text-muted-foreground">FECHA DE CREACIÓN</Label>
@@ -281,6 +283,12 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
                 className="bg-muted cursor-not-allowed text-sm"
               />
             </div>
+          </div>
+
+          <div className="pt-2">
+            <p className="text-xs text-muted-foreground italic">
+              Los campos marcados con * son obligatorios
+            </p>
           </div>
 
           {status !== 'draft' && (
