@@ -569,7 +569,7 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
             <div className="col-span-2">Fecha</div>
             <div className="col-span-2">Ubicación</div>
             <div className="col-span-2">Estado</div>
-            <div className="col-span-2">Acciones</div>
+            <div className="col-span-2">Descripción</div>
           </div>
           {filteredCitasPasadas.length === 0 ? (
             <div className="text-center py-8 bg-muted/30">
@@ -606,16 +606,8 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                       {cita.estado}
                     </Badge>
                   </div>
-                  <div className="col-span-2 flex gap-2 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
-                    {cita.expedientId && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => onNavigateToExpedient?.(cita.expedientId!)}
-                      >
-                        <FileText className="h-4 w-4" />
-                      </Button>
-                    )}
+                  <div className="col-span-2 text-sm text-muted-foreground min-w-0 overflow-hidden">
+                    <span className="truncate block">{cita.descripcion || '-'}</span>
                   </div>
                 </div>
                 ))}
