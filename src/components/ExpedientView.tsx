@@ -144,7 +144,7 @@ export function ExpedientView({
     }
   }, [expedientId]);
 
-  // Verificar si hay radicación interna pendiente para la oficina actual
+  // Verificar si hay radicación pendiente para la oficina actual
   const hayRadicacionInternaPendiente = () => {
     if (!user?.department && !user?.name) return false;
 
@@ -530,9 +530,9 @@ export function ExpedientView({
     fechaRegreso: string;
     actuacionesSeleccionadas: string[];
   }) => {
-    console.log('Procesando radicación interna:', data);
+    console.log('Procesando radicación:', data);
 
-    // Crear nueva radicación interna
+    // Crear nueva radicación
     const nuevaRadicacionInterna = {
       id: crypto.randomUUID(),
       expedientId: expedientId || expedient.id,
@@ -556,12 +556,12 @@ export function ExpedientView({
       const radicacionesExpediente = radicaciones.filter((d: any) => d.expedientId === expedientId && !d.devuelta);
       setRadicacionesInternasPendientes(radicacionesExpediente);
     } catch (error) {
-      console.error('Error saving radicación interna:', error);
+      console.error('Error saving radicación:', error);
     }
     const oficinaLabel = data.oficina.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     const fechaRegreso = data.fechaRegreso ? new Date(data.fechaRegreso).toLocaleString('es-ES') : 'No especificada';
     const cantidadActuaciones = data.actuacionesSeleccionadas.length;
-    alert(`Radicación interna enviada exitosamente:
+    alert(`Radicación enviada exitosamente:
 - Expediente: ${expedient.number}
 - Oficina destino: ${oficinaLabel}
 - Fecha de regreso: ${fechaRegreso}
@@ -570,16 +570,16 @@ export function ExpedientView({
   const handleRegresarRadicacionInterna = async (data: {
     fechaRegreso: string;
   }) => {
-    console.log('Procesando regreso de radicación interna:', data);
+    console.log('Procesando regreso de radicación:', data);
 
-    // Marcar radicación interna como devuelta
+    // Marcar radicación como devuelta
     try {
       const savedRadicaciones = localStorage.getItem('radicacionesInternasPendientes');
       if (savedRadicaciones) {
         const radicaciones = JSON.parse(savedRadicaciones);
         const oficinaActual = user?.department || user?.name;
 
-        // Encontrar y actualizar la radicación interna correspondiente
+        // Encontrar y actualizar la radicación correspondiente
         const radicacionIndex = radicaciones.findIndex((d: any) => d.expedientId === expedientId && d.oficinaDestino === oficinaActual && !d.devuelta);
         if (radicacionIndex !== -1) {
           radicaciones[radicacionIndex].devuelta = true;
@@ -592,12 +592,12 @@ export function ExpedientView({
         }
       }
     } catch (error) {
-      console.error('Error updating radicación interna:', error);
+      console.error('Error updating radicación:', error);
     }
-    alert(`Radicación interna devuelta exitosamente:
+    alert(`Radicación devuelta exitosamente:
 - Expediente: ${expedient.number}
 - Fecha de regreso: ${data.fechaRegreso}
-- La radicación interna ha sido devuelta a la oficina remitente`);
+- La radicación ha sido devuelta a la oficina remitente`);
   };
   const statusColors = getStatusColors(expedient.status);
   const latestActuacion = actuaciones.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
@@ -882,10 +882,10 @@ export function ExpedientView({
         </div>
       </div>
 
-      {/* Diálogo de Radicación Interna */}
+      {/* Diálogo de Radicación */}
       <RadicacionInternaDialog open={showRadicacionInternaDialog} onOpenChange={setShowRadicacionInternaDialog} expedientNumber={expedient.number} actuaciones={actuaciones} onConfirm={handleRadicacionInterna} />
 
-      {/* Diálogo de Regresar Radicación Interna */}
+      {/* Diálogo de Regresar Radicación */}
       <RegresarRadicacionInternaDialog open={showRegresarRadicacionInternaDialog} onOpenChange={setShowRegresarRadicacionInternaDialog} expedientNumber={expedient.number} oficinaRemitente="Mesa de Entrada" // Esto debería venir de los datos del expediente
     onConfirm={handleRegresarRadicacionInterna} />
 

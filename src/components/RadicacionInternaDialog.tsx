@@ -103,8 +103,8 @@ export function RadicacionInternaDialog({
       setActuacionesSeleccionadas([]);
       onOpenChange(false);
     } catch (error) {
-      console.error('Error al procesar radicación interna:', error);
-      alert('Error al procesar la radicación interna');
+      console.error('Error al procesar radicación:', error);
+      alert('Error al procesar la radicación');
     } finally {
       setLoading(false);
     }
@@ -119,7 +119,7 @@ export function RadicacionInternaDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <Building2 className="w-5 h-5" />
-            <span>Radicación Interna de Expediente</span>
+            <span>Radicación de Expediente</span>
           </DialogTitle>
         </DialogHeader>
 
@@ -136,7 +136,7 @@ export function RadicacionInternaDialog({
             </CardContent>
           </Card>
 
-          {/* Datos de la radicación interna */}
+          {/* Datos de la radicación */}
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Oficina destino */}
@@ -251,7 +251,7 @@ export function RadicacionInternaDialog({
                 Procesando...
               </>
             ) : (
-              'Enviar Radicación Interna'
+              'Enviar Radicación'
             )}
           </Button>
         </DialogFooter>

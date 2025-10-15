@@ -248,7 +248,7 @@ export function AppSidebar({
               >
                 <Send className="w-6 h-6 mb-2" />
                 <span className="text-xs text-center">
-                  Radicación Interna
+                  Radicación
                 </span>
               </button>
 
@@ -259,7 +259,7 @@ export function AppSidebar({
                 >
                   <ArrowLeft className="w-6 h-6 mb-2" />
                   <span className="text-xs text-center">
-                    Regresar Radicación Interna
+                    Regresar Radicación
                   </span>
                 </button>
               )}

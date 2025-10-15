@@ -40,9 +40,9 @@ export function RegresarRadicacionInternaDialog({
       
       onOpenChange(false);
     } catch (error) {
-      console.error('Error al procesar regreso de radicación interna:', error);
-      alert('Error al procesar el regreso de la radicación interna');
-    } finally {
+      console.error('Error al procesar regreso de radicación:', error);
+      alert('Error al procesar el regreso de la radicación');
+    } finally{
       setLoading(false);
     }
   };
@@ -53,7 +53,7 @@ export function RegresarRadicacionInternaDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <ArrowLeft className="w-5 h-5" />
-            <span>Regresar Radicación Interna</span>
+            <span>Regresar Radicación</span>
           </DialogTitle>
         </DialogHeader>
 
@@ -85,7 +85,7 @@ export function RegresarRadicacionInternaDialog({
           </Card>
 
           <p className="text-sm text-muted-foreground">
-            Esta radicación interna será devuelta a la oficina remitente con la fecha y hora actual registrada.
+            Esta radicación será devuelta a la oficina remitente con la fecha y hora actual registrada.
           </p>
         </div>
 
