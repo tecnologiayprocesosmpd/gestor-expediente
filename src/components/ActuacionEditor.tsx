@@ -66,8 +66,7 @@ import { HeadingSelector } from "@/components/ui/heading-selector";
 import { TableControls } from "@/components/ui/table-controls";
 import { LinkControls } from "@/components/ui/link-controls";
 import { DocumentStats } from "@/components/ui/document-stats";
-import { ImageInsert } from "@/components/ui/image-insert";
-import { ImageEdit } from "@/components/ui/image-edit";
+import { ImageManager } from "@/components/ui/image-manager";
 import { IndentControls } from "@/components/ui/indent-controls";
 import { MarginControls } from "@/components/ui/margin-controls";
 import { SearchReplaceDialog } from "@/components/ui/search-replace-dialog";
@@ -659,8 +658,7 @@ export function ActuacionEditor({
               <div className="flex items-center gap-1 flex-wrap">
                 <LinkControls editor={editor} />
                 <TableControls editor={editor} />
-                <ImageInsert editor={editor} />
-                <ImageEdit editor={editor} />
+                <ImageManager editor={editor} />
                 
                 <Separator orientation="vertical" className="h-6 mx-1" />
                 
