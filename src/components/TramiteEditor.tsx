@@ -81,14 +81,14 @@ export function TramiteEditor({ expedientId, onBack }: TramiteEditorProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
             <div className="space-y-2">
-              <Label htmlFor="numero" className="text-sm font-medium text-muted-foreground">Número de Trámite</Label>
+                <Label htmlFor="numero" className="text-sm font-medium text-muted-foreground">Número de Trámite</Label>
               <Input
                 id="numero"
                 value={numero}
                 readOnly
                 disabled
                 className="bg-muted cursor-not-allowed font-mono text-sm"
-                title="Número autogenerado - No modificable"
+                  title="Número autogenerado - No modificable"
               />
             </div>
             
