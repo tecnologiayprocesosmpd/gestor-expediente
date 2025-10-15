@@ -97,7 +97,7 @@ export function ActuacionEditor({
   const [status, setStatus] = useState<Actuacion['status']>(propActuacion?.status || 'borrador');
   const [margins, setMargins] = useState({ top: 20, right: 20, bottom: 20, left: 20 });
   const [content, setContent] = useState(propActuacion?.content || '');
-  const [pageSize, setPageSize] = useState('a4');
+  const [pageSize, setPageSize] = useState('oficio');
   const [orientation, setOrientation] = useState('portrait');
   const [headerText, setHeaderText] = useState('');
   const [footerText, setFooterText] = useState('');
@@ -700,17 +700,19 @@ export function ActuacionEditor({
             </div>
           )}
 
-          {/* Editor Content */}
-          <div 
-            className="border rounded-lg overflow-hidden bg-white"
-            style={{
-              padding: `${margins.top}px ${margins.right}px ${margins.bottom}px ${margins.left}px`
-            }}
-          >
-            <EditorContent 
-              editor={editor} 
-              className={canEdit ? '' : 'pointer-events-none opacity-75'}
-            />
+          {/* Editor Content with Pagination */}
+          <div className="document-container">
+            <div 
+              className={`document-page ${pageSize} ${orientation}`}
+              style={{
+                padding: `${margins.top}mm ${margins.right}mm ${margins.bottom}mm ${margins.left}mm`
+              }}
+            >
+              <EditorContent 
+                editor={editor} 
+                className={canEdit ? '' : 'pointer-events-none opacity-75'}
+              />
+            </div>
           </div>
 
           {!canEdit && status === 'firmado' && (

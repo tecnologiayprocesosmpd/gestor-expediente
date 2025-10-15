@@ -459,4 +459,123 @@ All colors MUST be HSL.
     max-width: 280px;
     margin: 0 auto;
   }
+
+  /* Document pagination styles */
+  .document-container {
+    background: hsl(var(--muted) / 0.3);
+    padding: 40px 20px;
+    min-height: 600px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .document-page {
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
+    margin: 0 auto;
+    position: relative;
+    overflow: visible;
+    min-height: 100%;
+  }
+
+  /* Page sizes - Portrait */
+  .document-page.a4.portrait {
+    width: 210mm;
+    min-height: 297mm;
+  }
+
+  .document-page.letter.portrait {
+    width: 216mm;
+    min-height: 279mm;
+  }
+
+  .document-page.oficio.portrait {
+    width: 216mm;
+    min-height: 330mm;
+  }
+
+  .document-page.legal.portrait {
+    width: 216mm;
+    min-height: 356mm;
+  }
+
+  .document-page.a3.portrait {
+    width: 297mm;
+    min-height: 420mm;
+  }
+
+  /* Page sizes - Landscape */
+  .document-page.a4.landscape {
+    width: 297mm;
+    min-height: 210mm;
+  }
+
+  .document-page.letter.landscape {
+    width: 279mm;
+    min-height: 216mm;
+  }
+
+  .document-page.oficio.landscape {
+    width: 330mm;
+    min-height: 216mm;
+  }
+
+  .document-page.legal.landscape {
+    width: 356mm;
+    min-height: 216mm;
+  }
+
+  .document-page.a3.landscape {
+    width: 420mm;
+    min-height: 297mm;
+  }
+
+  /* Page break visual styles */
+  .page-break {
+    page-break-after: always;
+    break-after: page;
+    border-top: 2px dashed hsl(var(--border));
+    margin: 40px 0;
+    position: relative;
+    clear: both;
+  }
+
+  .page-break::after {
+    content: 'Salto de página';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 0 12px;
+    color: hsl(var(--muted-foreground));
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  /* Print styles */
+  @media print {
+    .document-container {
+      background: white;
+      padding: 0;
+    }
+
+    .document-page {
+      box-shadow: none;
+      margin: 0;
+      page-break-after: always;
+    }
+
+    .page-break {
+      border-top: none;
+    }
+
+    .page-break::after {
+      display: none;
+    }
+  }
 }

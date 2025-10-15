@@ -54,6 +54,7 @@ export function PageSetupDialog({
               <SelectContent>
                 <SelectItem value="a4">A4 (21 x 29.7 cm)</SelectItem>
                 <SelectItem value="letter">Carta (21.6 x 27.9 cm)</SelectItem>
+                <SelectItem value="oficio">Oficio (21.6 x 33 cm)</SelectItem>
                 <SelectItem value="legal">Legal (21.6 x 35.6 cm)</SelectItem>
                 <SelectItem value="a3">A3 (29.7 x 42 cm)</SelectItem>
               </SelectContent>
