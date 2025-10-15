@@ -121,7 +121,7 @@ export function AppSidebar({
           <div className="pt-6 flex flex-col">
             <div className="px-2 mb-4">
               <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider text-center">
-                Acciones
+                Menú
               </h3>
             </div>
             <nav className="space-y-3 px-2 pb-6">
@@ -188,7 +188,7 @@ export function AppSidebar({
           <div className="pt-6 flex flex-col">
             <div className="px-2 mb-4">
               <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider text-center">
-                Acciones
+                Menú
               </h3>
             </div>
             <nav className="space-y-3 px-2 pb-6">
@@ -299,7 +299,7 @@ export function AppSidebar({
         <div className="pt-6 flex flex-col">
           <div className="px-2 mb-4">
             <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider text-center">
-              Acciones
+              Menú
             </h3>
           </div>
           <nav className="space-y-3 px-2">
