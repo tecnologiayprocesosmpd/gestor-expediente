@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,11 +9,11 @@ import { useSecurity } from "@/contexts/SecurityContext";
 import { useToast } from "@/hooks/use-toast";
 export function AuthenticationFlow() {
   const [credentials, setCredentials] = useState({
-    username: '',
-    password: ''
+    username: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [showSuperscript, setShowSuperscript] = useState(false);
   const { login, isLoading } = useSecurity();
   const { toast } = useToast();
@@ -25,28 +25,29 @@ export function AuthenticationFlow() {
   }, []);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    
+    setError("");
+
     if (!credentials.username || !credentials.password) {
-      setError('Por favor complete todos los campos');
+      setError("Por favor complete todos los campos");
       return;
     }
-    
+
     try {
       const success = await login(credentials);
       if (!success) {
-        setError('Usuario o contraseña incorrectos');
+        setError("Usuario o contraseña incorrectos");
       } else {
         toast({
           title: "Credenciales validadas",
-          description: "Ahora seleccione su perfil de acceso"
+          description: "Ahora seleccione su perfil de acceso",
         });
       }
     } catch (error) {
-      setError('Error al conectar con el sistema. Intente nuevamente.');
+      setError("Error al conectar con el sistema. Intente nuevamente.");
     }
   };
-  return <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
+  return (
+    <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
@@ -56,25 +57,29 @@ export function AuthenticationFlow() {
           <h1 className="text-3xl font-bold text-foreground mb-2 mt-[-60px]">
             <span className="inline-block relative">
               SIE
-              <span style={{
-              transition: 'all 2s cubic-bezier(0.34, 1.56, 0.64, 1)',
-              opacity: showSuperscript ? 0 : 1,
-              transform: showSuperscript ? 'translateX(-1em)' : 'translateX(0)'
-            }} className="inline-block">
+              <span
+                style={{
+                  transition: "all 2s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                  opacity: showSuperscript ? 0 : 1,
+                  transform: showSuperscript ? "translateX(-1em)" : "translateX(0)",
+                }}
+                className="inline-block"
+              >
                 E
               </span>
-              <span style={{
-              transition: 'all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
-              opacity: showSuperscript ? 1 : 0,
-              transform: showSuperscript ? 'translateY(0) scale(1)' : 'translateY(0.5em) scale(0.5)'
-            }} className="absolute text-2xl -top-2 right-1">
+              <span
+                style={{
+                  transition: "all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                  opacity: showSuperscript ? 1 : 0,
+                  transform: showSuperscript ? "translateY(0) scale(1)" : "translateY(0.5em) scale(0.5)",
+                }}
+                className="absolute text-2xl -top-2 right-1"
+              >
                 ²
               </span>
             </span>
           </h1>
-          <p className="text-muted-foreground mt-2 text-xl">
-            Sistema Integral de Empleados y Expedientes
-          </p>
+          <p className="text-muted-foreground mt-2 text-xl">Sistema Integral de Empleados y Expedientes</p>
         </div>
 
         {/* Login Card */}
@@ -87,85 +92,95 @@ export function AuthenticationFlow() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              {error && <Alert variant="destructive">
+              {error && (
+                <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>{error}</AlertDescription>
-                </Alert>}
+                </Alert>
+              )}
 
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="username">Usuario</Label>
-                  <Input 
-                    id="username" 
-                    type="text" 
-                    placeholder="Ingrese su usuario" 
-                    value={credentials.username} 
-                    onChange={e => setCredentials(prev => ({
-                      ...prev,
-                      username: e.target.value
-                    }))} 
-                    disabled={isLoading} 
-                    className="h-11" 
-                    required 
+                  <Input
+                    id="username"
+                    type="text"
+                    placeholder="Ingrese su usuario"
+                    value={credentials.username}
+                    onChange={(e) =>
+                      setCredentials((prev) => ({
+                        ...prev,
+                        username: e.target.value,
+                      }))
+                    }
+                    disabled={isLoading}
+                    className="h-11"
+                    required
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="password">Contraseña</Label>
                   <div className="relative">
-                    <Input 
-                      id="password" 
-                      type={showPassword ? "text" : "password"} 
-                      placeholder="Ingrese su contraseña" 
-                      value={credentials.password} 
-                      onChange={e => setCredentials(prev => ({
-                        ...prev,
-                        password: e.target.value
-                      }))} 
-                      disabled={isLoading} 
-                      className="h-11 pr-10" 
-                      required 
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Ingrese su contraseña"
+                      value={credentials.password}
+                      onChange={(e) =>
+                        setCredentials((prev) => ({
+                          ...prev,
+                          password: e.target.value,
+                        }))
+                      }
+                      disabled={isLoading}
+                      className="h-11 pr-10"
+                      required
                     />
-                    <Button 
-                      type="button" 
-                      variant="ghost" 
-                      size="sm" 
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" 
-                      onClick={() => setShowPassword(prev => !prev)} 
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      onClick={() => setShowPassword((prev) => !prev)}
                       disabled={isLoading}
                     >
-                      {showPassword ? 
-                        <EyeOff className="h-4 w-4 text-muted-foreground" /> : 
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4 text-muted-foreground" />
+                      ) : (
                         <Eye className="h-4 w-4 text-muted-foreground" />
-                      }
+                      )}
                     </Button>
                   </div>
                 </div>
               </div>
 
-              <Button 
-                type="submit" 
-                className="w-full h-11 bg-gradient-primary hover:bg-gradient-primary/90" 
+              <Button
+                type="submit"
+                className="w-full h-11 bg-gradient-primary hover:bg-gradient-primary/90"
                 disabled={isLoading}
               >
-                {isLoading ? 
+                {isLoading ? (
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     Validando credenciales...
-                  </div> : 
-                  'Iniciar Sesión'
-                }
+                  </div>
+                ) : (
+                  "Iniciar Sesión"
+                )}
               </Button>
             </form>
 
             {/* Demo credentials info */}
             <div className="mt-6 p-4 bg-muted/30 rounded-lg">
-              <p className="text-xs text-muted-foreground mb-2 font-medium">
-                Credenciales de prueba:
-              </p>
+              <p className="text-xs text-muted-foreground mb-2 font-medium">Credenciales de prueba:</p>
               <div className="space-y-1 text-xs text-muted-foreground">
-                <div>Usuario: <code className="bg-background px-1 rounded">admin</code></div>
-                <div>Contraseña: <code className="bg-background px-1 rounded">admin</code></div>
+                <div>
+                  Usuario: <code className="bg-background px-1 rounded">admin</code>
+                </div>
+                <div>
+                  Contraseña: <code className="bg-background px-1 rounded">admin</code>
+                </div>
               </div>
             </div>
           </CardContent>
@@ -173,9 +188,10 @@ export function AuthenticationFlow() {
 
         {/* Footer */}
         <div className="mt-8 text-center text-sm text-muted-foreground">
-          <p>© 2024 Ministerio Público de la Defensa</p>
+          <p>© 2025 MINISTERIO PUPILAR Y DE LA DEFENSA</p>
           <p>Sistema de Gestión Digital</p>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 }
