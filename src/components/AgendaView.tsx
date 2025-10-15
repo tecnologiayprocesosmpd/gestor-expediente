@@ -387,7 +387,7 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
         </div>
 
         {/* Citas Próximas */}
-        <div className="flex-1 min-w-0 max-w-[800px]">
+        <div className="flex-1 min-w-0">
           <h2 className="text-2xl font-bold tracking-tight mb-4">Citas Próximas</h2>
           
           {/* Filtros para Citas Próximas */}
