@@ -54,32 +54,7 @@ export function AuthenticationFlow() {
           <div className="w-60 h-60 mx-auto mb-2">
             <img src="/assets/logo-mpd.png" alt="Logo MPD" className="w-full h-full object-contain" />
           </div>
-          <h1 className="text-3xl font-bold text-foreground mb-2 mt-[-60px]">
-            <span className="inline-block relative">
-              SIE
-              <span
-                style={{
-                  transition: "all 2s cubic-bezier(0.34, 1.56, 0.64, 1)",
-                  opacity: showSuperscript ? 0 : 1,
-                  transform: showSuperscript ? "translateX(-1em)" : "translateX(0)",
-                }}
-                className="inline-block"
-              >
-                E
-              </span>
-              <span
-                style={{
-                  transition: "all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
-                  opacity: showSuperscript ? 1 : 0,
-                  transform: showSuperscript ? "translateY(0) scale(1)" : "translateY(0.5em) scale(0.5)",
-                }}
-                className="absolute text-2xl -top-2 right-1"
-              >
-                ²
-              </span>
-            </span>
-          </h1>
-          <p className="text-muted-foreground mt-2 text-xl">Sistema Integral de Empleados y Expedientes</p>
+          <p className="text-foreground text-2xl font-medium mt-[-60px]">Sistema de Expedientes</p>
         </div>
 
         {/* Login Card */}
