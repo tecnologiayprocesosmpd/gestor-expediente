@@ -2,7 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FileText, Building2, Shield } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { FileText, Building2, AlertCircle } from "lucide-react";
 import { useState } from "react";
 import { useUser, type UserProfile } from "@/contexts/UserContext";
 import { useToast } from "@/hooks/use-toast";
@@ -11,8 +12,16 @@ export default function SelectProfilePostLogin() {
   const { setUser } = useUser();
   const { toast } = useToast();
   const [selectedProfile, setSelectedProfile] = useState<string>("");
+  const [error, setError] = useState<string>("");
 
   const handleConfirm = () => {
+    setError("");
+    
+    if (!selectedProfile) {
+      setError("Por favor seleccione un perfil para continuar");
+      return;
+    }
+    
     const map = {
       "mesa-entrada": {
         role: "mesa" as const,
@@ -26,7 +35,6 @@ export default function SelectProfilePostLogin() {
       },
     } as const;
 
-    if (!selectedProfile) return;
     const cfg = map[selectedProfile as UserProfile];
     setUser({
       profile: selectedProfile as UserProfile,
@@ -53,10 +61,16 @@ export default function SelectProfilePostLogin() {
           </div>
           <CardTitle className="text-2xl">Seleccionar Perfil</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Sus credenciales fueron validadas. Elija cómo desea ingresar.
+            Paso 2 de 2: Sus credenciales fueron validadas. Elija cómo desea ingresar al sistema.
           </p>
         </CardHeader>
         <CardContent className="space-y-6">
+          {error && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
           <div className="space-y-2">
             <Label>Perfil de Acceso</Label>
             <Select value={selectedProfile} onValueChange={setSelectedProfile}>

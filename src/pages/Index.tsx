@@ -157,7 +157,8 @@ function AppContent() {
     return expedients.find(exp => exp.id === currentExpedientId);
   };
 
-  // If user not set in UserContext yet (post-login), show profile selector dropdown
+  // STEP 2: If user is authenticated (SecurityContext) but hasn't selected a profile (UserContext)
+  // Show profile selector to complete the authentication flow
   if (!user) {
     return <SelectProfilePostLogin />;
   }
