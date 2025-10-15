@@ -251,7 +251,7 @@ export function RadicacionInternaDialog({
                 Procesando...
               </>
             ) : (
-              'Enviar Radicación'
+              'Radicar'
             )}
           </Button>
         </DialogFooter>
