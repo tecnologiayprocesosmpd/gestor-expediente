@@ -1,7 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { StatusChangeConfirmDialog } from "./StatusChangeConfirmDialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   FileText, 
   TrendingUp, 
@@ -61,6 +63,8 @@ export function Dashboard({
   const [showActuacionesParaFirma, setShowActuacionesParaFirma] = useState(false);
   const [actuacionesParaFirmaList, setActuacionesParaFirmaList] = useState<any[]>([]);
   const [expedientesExpanded, setExpedientesExpanded] = useState(false);
+  const [selectedActuacion, setSelectedActuacion] = useState<any | null>(null);
+  const [showConfirmFirma, setShowConfirmFirma] = useState(false);
 
   if (!user) return null;
 
@@ -313,7 +317,7 @@ export function Dashboard({
         </DialogContent>
       </Dialog>
 
-      {/* Modal para firmar actuaciones */}
+      {/* Modal para listar actuaciones para firma */}
       <Dialog open={showActuacionesParaFirma} onOpenChange={setShowActuacionesParaFirma}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
@@ -332,22 +336,7 @@ export function Dashboard({
                     key={actuacion.id}
                     className="p-4 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors border-orange-200 bg-orange-50/50"
                     onClick={() => {
-                      // Cambiar estado a firmado
-                      const updatedActuacion = {
-                        ...actuacion,
-                        status: 'firmado' as const,
-                        signedAt: new Date(),
-                        signedBy: user?.name || 'Usuario',
-                        updatedAt: new Date()
-                      };
-                      
-                      actuacionStorage.saveActuacion(updatedActuacion);
-                      
-                      // Actualizar la lista
-                      const newList = actuacionesParaFirmaList.filter(a => a.id !== actuacion.id);
-                      setActuacionesParaFirmaList(newList);
-                      setActuacionesParaFirma(newList.length);
-                      
+                      setSelectedActuacion(actuacion);
                       setShowActuacionesParaFirma(false);
                     }}
                   >
@@ -368,8 +357,18 @@ export function Dashboard({
                         <Badge className="bg-orange-100 text-orange-800 border-orange-200">
                           Para Firmar
                         </Badge>
-                        <Button size="sm" variant="outline" className="text-xs">
-                          Firmar
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="text-xs"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedActuacion(actuacion);
+                            setShowActuacionesParaFirma(false);
+                          }}
+                        >
+                          <Eye className="w-3 h-3 mr-1" />
+                          Ver
                         </Button>
                       </div>
                     </div>
@@ -377,6 +376,87 @@ export function Dashboard({
                 ))}
               </div>
             )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal para visualizar y firmar actuación */}
+      <Dialog open={!!selectedActuacion} onOpenChange={(open) => {
+        if (!open) {
+          setSelectedActuacion(null);
+          setShowConfirmFirma(false);
+        }
+      }}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="w-5 h-5" />
+              {selectedActuacion?.title}
+            </DialogTitle>
+            <DialogDescription>
+              {selectedActuacion && (
+                <div className="flex items-center gap-4 text-sm mt-2">
+                  <Badge className="bg-orange-100 text-orange-800 border-orange-200">
+                    Para Firmar
+                  </Badge>
+                  <span>Tipo: {selectedActuacion.tipo}</span>
+                  <span>Creado: {format(new Date(selectedActuacion.createdAt), "dd/MM/yyyy HH:mm", { locale: es })}</span>
+                </div>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <ScrollArea className="flex-1 pr-4">
+            {selectedActuacion && (
+              <div 
+                className="prose prose-sm max-w-none p-4 bg-muted/30 rounded-lg"
+                dangerouslySetInnerHTML={{ __html: selectedActuacion.content }}
+              />
+            )}
+          </ScrollArea>
+
+          <div className="flex justify-end gap-2 pt-4 border-t">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSelectedActuacion(null);
+                setShowActuacionesParaFirma(true);
+              }}
+            >
+              Volver a Lista
+            </Button>
+            <StatusChangeConfirmDialog
+              open={showConfirmFirma}
+              onOpenChange={setShowConfirmFirma}
+              onConfirm={() => {
+                if (selectedActuacion) {
+                  const updatedActuacion = {
+                    ...selectedActuacion,
+                    status: 'firmado' as const,
+                    signedAt: new Date(),
+                    signedBy: user?.name || 'Usuario',
+                    updatedAt: new Date()
+                  };
+                  
+                  actuacionStorage.saveActuacion(updatedActuacion);
+                  
+                  const newList = actuacionesParaFirmaList.filter(a => a.id !== selectedActuacion.id);
+                  setActuacionesParaFirmaList(newList);
+                  setActuacionesParaFirma(newList.length);
+                  
+                  setSelectedActuacion(null);
+                  setShowConfirmFirma(false);
+                }
+              }}
+              title="Confirmar firma"
+              message="¿Está seguro de firmar esta actuación?"
+              requireMotivo={false}
+            >
+              <Button className="bg-green-600 hover:bg-green-700">
+                <PenTool className="w-4 h-4 mr-2" />
+                Firmar Actuación
+              </Button>
+            </StatusChangeConfirmDialog>
           </div>
         </DialogContent>
       </Dialog>
