@@ -202,8 +202,8 @@ export function Dashboard({
                 {actuacionesParaFirma} pendiente{actuacionesParaFirma !== 1 ? 's' : ''}
               </Badge>
               {actuacionesParaFirma > 0 && (
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center">
-                  <Bell className="w-2 h-2 text-white" />
+                <div className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center shadow-lg ring-2 ring-white animate-pulse">
+                  <Bell className="w-3.5 h-3.5 text-white" />
                 </div>
               )}
             </div>
