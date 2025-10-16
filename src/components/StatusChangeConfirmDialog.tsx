@@ -11,13 +11,15 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { AlertTriangle } from "lucide-react";
 
 interface StatusChangeConfirmDialogProps {
   children?: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  onConfirm: () => void;
+  onConfirm: (motivo: string) => void;
   title?: string;
   message?: string;
 }
@@ -31,12 +33,17 @@ export function StatusChangeConfirmDialog({
   message = "¿Está seguro de enviar la actuación para firma?"
 }: StatusChangeConfirmDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [motivo, setMotivo] = useState('');
 
   const handleConfirm = async () => {
+    if (!motivo.trim()) {
+      return;
+    }
     setIsLoading(true);
     try {
-      onConfirm();
+      onConfirm(motivo);
       onOpenChange?.(false);
+      setMotivo('');
     } finally {
       setIsLoading(false);
     }
@@ -62,14 +69,28 @@ export function StatusChangeConfirmDialog({
             {message}
           </AlertDialogDescription>
         </AlertDialogHeader>
+        <div className="py-4">
+          <Label htmlFor="motivo" className="text-sm font-medium">
+            Motivo del cambio de estado *
+          </Label>
+          <Textarea
+            id="motivo"
+            value={motivo}
+            onChange={(e) => setMotivo(e.target.value)}
+            placeholder="Ingrese el motivo del cambio de estado..."
+            className="mt-2"
+            rows={4}
+            disabled={isLoading}
+          />
+        </div>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isLoading}>
+          <AlertDialogCancel disabled={isLoading} onClick={() => setMotivo('')}>
             Cancelar
           </AlertDialogCancel>
           <AlertDialogAction 
             onClick={handleConfirm}
-            disabled={isLoading}
-            className="bg-orange-500 hover:bg-orange-600"
+            disabled={isLoading || !motivo.trim()}
+            className="bg-orange-500 hover:bg-orange-600 disabled:opacity-50"
           >
             {isLoading ? "Procesando..." : "Confirmar"}
           </AlertDialogAction>

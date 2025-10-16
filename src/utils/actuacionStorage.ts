@@ -61,12 +61,37 @@ class ActuacionStorage {
       
       localStorage.setItem(ACTUACIONES_KEY, JSON.stringify(actuaciones));
       
+      // Actualizar fecha de última actividad del expediente
+      this.updateExpedientLastActivity(actuacion.expedientId);
+      
       // Emitir evento personalizado para notificar cambios
       if (statusChanged) {
         this.emitActuacionChangeEvent(actuacion, oldStatus);
       }
     } catch (error) {
       console.error('Error saving actuacion:', error);
+    }
+  }
+
+  private updateExpedientLastActivity(expedientId: string): void {
+    try {
+      const storedExpedients = localStorage.getItem('expedients');
+      if (!storedExpedients) return;
+
+      const expedients = JSON.parse(storedExpedients);
+      const updatedExpedients = expedients.map((exp: any) => {
+        if (exp.id === expedientId) {
+          return {
+            ...exp,
+            fechaUltimaActividad: new Date().toISOString()
+          };
+        }
+        return exp;
+      });
+
+      localStorage.setItem('expedients', JSON.stringify(updatedExpedients));
+    } catch (error) {
+      console.error('Error updating expedient last activity:', error);
     }
   }
 

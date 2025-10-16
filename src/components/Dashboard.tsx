@@ -23,6 +23,7 @@ import { useState, useEffect } from "react";
 import { ExpedientesParaRecibir } from "./ExpedientesParaRecibir";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { useAutoArchive } from "@/hooks/useAutoArchive";
 
 interface DashboardProps {
   expedients: ExpedientSummary[];
@@ -50,6 +51,10 @@ export function Dashboard({
   onNavigateToOficios
 }: DashboardProps) {
   const { user } = useUser();
+  
+  // Activar verificación automática de expedientes inactivos
+  useAutoArchive();
+  
   const [novedades] = useState<any[]>([]); // Funcionalidad desactivada temporalmente
   const [actuacionesParaFirma, setActuacionesParaFirma] = useState<number>(0);
   const [showExpedientSelector, setShowExpedientSelector] = useState(false);

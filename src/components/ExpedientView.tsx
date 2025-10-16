@@ -84,8 +84,23 @@ export function ExpedientView({
     setShowSelectEstado(false);
     setShowStatusConfirm(true);
   };
-  const handleConfirmStatusChange = () => {
-    if (expedientId) {
+  const handleConfirmStatusChange = (motivo: string) => {
+    if (expedientId && propExpedient) {
+      // Guardar el motivo en el expediente
+      const storedExpedients = localStorage.getItem('expedients');
+      const expedients = storedExpedients ? JSON.parse(storedExpedients) : [];
+      const updatedExpedients = expedients.map((exp: any) => {
+        if (exp.id === expedientId) {
+          return {
+            ...exp,
+            motivoCambioEstado: motivo,
+            fechaUltimaActividad: new Date().toISOString()
+          };
+        }
+        return exp;
+      });
+      localStorage.setItem('expedients', JSON.stringify(updatedExpedients));
+      
       onStatusChange?.(expedientId, pendingNewStatus);
     }
     setShowStatusConfirm(false);
@@ -552,6 +567,22 @@ export function ExpedientView({
       radicaciones.push(nuevaRadicacionInterna);
       localStorage.setItem('radicacionesInternasPendientes', JSON.stringify(radicaciones));
 
+      // Actualizar fecha de última actividad del expediente
+      const storedExpedients = localStorage.getItem('expedients');
+      if (storedExpedients) {
+        const expedients = JSON.parse(storedExpedients);
+        const updatedExpedients = expedients.map((exp: any) => {
+          if (exp.id === (expedientId || expedient.id)) {
+            return {
+              ...exp,
+              fechaUltimaActividad: new Date().toISOString()
+            };
+          }
+          return exp;
+        });
+        localStorage.setItem('expedients', JSON.stringify(updatedExpedients));
+      }
+
       // Actualizar estado local
       const radicacionesExpediente = radicaciones.filter((d: any) => d.expedientId === expedientId && !d.devuelta);
       setRadicacionesInternasPendientes(radicacionesExpediente);
@@ -585,6 +616,22 @@ export function ExpedientView({
           radicaciones[radicacionIndex].devuelta = true;
           radicaciones[radicacionIndex].fechaDevolucion = data.fechaRegreso;
           localStorage.setItem('radicacionesInternasPendientes', JSON.stringify(radicaciones));
+
+          // Actualizar fecha de última actividad del expediente
+          const storedExpedients = localStorage.getItem('expedients');
+          if (storedExpedients) {
+            const expedients = JSON.parse(storedExpedients);
+            const updatedExpedients = expedients.map((exp: any) => {
+              if (exp.id === expedientId) {
+                return {
+                  ...exp,
+                  fechaUltimaActividad: new Date().toISOString()
+                };
+              }
+              return exp;
+            });
+            localStorage.setItem('expedients', JSON.stringify(updatedExpedients));
+          }
 
           // Actualizar estado local
           const radicacionesExpediente = radicaciones.filter((d: any) => d.expedientId === expedientId && !d.devuelta);

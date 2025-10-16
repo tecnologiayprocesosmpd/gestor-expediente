@@ -43,6 +43,8 @@ export interface Expedient {
   archivedAt?: Date;
   archivedBy?: string;
   archivoMotivo?: string; // Motivo del archivo
+  motivoCambioEstado?: string; // Motivo del último cambio de estado
+  fechaUltimaActividad?: Date; // Última vez que hubo actividad en el expediente
   
   // Auditoría y trazabilidad del flujo
   lastAccessedAt?: Date;
