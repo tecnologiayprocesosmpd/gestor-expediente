@@ -88,7 +88,7 @@ export function TramiteList({ tramites, onCreateTramite, onBack, onTramiteUpdate
         <div className="flex items-center space-x-4">
           <Button variant="outline" onClick={onBack}>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Volver al Expediente
+            Volver
           </Button>
           <div>
             <h1 className="text-3xl font-bold text-foreground">Trámites</h1>

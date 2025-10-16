@@ -271,7 +271,7 @@ export function ExpedientOficioView({
       <div className="flex items-center gap-4">
         <Button onClick={onBack} variant="outline" size="sm">
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Volver al Expediente
+          Volver
         </Button>
         <div>
           <h1 className="text-2xl font-bold">Oficios del Expediente</h1>

@@ -698,7 +698,7 @@ export function ExpedientView({
           <div className="flex items-center justify-between">
             <Button variant="outline" onClick={() => setShowNavigator(false)}>
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Volver al Expediente
+              Volver
             </Button>
             <h2 className="text-2xl font-bold">
               Navegador de Actuaciones - {expedient.number}
@@ -754,7 +754,7 @@ export function ExpedientView({
               setSelectedActuacion(null);
             }}>
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Volver al Expediente
+              Volver
             </Button>
             <div>
               <h1 className="text-3xl font-bold text-foreground">
@@ -860,7 +860,7 @@ export function ExpedientView({
             <div className="flex items-center gap-4 min-w-0 flex-1">
               <Button variant="outline" onClick={onBack} className="h-auto py-2 px-4 shrink-0">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Volver a Expedientes
+                Volver
               </Button>
               
               <h1 className="text-2xl font-bold text-foreground truncate max-w-[500px]" title={expedient.title}>

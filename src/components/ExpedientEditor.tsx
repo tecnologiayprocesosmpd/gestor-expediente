@@ -164,7 +164,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
         <div className="flex items-center space-x-4">
           <Button variant="outline" onClick={onBack}>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Volver a Expedientes
+            Volver
           </Button>
           <div>
             <h1 className="text-2xl font-bold text-foreground">

@@ -355,7 +355,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
       <div className="flex items-center gap-4">
         <Button onClick={onBack} variant="outline" size="sm">
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Volver al Inicio
+          Volver
         </Button>
         <h1 className="text-2xl font-bold">Gestión de Oficios</h1>
       </div>
