@@ -1,6 +1,7 @@
 import { Tramite } from "@/types/tramite";
 
 const STORAGE_KEY = "gestexp_tramites";
+const INITIALIZED_KEY = "gestexp_tramites_initialized_v2";
 
 export const tramiteStorage = {
   getAll: (): Tramite[] => {
@@ -41,5 +42,67 @@ export const tramiteStorage = {
     const tramites = tramiteStorage.getByExpedientId(expedientId);
     const nextNumber = tramites.length + 1;
     return `TR-${nextNumber.toString().padStart(4, '0')}`;
+  },
+
+  initializeMockData: (): void => {
+    // Check if already initialized
+    if (localStorage.getItem(INITIALIZED_KEY)) {
+      return;
+    }
+
+    // Clear any old data
+    localStorage.removeItem(STORAGE_KEY);
+
+    // Create mock tramites for testing
+    const mockTramites: Tramite[] = [
+      {
+        id: "t1",
+        expedientId: "1",
+        numero: "TR-0001",
+        referencia: "Solicitud de medida cautelar urgente",
+        fechaCreacion: new Date("2024-01-16"),
+        createdBy: "Dr. María González",
+        finalizado: true
+      },
+      {
+        id: "t2",
+        expedientId: "1",
+        numero: "TR-0002",
+        referencia: "Presentación de prueba documental",
+        fechaCreacion: new Date("2024-01-18"),
+        createdBy: "Dr. María González",
+        finalizado: false
+      },
+      {
+        id: "t3",
+        expedientId: "3",
+        numero: "TR-0001",
+        referencia: "Solicitud de dictamen sobre convenio colectivo",
+        fechaCreacion: new Date("2024-01-23"),
+        createdBy: "Dra. Ana Martínez",
+        finalizado: false
+      },
+      {
+        id: "t4",
+        expedientId: "5",
+        numero: "TR-0001",
+        referencia: "Presentación de acuerdo de divorcio",
+        fechaCreacion: new Date("2024-01-25"),
+        createdBy: "Dra. Laura Pérez",
+        finalizado: true
+      },
+      {
+        id: "t5",
+        expedientId: "6",
+        numero: "TR-0001",
+        referencia: "Solicitud de informe técnico ambiental",
+        fechaCreacion: new Date("2024-01-27"),
+        createdBy: "Dr. Fernando Costa",
+        finalizado: false
+      }
+    ];
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(mockTramites));
+    localStorage.setItem(INITIALIZED_KEY, "true");
   }
 };
