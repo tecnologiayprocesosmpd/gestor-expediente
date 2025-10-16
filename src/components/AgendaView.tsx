@@ -48,10 +48,14 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
   const [editCita, setEditCita] = useState<CitaAgenda | null>(null);
   const [isCitaProxima, setIsCitaProxima] = useState(false);
   
-  // Filtros
+  // Filtros separados
   const [searchProximas, setSearchProximas] = useState('');
   const [fechaProximas, setFechaProximas] = useState('');
-  const [expedientFilter, setExpedientFilter] = useState('');
+  const [expedientFilterProximas, setExpedientFilterProximas] = useState('');
+  
+  const [searchHistorial, setSearchHistorial] = useState('');
+  const [fechaHistorial, setFechaHistorial] = useState('');
+  const [expedientFilterHistorial, setExpedientFilterHistorial] = useState('');
 
   useEffect(() => {
     loadCitas();
@@ -213,21 +217,21 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
     const matchesFecha = fechaProximas === '' || 
       format(new Date(cita.fechaInicio), 'yyyy-MM-dd') === fechaProximas;
 
-    const matchesExpedient = expedientFilter === '' || cita.expedientId === expedientFilter;
+    const matchesExpedient = expedientFilterProximas === '' || cita.expedientId === expedientFilterProximas;
     
     return matchesSearch && matchesFecha && matchesExpedient;
   });
 
   // Aplicar filtros a historial
   const filteredCitasHistorial = citasHistorial.filter(cita => {
-    const matchesSearch = searchProximas === '' || 
-      cita.titulo.toLowerCase().includes(searchProximas.toLowerCase()) ||
-      (cita.ubicacion && cita.ubicacion.toLowerCase().includes(searchProximas.toLowerCase()));
+    const matchesSearch = searchHistorial === '' || 
+      cita.titulo.toLowerCase().includes(searchHistorial.toLowerCase()) ||
+      (cita.ubicacion && cita.ubicacion.toLowerCase().includes(searchHistorial.toLowerCase()));
     
-    const matchesFecha = fechaProximas === '' || 
-      format(new Date(cita.fechaInicio), 'yyyy-MM-dd') === fechaProximas;
+    const matchesFecha = fechaHistorial === '' || 
+      format(new Date(cita.fechaInicio), 'yyyy-MM-dd') === fechaHistorial;
 
-    const matchesExpedient = expedientFilter === '' || cita.expedientId === expedientFilter;
+    const matchesExpedient = expedientFilterHistorial === '' || cita.expedientId === expedientFilterHistorial;
     
     return matchesSearch && matchesFecha && matchesExpedient;
   });
@@ -394,9 +398,10 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
       </div>
 
       <div className="space-y-6">
-        {/* Filtros Globales Minimalistas */}
+        {/* Filtros para Programadas */}
         <Card className="w-full">
           <CardContent className="p-4">
+            <h3 className="text-sm font-semibold mb-3 text-muted-foreground">FILTROS - PROGRAMADAS</h3>
             <div className="flex items-center gap-3">
               <div className="relative flex-1 max-w-xs">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -414,7 +419,7 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
                 className="h-9 w-40"
                 placeholder="Fecha"
               />
-              <Select value={expedientFilter || "all"} onValueChange={(value) => setExpedientFilter(value === "all" ? "" : value)}>
+              <Select value={expedientFilterProximas || "all"} onValueChange={(value) => setExpedientFilterProximas(value === "all" ? "" : value)}>
                 <SelectTrigger className="h-9 w-56">
                   <SelectValue placeholder="Expediente" />
                 </SelectTrigger>
@@ -427,13 +432,14 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
                   ))}
                 </SelectContent>
               </Select>
-              {(fechaProximas || expedientFilter) && (
+              {(fechaProximas || expedientFilterProximas || searchProximas) && (
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => {
+                    setSearchProximas('');
                     setFechaProximas('');
-                    setExpedientFilter('');
+                    setExpedientFilterProximas('');
                   }}
                   className="h-9"
                 >
@@ -490,7 +496,7 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
                   <div className="text-center py-8 bg-muted/30 rounded-lg">
                     <CalendarIcon className="mx-auto h-12 w-12 text-muted-foreground" />
                     <p className="mt-2 text-sm text-muted-foreground">
-                      {searchProximas || fechaProximas || expedientFilter
+                      {searchProximas || fechaProximas || expedientFilterProximas
                         ? 'No se encontraron eventos' 
                         : 'No hay eventos programados'}
                     </p>
@@ -589,8 +595,60 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
       </div>
 
       {/* HISTORIAL - Ancho completo */}
-      <div className="w-full">
-        <h2 className="text-2xl font-bold tracking-tight mb-4">HISTORIAL</h2>
+      <div className="w-full space-y-4">
+        {/* Filtros para Historial */}
+        <Card className="w-full">
+          <CardContent className="p-4">
+            <h3 className="text-sm font-semibold mb-3 text-muted-foreground">FILTROS - HISTORIAL</h3>
+            <div className="flex items-center gap-3">
+              <div className="relative flex-1 max-w-xs">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  placeholder="Buscar..."
+                  value={searchHistorial}
+                  onChange={(e) => setSearchHistorial(e.target.value)}
+                  className="pl-10 h-9"
+                />
+              </div>
+              <Input
+                type="date"
+                value={fechaHistorial}
+                onChange={(e) => setFechaHistorial(e.target.value)}
+                className="h-9 w-40"
+                placeholder="Fecha"
+              />
+              <Select value={expedientFilterHistorial || "all"} onValueChange={(value) => setExpedientFilterHistorial(value === "all" ? "" : value)}>
+                <SelectTrigger className="h-9 w-56">
+                  <SelectValue placeholder="Expediente" />
+                </SelectTrigger>
+                <SelectContent className="bg-background z-50">
+                  <SelectItem value="all">Todos</SelectItem>
+                  {expedients.map(exp => (
+                    <SelectItem key={exp.id} value={exp.id}>
+                      {exp.number} - {exp.title.substring(0, 30)}...
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {(fechaHistorial || expedientFilterHistorial || searchHistorial) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setSearchHistorial('');
+                    setFechaHistorial('');
+                    setExpedientFilterHistorial('');
+                  }}
+                  className="h-9"
+                >
+                  Limpiar
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+        
+        <h2 className="text-2xl font-bold tracking-tight">HISTORIAL</h2>
         
         <Card>
           <CardContent className="p-3">
@@ -598,7 +656,7 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
                   <div className="text-center py-8 bg-muted/30 rounded-lg">
                     <CalendarIcon className="mx-auto h-12 w-12 text-muted-foreground" />
                     <p className="mt-2 text-sm text-muted-foreground">
-                      {searchProximas || fechaProximas || expedientFilter
+                      {searchHistorial || fechaHistorial || expedientFilterHistorial
                         ? 'No se encontraron eventos en el historial' 
                         : 'No hay eventos en el historial'}
                     </p>
