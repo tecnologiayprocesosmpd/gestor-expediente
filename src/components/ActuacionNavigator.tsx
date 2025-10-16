@@ -10,9 +10,10 @@ interface ActuacionNavigatorProps {
   actuaciones: Actuacion[];
   expedientNumber: string;
   expedientTitle: string;
+  expedientTipoProceso: 'administrativo' | 'compra';
 }
 
-export function ActuacionNavigator({ actuaciones, expedientNumber, expedientTitle }: ActuacionNavigatorProps) {
+export function ActuacionNavigator({ actuaciones, expedientNumber, expedientTitle, expedientTipoProceso }: ActuacionNavigatorProps) {
   const [filterStatus, setFilterStatus] = useState<'todos' | 'borrador' | 'para-firmar' | 'firmado'>('todos');
   
   // Filtrar actuaciones según el estado seleccionado
@@ -58,9 +59,13 @@ export function ActuacionNavigator({ actuaciones, expedientNumber, expedientTitl
 
     return (
       <div className="bg-white text-black p-12 min-h-full" style={{ fontFamily: 'Times New Roman, serif' }}>
-        {/* Encabezado con título e información */}
-        <div className="mb-8 border-b-2 border-black pb-4">
-          <h1 className="text-2xl font-bold text-center mb-4">{expedientTitle}</h1>
+        {/* Encabezado con información del expediente - MISMO FORMATO QUE EDITOR */}
+        <div className="mb-8 pb-4 border-b-2 border-gray-800">
+          <div className="text-center">
+            <p className="text-lg font-bold uppercase tracking-wide mb-6">
+              {expedientTitle} S/ {expedientTipoProceso}
+            </p>
+          </div>
           <div className="text-sm space-y-1">
             <p><strong>Actuación #{actuacion.number}:</strong> {actuacion.title}</p>
             <p><strong>Tipo:</strong> {getTipoLabel(actuacion.tipo)}</p>

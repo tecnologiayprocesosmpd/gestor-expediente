@@ -704,7 +704,12 @@ export function ExpedientView({
               Navegador de Actuaciones - {expedient.number}
             </h2>
           </div>
-          <ActuacionNavigator actuaciones={actuaciones} expedientNumber={expedient.number} expedientTitle={expedient.title} />
+          <ActuacionNavigator 
+            actuaciones={actuaciones} 
+            expedientNumber={expedient.number} 
+            expedientTitle={expedient.title}
+            expedientTipoProceso={expedient.tipoProceso}
+          />
         </div>
 
         {/* Diálogos disponibles en vista de navegación */}
