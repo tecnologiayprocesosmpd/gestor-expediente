@@ -96,7 +96,7 @@ export function ActuacionEditor({
 }: ActuacionEditorProps) {
   const [title, setTitle] = useState(propActuacion?.title || '');
   const [tipo, setTipo] = useState<Actuacion['tipo']>(propActuacion?.tipo || 'nota');
-  const [subtipo, setSubtipo] = useState(propActuacion?.subtipo || '');
+  const [subtipo, setSubtipo] = useState<Actuacion['subtipo']>(propActuacion?.subtipo || 'simple');
   const [status, setStatus] = useState<Actuacion['status']>(propActuacion?.status || 'borrador');
   const [margins, setMargins] = useState({ top: 2, right: 2, bottom: 2, left: 4 });
   const [content, setContent] = useState(propActuacion?.content || '');
@@ -401,7 +401,7 @@ export function ActuacionEditor({
     if (propActuacion) {
       setTitle(propActuacion.title || '');
       setTipo(propActuacion.tipo || 'nota');
-      setSubtipo(propActuacion.subtipo || '');
+      setSubtipo(propActuacion.subtipo || 'simple');
       setStatus(propActuacion.status || 'borrador');
       
       if (editor && propActuacion.content) {
@@ -555,14 +555,20 @@ export function ActuacionEditor({
             </div>
 
             <div>
-              <Label htmlFor="subtipo">Subtipo</Label>
-              <Input
-                id="subtipo"
-                value={subtipo}
-                onChange={(e) => setSubtipo(e.target.value)}
-                placeholder="Subtipo de la actuación"
-                disabled={!canEdit}
-              />
+              <Label htmlFor="subtipo">Subtipo *</Label>
+              <Select value={subtipo} onValueChange={(value: Actuacion['subtipo']) => setSubtipo(value)} disabled={!canEdit}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="simple">Simple</SelectItem>
+                  <SelectItem value="compleja">Compleja</SelectItem>
+                  <SelectItem value="urgente">Urgente</SelectItem>
+                  <SelectItem value="ordinaria">Ordinaria</SelectItem>
+                  <SelectItem value="extraordinaria">Extraordinaria</SelectItem>
+                  <SelectItem value="especial">Especial</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           
