@@ -187,10 +187,10 @@ export function TramiteList({ tramites, onCreateTramite, onBack, onTramiteUpdate
                           </Badge>
                         ) : (
                           <Button
-                            variant="outline"
+                            variant="default"
                             size="sm"
                             onClick={() => handleFinalizarTramite(tramite.id)}
-                            className="text-xs"
+                            className="text-xs bg-cyan-500 hover:bg-cyan-600 text-white border-0"
                           >
                             <CheckCircle2 className="w-3 h-3 mr-1" />
                             Finalizar
