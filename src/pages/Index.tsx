@@ -121,10 +121,38 @@ function AppContent() {
   const { user } = useUser();
   const { toast } = useToast();
   const [currentView, setCurrentView] = useState<'dashboard' | 'expedientes' | 'view' | 'editor' | 'agenda' | 'diligencias'>('dashboard');
-  const [expedients, setExpedients] = useState<ExpedientSummary[]>(mockExpedients);
+  const [expedients, setExpedients] = useState<ExpedientSummary[]>(() => {
+    // Cargar expedientes desde localStorage al inicio
+    try {
+      const stored = localStorage.getItem('expedients');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        // Convertir strings de fechas a objetos Date
+        return parsed.map((exp: any) => ({
+          ...exp,
+          createdAt: new Date(exp.createdAt),
+          updatedAt: new Date(exp.updatedAt),
+          lastActivity: exp.lastActivity ? new Date(exp.lastActivity) : undefined
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading expedients from localStorage:', error);
+    }
+    return mockExpedients;
+  });
   const [currentExpedientId, setCurrentExpedientId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [autoCreateActuacion, setAutoCreateActuacion] = useState(false);
+  
+  // Sincronizar expedients con localStorage cuando cambian
+  useEffect(() => {
+    try {
+      localStorage.setItem('expedients', JSON.stringify(expedients));
+      console.log('[Index] Expedientes guardados en localStorage:', expedients.length);
+    } catch (error) {
+      console.error('Error saving expedients to localStorage:', error);
+    }
+  }, [expedients]);
   
   // State for managing actuaciones per expedient
   const [expedientActuaciones, setExpedientActuaciones] = useState<Record<string, any[]>>({});
@@ -186,20 +214,28 @@ function AppContent() {
   };
 
   const handleSaveExpedient = (data: any) => {
+    console.log('[handleSaveExpedient] Datos recibidos:', data);
     if (currentExpedientId) {
       // Update existing expedient
-      setExpedients(prev => prev.map(exp => 
-        exp.id === currentExpedientId 
-          ? { 
-              ...exp, 
-              title: data.title || exp.title,
-              number: data.number || exp.number,
-              status: data.status || exp.status,
-              assignedOffice: data.assignedOffice,
-              updatedAt: new Date() 
-            }
-          : exp
-      ));
+      setExpedients(prev => {
+        const updated = prev.map(exp => 
+          exp.id === currentExpedientId 
+            ? { 
+                ...exp, 
+                title: data.title || exp.title,
+                number: data.number || exp.number,
+                status: data.status || exp.status,
+                oficina: data.oficina || exp.oficina,
+                referencia: data.referencia || exp.referencia,
+                tipoProceso: data.tipoProceso || exp.tipoProceso,
+                assignedOffice: data.assignedOffice,
+                updatedAt: new Date() 
+              }
+            : exp
+        );
+        console.log('[handleSaveExpedient] Expedientes actualizados:', updated);
+        return updated;
+      });
       toast({
         title: "Expediente actualizado",
         description: "Los cambios han sido guardados correctamente",
@@ -221,9 +257,11 @@ function AppContent() {
         urgente: data.urgente || false,
         content: data.content || '<p>Contenido del expediente...</p>',
         referencia: data.referencia || 'Sin referencia especificada',
-        tipoProceso: data.tipoProceso || 'administrativo'
+        tipoProceso: data.tipoProceso || 'administrativo',
+        oficina: data.oficina || data.assignedOffice || 'Sin asignar'
       };
       
+      console.log('[handleSaveExpedient] Nuevo expediente creado:', newExpedient);
       setExpedients(prev => [newExpedient, ...prev]);
       setCurrentExpedientId(newExpedient.id);
       

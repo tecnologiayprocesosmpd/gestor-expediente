@@ -70,6 +70,7 @@ export interface ExpedientSummary {
   content: string;        // Contenido del expediente para mostrar extracto
   referencia: string;     // Descripción de referencia
   tipoProceso: 'administrativo' | 'compra'; // Tipo de proceso
+  oficina?: string;       // Oficina asignada
   actuacionesCount?: number;
   derivacionesCount?: number;
   adjuntosCount?: number;
