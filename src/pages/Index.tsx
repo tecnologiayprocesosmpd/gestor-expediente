@@ -177,6 +177,21 @@ function AppContent() {
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [autoCreateActuacion, setAutoCreateActuacion] = useState(false);
   
+  // Logs de debugging
+  useEffect(() => {
+    console.log('=== ESTADO DE EXPEDIENTES ===');
+    console.log('Total de expedientes:', expedients.length);
+    console.log('Expedientes por estado:', {
+      draft: expedients.filter(e => e.status === 'draft').length,
+      en_tramite: expedients.filter(e => e.status === 'en_tramite').length,
+      paralizado: expedients.filter(e => e.status === 'paralizado').length,
+      archivado: expedients.filter(e => e.status === 'archivado').length
+    });
+    expedients.forEach(exp => {
+      console.log(`Expediente ${exp.number}: status=${exp.status}, createdAt=${exp.createdAt}`);
+    });
+  }, [expedients]);
+  
   // Sincronizar expedients con localStorage cuando cambian
   useEffect(() => {
     try {

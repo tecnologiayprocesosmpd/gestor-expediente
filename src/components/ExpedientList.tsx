@@ -65,6 +65,12 @@ export function ExpedientList({
 
     return matchesSearch && matchesStatus;
   });
+  
+  console.log('=== EXPEDIENT LIST DEBUG ===');
+  console.log('Expedientes recibidos:', expedients.length);
+  console.log('Expedientes filtrados:', filteredExpedients.length);
+  console.log('Filtro seleccionado:', selectedStatus);
+  console.log('Término de búsqueda:', searchTerm);
 
   // Sort expedients
   const sortedExpedients = [...filteredExpedients].sort((a, b) => {
