@@ -65,7 +65,7 @@ export function ConfirmDerivationDialog({
             <div className="flex items-center gap-2 text-sm">
               <FileText className="w-4 h-4 text-muted-foreground" />
               <span className="font-medium text-muted-foreground">Título:</span>
-              <span className="font-semibold text-foreground">{title}</span>
+              <span className="font-semibold text-foreground uppercase">{title}</span>
             </div>
             
             <div className="flex items-center gap-2 text-sm">
