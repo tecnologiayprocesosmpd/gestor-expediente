@@ -193,7 +193,7 @@ export function TramiteList({ tramites, onCreateTramite, onBack, onTramiteUpdate
                       </td>
                       <td className="p-4">
                         {tramite.finalizado ? (
-                          <Badge variant="default" className="bg-green-500">
+                          <Badge variant="default" className="bg-green-500 hover:bg-green-500 text-white">
                             <CheckCircle2 className="w-3 h-3 mr-1" />
                             Finalizado
                           </Badge>
@@ -213,7 +213,7 @@ export function TramiteList({ tramites, onCreateTramite, onBack, onTramiteUpdate
                               variant="default"
                               size="sm"
                               onClick={() => handleFinalizarClick(tramite.id)}
-                              className="text-xs bg-cyan-500 hover:bg-cyan-600 text-white border-0"
+                              className="text-xs bg-cyan-500 hover:bg-cyan-600 text-white border-0 h-5 px-2.5 py-0"
                             >
                               <CheckCircle2 className="w-3 h-3 mr-1" />
                               Finalizar
