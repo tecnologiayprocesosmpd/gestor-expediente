@@ -122,56 +122,25 @@ function AppContent() {
   const { toast } = useToast();
   const [currentView, setCurrentView] = useState<'dashboard' | 'expedientes' | 'view' | 'editor' | 'agenda' | 'diligencias'>('dashboard');
   const [expedients, setExpedients] = useState<ExpedientSummary[]>(() => {
-    // Cargar expedientes desde localStorage al inicio
+    console.log('=== INICIALIZANDO EXPEDIENTES ===');
+    
+    // Siempre usar mockExpedients como punto de partida en producción
+    const initialExpedients = mockExpedients;
+    
+    console.log('Expedientes iniciales cargados:', initialExpedients.length);
+    initialExpedients.forEach(exp => {
+      console.log(`- Expediente ${exp.number}: ${exp.title}, status: ${exp.status}`);
+    });
+    
+    // Guardar en localStorage
     try {
-      const stored = localStorage.getItem('expedients');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        
-        // Actualizar fechas antiguas automáticamente
-        const now = new Date();
-        const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
-        const twoMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, now.getDate());
-        const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-        
-        const updated = parsed.map((exp: any, index: number) => {
-          const createdAt = new Date(exp.createdAt);
-          
-          // Si el expediente tiene fecha anterior a 2025, actualizarlo
-          if (createdAt.getFullYear() < 2025) {
-            const newDate = index % 3 === 0 ? threeMonthsAgo : 
-                          index % 3 === 1 ? twoMonthsAgo : oneMonthAgo;
-            
-            console.log(`Actualizando expediente ${exp.number} de ${createdAt.toISOString()} a ${newDate.toISOString()}`);
-            
-            return {
-              ...exp,
-              createdAt: newDate,
-              updatedAt: newDate,
-              lastActivity: newDate,
-              fechaUltimaActividad: newDate.toISOString(),
-              status: exp.status === 'archivado' && exp.archivoMotivo?.includes('automático') ? 'en_tramite' : exp.status
-            };
-          }
-          
-          // Convertir strings de fechas a objetos Date
-          return {
-            ...exp,
-            createdAt,
-            updatedAt: new Date(exp.updatedAt),
-            lastActivity: exp.lastActivity ? new Date(exp.lastActivity) : undefined
-          };
-        });
-        
-        // Guardar los datos actualizados de vuelta en localStorage
-        localStorage.setItem('expedients', JSON.stringify(updated));
-        
-        return updated;
-      }
+      localStorage.setItem('expedients', JSON.stringify(initialExpedients));
+      console.log('Expedientes guardados en localStorage');
     } catch (error) {
-      console.error('Error loading expedients from localStorage:', error);
+      console.error('Error guardando expedientes en localStorage:', error);
     }
-    return mockExpedients;
+    
+    return initialExpedients;
   });
   const [currentExpedientId, setCurrentExpedientId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('');
