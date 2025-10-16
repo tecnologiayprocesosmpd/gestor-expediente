@@ -17,6 +17,7 @@ import { tramiteStorage } from "@/utils/tramiteStorage";
 import { toast } from "sonner";
 import { usePagination } from "@/hooks/usePagination";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { StatusChangeConfirmDialog } from "./StatusChangeConfirmDialog";
 
 interface TramiteListProps {
   tramites: Tramite[];
@@ -27,15 +28,26 @@ interface TramiteListProps {
 
 export function TramiteList({ tramites, onCreateTramite, onBack, onTramiteUpdated }: TramiteListProps) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [selectedTramiteId, setSelectedTramiteId] = useState<string | null>(null);
 
-  const handleFinalizarTramite = (tramiteId: string) => {
-    const tramite = tramites.find(t => t.id === tramiteId);
-    if (tramite) {
-      const updatedTramite = { ...tramite, finalizado: true };
-      tramiteStorage.save(updatedTramite);
-      toast.success("Trámite finalizado");
-      onTramiteUpdated();
+  const handleFinalizarClick = (tramiteId: string) => {
+    setSelectedTramiteId(tramiteId);
+    setConfirmDialogOpen(true);
+  };
+
+  const handleConfirmFinalizar = async () => {
+    if (selectedTramiteId) {
+      const tramite = tramites.find(t => t.id === selectedTramiteId);
+      if (tramite) {
+        const updatedTramite = { ...tramite, finalizado: true };
+        tramiteStorage.save(updatedTramite);
+        toast.success("Trámite finalizado");
+        onTramiteUpdated();
+      }
     }
+    setConfirmDialogOpen(false);
+    setSelectedTramiteId(null);
   };
 
   // Check if there's an active (non-finished) tramite
@@ -186,15 +198,27 @@ export function TramiteList({ tramites, onCreateTramite, onBack, onTramiteUpdate
                             Finalizado
                           </Badge>
                         ) : (
-                          <Button
-                            variant="default"
-                            size="sm"
-                            onClick={() => handleFinalizarTramite(tramite.id)}
-                            className="text-xs bg-cyan-500 hover:bg-cyan-600 text-white border-0"
+                          <StatusChangeConfirmDialog
+                            open={confirmDialogOpen && selectedTramiteId === tramite.id}
+                            onOpenChange={(open) => {
+                              setConfirmDialogOpen(open);
+                              if (!open) setSelectedTramiteId(null);
+                            }}
+                            onConfirm={handleConfirmFinalizar}
+                            title="Confirmar finalización"
+                            message="¿Está seguro que desea finalizar este trámite? Esta acción no se puede deshacer."
+                            requireMotivo={false}
                           >
-                            <CheckCircle2 className="w-3 h-3 mr-1" />
-                            Finalizar
-                          </Button>
+                            <Button
+                              variant="default"
+                              size="sm"
+                              onClick={() => handleFinalizarClick(tramite.id)}
+                              className="text-xs bg-cyan-500 hover:bg-cyan-600 text-white border-0"
+                            >
+                              <CheckCircle2 className="w-3 h-3 mr-1" />
+                              Finalizar
+                            </Button>
+                          </StatusChangeConfirmDialog>
                         )}
                       </td>
                     </tr>
