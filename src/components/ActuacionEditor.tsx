@@ -98,7 +98,7 @@ export function ActuacionEditor({
   const [tipo, setTipo] = useState<Actuacion['tipo']>(propActuacion?.tipo || 'nota');
   const [subtipo, setSubtipo] = useState<Actuacion['subtipo']>(propActuacion?.subtipo || 'simple');
   const [status, setStatus] = useState<Actuacion['status']>(propActuacion?.status || 'borrador');
-  const [margins, setMargins] = useState({ top: 2, right: 2, bottom: 2, left: 4 });
+  const [margins, setMargins] = useState({ top: 20, right: 20, bottom: 20, left: 40 }); // Márgenes en mm: 4cm izquierda, 2cm resto
   const [content, setContent] = useState(propActuacion?.content || '');
   const [pageSize, setPageSize] = useState('oficio');
   const [orientation, setOrientation] = useState('portrait');
