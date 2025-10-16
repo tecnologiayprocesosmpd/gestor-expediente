@@ -23,7 +23,6 @@ import { IndentExtension } from '@/extensions/IndentExtension';
 import { PageBreak } from '@/extensions/PageBreakExtension';
 import { useState, useEffect, useMemo } from 'react';
 import { useUser } from "@/contexts/UserContext";
-import { useAutoSave } from "@/hooks/useAutoSave";
 import { ActuacionVersionHistory, ActuacionVersion } from "@/components/ActuacionVersionHistory";
 import { useToast } from "@/hooks/use-toast";
 import type { Expedient } from "@/types/expedient";
@@ -173,20 +172,17 @@ export function ActuacionEditor({
         };
         setVersions(prev => [newVersion, ...prev]);
         
+        toast({
+          title: "Actuación guardada",
+          description: "Los cambios han sido guardados correctamente",
+        });
+        
         console.log('[ActuacionEditor.handleSave] Guardado completado');
       } catch (error) {
         console.error('[ActuacionEditor.handleSave] Error en guardado:', error);
       }
     }
   };
-
-  // Auto-save functionality
-  const { forceSave } = useAutoSave({
-    data: { title, content, tipo, subtipo },
-    onSave: handleSave,
-    delay: 3000,
-    enabled: canEdit && !!actuacionId
-  });
 
   // Load versions from localStorage
   useEffect(() => {
@@ -867,11 +863,6 @@ export function ActuacionEditor({
                 <div>
                   Caracteres: {editor.storage.characterCount.characters()} | 
                   Palabras: {editor.storage.characterCount.words()}
-                </div>
-              )}
-              {canEdit && actuacionId && (
-                <div className="text-xs text-green-600">
-                  ✓ Guardado automático activado
                 </div>
               )}
             </div>
