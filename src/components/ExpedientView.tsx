@@ -331,6 +331,7 @@ export function ExpedientView({
           ...act,
           status: newStatus,
           signedAt: newStatus === 'firmado' ? new Date() : undefined,
+          signedBy: newStatus === 'firmado' ? (user?.name || 'Usuario') : act.signedBy,
           updatedAt: new Date()
         };
 
