@@ -253,6 +253,38 @@ export function ExpedientView({
       });
     }
   }, [onRegisterActions, radicacionesInternasPendientes, showActuacionEditor, showNavigator, selectedActuacion, showTramiteList, showOficioView, showTramiteEditor]);
+  
+  // Scroll to top when selectedActuacion changes
+  useEffect(() => {
+    if (selectedActuacion) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [selectedActuacion]);
+
+  const getTipoLabel = (tipo: Actuacion['tipo']): string => {
+    const labels = {
+      'resolucion': 'Resolución',
+      'providencia': 'Providencia',
+      'nota': 'Nota',
+      'dictamen': 'Dictamen',
+      'decreto': 'Decreto',
+      'auto': 'Auto'
+    };
+    return labels[tipo] || tipo;
+  };
+
+  const getSubtipoLabel = (subtipo: Actuacion['subtipo']): string => {
+    const labels = {
+      'simple': 'Simple',
+      'compleja': 'Compleja',
+      'urgente': 'Urgente',
+      'ordinaria': 'Ordinaria',
+      'extraordinaria': 'Extraordinaria',
+      'especial': 'Especial'
+    };
+    return labels[subtipo] || subtipo;
+  };
+
   const getStatusColors = (status: string) => {
     const colors = {
       draft: {
@@ -703,37 +735,7 @@ export function ExpedientView({
   if (showEditor) {
     return <ExpedientEditor expedientId={expedientId} onBack={() => setShowEditor(false)} onSave={handleSaveActuacion} />;
   }
-  // Scroll to top when selectedActuacion changes
-  useEffect(() => {
-    if (selectedActuacion) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, [selectedActuacion]);
-
-  const getTipoLabel = (tipo: Actuacion['tipo']): string => {
-    const labels = {
-      'resolucion': 'Resolución',
-      'providencia': 'Providencia',
-      'nota': 'Nota',
-      'dictamen': 'Dictamen',
-      'decreto': 'Decreto',
-      'auto': 'Auto'
-    };
-    return labels[tipo] || tipo;
-  };
-
-  const getSubtipoLabel = (subtipo: Actuacion['subtipo']): string => {
-    const labels = {
-      'simple': 'Simple',
-      'compleja': 'Compleja',
-      'urgente': 'Urgente',
-      'ordinaria': 'Ordinaria',
-      'extraordinaria': 'Extraordinaria',
-      'especial': 'Especial'
-    };
-    return labels[subtipo] || subtipo;
-  };
-
+  
   if (selectedActuacion) {
     return <div className="min-h-screen p-6 space-y-6">
         {/* Header */}
