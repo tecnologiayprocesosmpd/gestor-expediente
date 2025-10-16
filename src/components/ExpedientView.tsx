@@ -876,20 +876,8 @@ export function ExpedientView({
             </div>
           </div>
           
-          {/* Segunda fila: Trámite */}
-          {tramites.length > 0 && !tramites.every(t => t.finalizado) && (
-            <div className="mb-4">
-              <div className="bg-cyan-50 rounded-lg px-6 py-4 flex items-center space-x-3 shadow-md border-2 border-cyan-500">
-                <FileText className="w-6 h-6 text-cyan-600 shrink-0" />
-                <span className="text-base font-semibold text-cyan-700 truncate" title={`Trámite: ${tramites.find(t => !t.finalizado)?.referencia || 'En Trámite'}`}>
-                  Trámite: {tramites.find(t => !t.finalizado)?.referencia || 'En Trámite'}
-                </span>
-              </div>
-            </div>
-          )}
-          
-          {/* Tercera fila: Información adicional */}
-          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+          {/* Segunda fila: Información adicional */}
+          <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-4">
             {(expedient.derivadoPor || expedient.recibidoPor) && <span className="flex items-center space-x-1">
                 <User className="w-4 h-4" />
               <span>
@@ -898,6 +886,18 @@ export function ExpedientView({
               </span>
             </span>}
           </div>
+          
+          {/* Tercera fila: Trámite */}
+          {tramites.length > 0 && !tramites.every(t => t.finalizado) && (
+            <div>
+              <div className="bg-cyan-50 rounded-lg px-6 py-4 flex items-center space-x-3 shadow-md border-2 border-cyan-500">
+                <FileText className="w-6 h-6 text-cyan-600 shrink-0" />
+                <span className="text-base font-semibold text-cyan-700 truncate" title={`Trámite: ${tramites.find(t => !t.finalizado)?.referencia || 'En Trámite'}`}>
+                  Trámite: {tramites.find(t => !t.finalizado)?.referencia || 'En Trámite'}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
