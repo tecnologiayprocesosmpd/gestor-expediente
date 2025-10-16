@@ -62,7 +62,6 @@ export function ActuacionNavigator({ actuaciones, expedientNumber, expedientTitl
         <div className="mb-8 border-b-2 border-black pb-4">
           <h1 className="text-2xl font-bold text-center mb-4">{expedientTitle}</h1>
           <div className="text-sm space-y-1">
-            <p><strong>Expediente:</strong> {expedientNumber}</p>
             <p><strong>Actuación #{actuacion.number}:</strong> {actuacion.title}</p>
             <p><strong>Tipo:</strong> {getTipoLabel(actuacion.tipo)}</p>
             <p><strong>Creado por:</strong> {actuacion.createdBy}</p>
