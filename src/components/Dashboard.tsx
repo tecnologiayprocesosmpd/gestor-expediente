@@ -353,23 +353,10 @@ export function Dashboard({
                           Expediente ID: {actuacion.expedientId}
                         </p>
                       </div>
-                      <div className="ml-4 flex flex-col items-end gap-2">
+                      <div className="ml-4">
                         <Badge className="bg-orange-100 text-orange-800 border-orange-200">
                           Para Firmar
                         </Badge>
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="text-xs"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedActuacion(actuacion);
-                            setShowActuacionesParaFirma(false);
-                          }}
-                        >
-                          <Eye className="w-3 h-3 mr-1" />
-                          Ver
-                        </Button>
                       </div>
                     </div>
                   </div>
