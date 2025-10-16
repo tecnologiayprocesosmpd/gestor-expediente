@@ -879,9 +879,9 @@ export function ExpedientView({
           {/* Segunda fila: Trámite */}
           {tramites.length > 0 && !tramites.every(t => t.finalizado) && (
             <div className="mb-4">
-              <div className="bg-primary/10 rounded-md px-4 py-2 flex items-center space-x-2 shadow-sm border border-primary/20 max-w-[500px]">
-                <FileText className="w-5 h-5 text-primary shrink-0" />
-                <span className="text-sm font-semibold text-primary truncate" title={`Trámite: ${tramites.find(t => !t.finalizado)?.referencia || 'En Trámite'}`}>
+              <div className="bg-cyan-50 rounded-lg px-6 py-4 flex items-center space-x-3 shadow-md border-2 border-cyan-500">
+                <FileText className="w-6 h-6 text-cyan-600 shrink-0" />
+                <span className="text-base font-semibold text-cyan-700 truncate" title={`Trámite: ${tramites.find(t => !t.finalizado)?.referencia || 'En Trámite'}`}>
                   Trámite: {tramites.find(t => !t.finalizado)?.referencia || 'En Trámite'}
                 </span>
               </div>
