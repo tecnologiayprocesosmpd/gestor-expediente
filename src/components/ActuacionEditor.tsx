@@ -120,8 +120,13 @@ export function ActuacionEditor({
         const expedients = JSON.parse(storedExpedients);
         const foundExpedient = expedients.find((exp: any) => exp.id === expedientId);
         if (foundExpedient) {
+          console.log('[ActuacionEditor] Expediente cargado:', foundExpedient);
           setExpedient(foundExpedient);
+        } else {
+          console.log('[ActuacionEditor] No se encontró expediente con ID:', expedientId);
         }
+      } else {
+        console.log('[ActuacionEditor] No hay expedientes en localStorage');
       }
     } catch (error) {
       console.error('Error loading expedient:', error);
@@ -813,11 +818,19 @@ export function ActuacionEditor({
               }}
             >
               {/* Encabezado con información del expediente */}
-              {expedient && (
-                <div className="mb-6 pb-4 border-b-2 border-border">
+              {expedient ? (
+                <div className="mb-8 pb-4 border-b-2 border-gray-800">
                   <div className="text-center">
-                    <p className="text-base font-bold uppercase">
-                      {expedient.title.toUpperCase()} S/ {expedient.tipoProceso.toUpperCase()}
+                    <p className="text-lg font-bold uppercase tracking-wide">
+                      {expedient.title} S/ {expedient.tipoProceso}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="mb-8 pb-4 border-b-2 border-gray-300">
+                  <div className="text-center">
+                    <p className="text-sm text-muted-foreground italic">
+                      Cargando información del expediente...
                     </p>
                   </div>
                 </div>
