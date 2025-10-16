@@ -96,6 +96,7 @@ export function ActuacionEditor({
 }: ActuacionEditorProps) {
   const [title, setTitle] = useState(propActuacion?.title || '');
   const [tipo, setTipo] = useState<Actuacion['tipo']>(propActuacion?.tipo || 'nota');
+  const [subtipo, setSubtipo] = useState(propActuacion?.subtipo || '');
   const [status, setStatus] = useState<Actuacion['status']>(propActuacion?.status || 'borrador');
   const [margins, setMargins] = useState({ top: 2, right: 2, bottom: 2, left: 4 });
   const [content, setContent] = useState(propActuacion?.content || '');
@@ -123,6 +124,7 @@ export function ActuacionEditor({
         title,
         content,
         tipo,
+        subtipo,
         status,
         updatedAt: new Date(),
         createdBy: propActuacion?.createdBy || user?.name || 'Usuario',
@@ -152,7 +154,7 @@ export function ActuacionEditor({
 
   // Auto-save functionality
   const { forceSave } = useAutoSave({
-    data: { title, content, tipo },
+    data: { title, content, tipo, subtipo },
     onSave: handleSave,
     delay: 3000,
     enabled: canEdit && !!actuacionId
@@ -399,6 +401,7 @@ export function ActuacionEditor({
     if (propActuacion) {
       setTitle(propActuacion.title || '');
       setTipo(propActuacion.tipo || 'nota');
+      setSubtipo(propActuacion.subtipo || '');
       setStatus(propActuacion.status || 'borrador');
       
       if (editor && propActuacion.content) {
@@ -535,18 +538,7 @@ export function ActuacionEditor({
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="title" className="text-sm font-semibold">Título *</Label>
-              <Input
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Título de la actuación"
-                disabled={!canEdit}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="tipo">Tipo de Actuación</Label>
+              <Label htmlFor="tipo">Tipo de Actuación *</Label>
               <Select value={tipo} onValueChange={(value: Actuacion['tipo']) => setTipo(value)} disabled={!canEdit}>
                 <SelectTrigger>
                   <SelectValue />
@@ -560,6 +552,17 @@ export function ActuacionEditor({
                   <SelectItem value="auto">Auto</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="subtipo">Subtipo</Label>
+              <Input
+                id="subtipo"
+                value={subtipo}
+                onChange={(e) => setSubtipo(e.target.value)}
+                placeholder="Subtipo de la actuación"
+                disabled={!canEdit}
+              />
             </div>
           </div>
           

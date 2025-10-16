@@ -16,6 +16,7 @@ export interface Actuacion {
   
   // Metadatos adicionales
   tipo: 'resolucion' | 'providencia' | 'nota' | 'dictamen' | 'decreto' | 'auto';
+  subtipo?: string; // Subtipo de actuación
   confidencial: boolean;
   urgente: boolean;
   
