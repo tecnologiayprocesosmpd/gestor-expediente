@@ -193,6 +193,7 @@ export function ExpedientView({
     }
   };
   const handleNuevaActuacion = () => {
+    window.scrollTo(0, 0);
     setShowActuacionEditor(true);
     setShowNavigator(false);
     setShowTramiteList(false);
@@ -202,6 +203,7 @@ export function ExpedientView({
     setSelectedActuacion(null);
   };
   const handleNavegar = () => {
+    window.scrollTo(0, 0);
     setShowNavigator(true);
     setShowTramiteList(false);
     setShowOficioView(false);
@@ -211,6 +213,7 @@ export function ExpedientView({
     setSelectedActuacion(null);
   };
   const handleShowTramites = () => {
+    window.scrollTo(0, 0);
     setShowTramiteList(true);
     setShowNavigator(false);
     setShowOficioView(false);
@@ -220,6 +223,7 @@ export function ExpedientView({
     setSelectedActuacion(null);
   };
   const handleShowOficio = () => {
+    window.scrollTo(0, 0);
     setShowOficioView(true);
     setShowNavigator(false);
     setShowTramiteList(false);
@@ -257,7 +261,7 @@ export function ExpedientView({
   // Scroll to top when selectedActuacion changes
   useEffect(() => {
     if (selectedActuacion) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo(0, 0);
     }
   }, [selectedActuacion]);
 
@@ -349,6 +353,7 @@ export function ExpedientView({
     }
   };
   const handleEditActuacion = (actuacionId: string) => {
+    window.scrollTo(0, 0);
     setEditingActuacionId(actuacionId);
     const actuacion = actuaciones.find(act => act.id === actuacionId);
     if (actuacion) {
@@ -394,6 +399,7 @@ export function ExpedientView({
 
       // Close editor for manual saves
       if (!autoSave) {
+        window.scrollTo(0, 0);
         setShowEditor(false);
         setShowActuacionEditor(false);
         setEditingActuacionId(null);
@@ -410,6 +416,7 @@ export function ExpedientView({
           // Only close editor for manual saves after successful save
           if (!autoSave) {
             console.log('[ExpedientView.handleSaveActuacion] Cerrando editor');
+            window.scrollTo(0, 0);
             setShowEditor(false);
             setShowActuacionEditor(false);
             setEditingActuacionId(null);
@@ -727,6 +734,7 @@ export function ExpedientView({
   }
   if (showActuacionEditor) {
     return <ActuacionEditor expedientId={expedientId || ''} actuacionId={editingActuacionId || undefined} actuacion={selectedActuacion || undefined} onBack={() => {
+      window.scrollTo(0, 0);
       setShowActuacionEditor(false);
       setEditingActuacionId(null);
       setSelectedActuacion(null);
@@ -741,7 +749,10 @@ export function ExpedientView({
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Button variant="outline" onClick={() => setSelectedActuacion(null)}>
+            <Button variant="outline" onClick={() => {
+              window.scrollTo(0, 0);
+              setSelectedActuacion(null);
+            }}>
               <ArrowLeft className="w-4 h-4 mr-2" />
               Volver al Expediente
             </Button>

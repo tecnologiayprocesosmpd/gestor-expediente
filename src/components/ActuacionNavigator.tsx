@@ -129,7 +129,10 @@ export function ActuacionNavigator({ actuaciones, expedientNumber, expedientTitl
               {filteredActuaciones.map((actuacion) => (
                 <button
                   key={actuacion.id}
-                  onClick={() => setSelectedActuacion(actuacion)}
+                  onClick={() => {
+                    window.scrollTo(0, 0);
+                    setSelectedActuacion(actuacion);
+                  }}
                   className={`w-full text-left p-3 rounded-lg border transition-all ${
                     selectedActuacion?.id === actuacion.id
                       ? 'border-primary bg-primary/10'

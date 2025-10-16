@@ -110,6 +110,11 @@ export function ActuacionEditor({
   const { toast } = useToast();
   const canEdit = status !== 'firmado';
   
+  // Scroll to top on component mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
   // Handle margins change
   const handleMarginsChange = (newMargins: { top: number; right: number; bottom: number; left: number }) => {
     setMargins(newMargins);
@@ -496,7 +501,10 @@ export function ActuacionEditor({
       <div className="bg-card rounded-lg border shadow-sm">
         <div className={`flex items-start justify-between p-6 border-l-4 ${statusColors.border}`}>
           <div className="flex items-start space-x-6">
-            <Button variant="outline" onClick={onBack}>
+            <Button variant="outline" onClick={() => {
+              window.scrollTo(0, 0);
+              onBack?.();
+            }}>
               <ArrowLeft className="w-4 h-4 mr-2" />
               Volver al Expediente
             </Button>
