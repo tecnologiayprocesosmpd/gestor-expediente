@@ -156,9 +156,9 @@ export function RadicacionInternaDialog({
                 </Select>
               </div>
 
-              {/* Fecha de emisión */}
+              {/* Fecha de radicación */}
               <div className="space-y-2">
-                <Label htmlFor="fechaEmision">Fecha de Emisión</Label>
+                <Label htmlFor="fechaEmision">Fecha de Radicación</Label>
                 <div className="flex items-center space-x-2 p-2 border rounded-md bg-muted">
                   <Calendar className="w-4 h-4 text-muted-foreground" />
                   <span className="text-sm">{fechaEmision}</span>
