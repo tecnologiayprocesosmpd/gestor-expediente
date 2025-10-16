@@ -69,6 +69,7 @@ export function SelectActuacionEstadoDialog({
                   onOpenChange(false);
                 }}
                 message={option.confirmMessage}
+                requireMotivo={false}
               >
                 <Button
                   variant={option.variant}

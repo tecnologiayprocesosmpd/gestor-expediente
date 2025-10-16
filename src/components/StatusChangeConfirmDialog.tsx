@@ -19,9 +19,10 @@ interface StatusChangeConfirmDialogProps {
   children?: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  onConfirm: (motivo: string) => void;
+  onConfirm: (motivo?: string) => void;
   title?: string;
   message?: string;
+  requireMotivo?: boolean;
 }
 
 export function StatusChangeConfirmDialog({
@@ -30,18 +31,19 @@ export function StatusChangeConfirmDialog({
   onOpenChange,
   onConfirm,
   title = "Confirmar cambio de estado",
-  message = "¿Está seguro de enviar la actuación para firma?"
+  message = "¿Está seguro de enviar la actuación para firma?",
+  requireMotivo = true
 }: StatusChangeConfirmDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [motivo, setMotivo] = useState('');
 
   const handleConfirm = async () => {
-    if (!motivo.trim()) {
+    if (requireMotivo && !motivo.trim()) {
       return;
     }
     setIsLoading(true);
     try {
-      onConfirm(motivo);
+      onConfirm(requireMotivo ? motivo : undefined);
       onOpenChange?.(false);
       setMotivo('');
     } finally {
@@ -69,27 +71,29 @@ export function StatusChangeConfirmDialog({
             {message}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <div className="py-4">
-          <Label htmlFor="motivo" className="text-sm font-medium">
-            Motivo del cambio de estado *
-          </Label>
-          <Textarea
-            id="motivo"
-            value={motivo}
-            onChange={(e) => setMotivo(e.target.value)}
-            placeholder="Ingrese el motivo del cambio de estado..."
-            className="mt-2"
-            rows={4}
-            disabled={isLoading}
-          />
-        </div>
+        {requireMotivo && (
+          <div className="py-4">
+            <Label htmlFor="motivo" className="text-sm font-medium">
+              Motivo del cambio de estado *
+            </Label>
+            <Textarea
+              id="motivo"
+              value={motivo}
+              onChange={(e) => setMotivo(e.target.value)}
+              placeholder="Ingrese el motivo del cambio de estado..."
+              className="mt-2"
+              rows={4}
+              disabled={isLoading}
+            />
+          </div>
+        )}
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isLoading} onClick={() => setMotivo('')}>
             Cancelar
           </AlertDialogCancel>
           <AlertDialogAction 
             onClick={handleConfirm}
-            disabled={isLoading || !motivo.trim()}
+            disabled={isLoading || (requireMotivo && !motivo.trim())}
             className="bg-orange-500 hover:bg-orange-600 disabled:opacity-50"
           >
             {isLoading ? "Procesando..." : "Confirmar"}
