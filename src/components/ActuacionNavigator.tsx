@@ -13,21 +13,14 @@ interface ActuacionNavigatorProps {
 }
 
 export function ActuacionNavigator({ actuaciones, expedientNumber, expedientTitle }: ActuacionNavigatorProps) {
-  const [filterStatus, setFilterStatus] = useState<'todos' | 'para-firmar' | 'firmado'>('todos');
+  const [filterStatus, setFilterStatus] = useState<'todos' | 'borrador' | 'para-firmar' | 'firmado'>('todos');
   
-  // Filtrar actuaciones según el estado seleccionado (excluir siempre borradores)
+  // Filtrar actuaciones según el estado seleccionado
   const filteredActuaciones = useMemo(() => {
     if (filterStatus === 'todos') {
-      // Mostrar solo para-firmar y firmado (nunca borradores)
-      return actuaciones.filter(a => a.status === 'para-firmar' || a.status === 'firmado');
+      return actuaciones;
     }
-    if (filterStatus === 'para-firmar') {
-      return actuaciones.filter(a => a.status === 'para-firmar');
-    }
-    if (filterStatus === 'firmado') {
-      return actuaciones.filter(a => a.status === 'firmado');
-    }
-    return actuaciones.filter(a => a.status === 'para-firmar' || a.status === 'firmado');
+    return actuaciones.filter(a => a.status === filterStatus);
   }, [actuaciones, filterStatus]);
   
   const [selectedActuacion, setSelectedActuacion] = useState<Actuacion | null>(
@@ -45,6 +38,18 @@ export function ActuacionNavigator({ actuaciones, expedientNumber, expedientTitl
     return <Badge variant="outline" className={variant.className}>{variant.label}</Badge>;
   };
 
+  const getTipoLabel = (tipo: Actuacion['tipo']) => {
+    const labels = {
+      resolucion: 'Resolución',
+      providencia: 'Providencia',
+      nota: 'Nota',
+      dictamen: 'Dictamen',
+      decreto: 'Decreto',
+      auto: 'Auto'
+    };
+    return labels[tipo];
+  };
+
   const renderPDFPreview = (actuacion: Actuacion) => {
     // Extraer texto del HTML
     const tempDiv = document.createElement('div');
@@ -53,6 +58,21 @@ export function ActuacionNavigator({ actuaciones, expedientNumber, expedientTitl
 
     return (
       <div className="bg-white text-black p-12 min-h-full" style={{ fontFamily: 'Times New Roman, serif' }}>
+        {/* Encabezado con título e información */}
+        <div className="mb-8 border-b-2 border-black pb-4">
+          <h1 className="text-2xl font-bold text-center mb-4">{expedientTitle}</h1>
+          <div className="text-sm space-y-1">
+            <p><strong>Expediente:</strong> {expedientNumber}</p>
+            <p><strong>Actuación #{actuacion.number}:</strong> {actuacion.title}</p>
+            <p><strong>Tipo:</strong> {getTipoLabel(actuacion.tipo)}</p>
+            <p><strong>Creado por:</strong> {actuacion.createdBy}</p>
+            <p><strong>Fecha:</strong> {new Date(actuacion.createdAt).toLocaleDateString('es-ES')}</p>
+            {actuacion.status === 'firmado' && actuacion.signedBy && (
+              <p><strong>Firmado por:</strong> {actuacion.signedBy}</p>
+            )}
+          </div>
+        </div>
+
         {/* Contenido de la actuación */}
         <div className="text-justify leading-relaxed whitespace-pre-wrap">
           {textContent}
@@ -65,6 +85,9 @@ export function ActuacionNavigator({ actuaciones, expedientNumber, expedientTitl
               <p className="mb-1">_____________________________</p>
               <p className="font-bold">{actuacion.signedBy}</p>
               <p className="text-sm">Firma Digital</p>
+              <p className="text-xs text-gray-600 mt-2">
+                Firmado el {new Date(actuacion.signedAt!).toLocaleString('es-ES')}
+              </p>
             </div>
           </div>
         )}
@@ -94,6 +117,7 @@ export function ActuacionNavigator({ actuaciones, expedientNumber, expedientTitl
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="todos">Todos</SelectItem>
+                <SelectItem value="borrador">Borradores</SelectItem>
                 <SelectItem value="para-firmar">Para Firma</SelectItem>
                 <SelectItem value="firmado">Firmado</SelectItem>
               </SelectContent>

@@ -47,6 +47,13 @@ class ActuacionStorage {
       
       if (existingIndex >= 0) {
         oldStatus = actuaciones[existingIndex].status;
+        
+        // Si el estado cambia a firmado, registrar quién firmó
+        if (actuacion.status === 'firmado' && oldStatus !== 'firmado') {
+          actuacion.signedAt = new Date();
+          // signedBy debe ser establecido por quien hace la firma
+        }
+        
         actuaciones[existingIndex] = actuacion;
         statusChanged = oldStatus !== actuacion.status;
         

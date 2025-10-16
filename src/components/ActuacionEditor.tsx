@@ -23,6 +23,9 @@ import { IndentExtension } from '@/extensions/IndentExtension';
 import { PageBreak } from '@/extensions/PageBreakExtension';
 import { useState, useEffect, useMemo } from 'react';
 import { useUser } from "@/contexts/UserContext";
+import { useAutoSave } from "@/hooks/useAutoSave";
+import { ActuacionVersionHistory, ActuacionVersion } from "@/components/ActuacionVersionHistory";
+import { useToast } from "@/hooks/use-toast";
 
 
 import { Button } from "@/components/ui/button";
@@ -94,14 +97,16 @@ export function ActuacionEditor({
   const [title, setTitle] = useState(propActuacion?.title || '');
   const [tipo, setTipo] = useState<Actuacion['tipo']>(propActuacion?.tipo || 'nota');
   const [status, setStatus] = useState<Actuacion['status']>(propActuacion?.status || 'borrador');
-  const [margins, setMargins] = useState({ top: 20, right: 20, bottom: 20, left: 20 });
+  const [margins, setMargins] = useState({ top: 2, right: 2, bottom: 2, left: 4 });
   const [content, setContent] = useState(propActuacion?.content || '');
   const [pageSize, setPageSize] = useState('oficio');
   const [orientation, setOrientation] = useState('portrait');
   const [headerText, setHeaderText] = useState('');
   const [footerText, setFooterText] = useState('');
+  const [versions, setVersions] = useState<ActuacionVersion[]>([]);
   
   const { user } = useUser();
+  const { toast } = useToast();
   const canEdit = status !== 'firmado';
   
   // Handle margins change
@@ -120,15 +125,69 @@ export function ActuacionEditor({
         tipo,
         status,
         updatedAt: new Date(),
-        createdBy: user?.name || 'Usuario'
+        createdBy: propActuacion?.createdBy || user?.name || 'Usuario',
+        version: (propActuacion?.version || 0) + 1
       };
       console.log('[ActuacionEditor.handleSave] Datos a guardar:', saveData);
       try {
         await onSave(saveData);
+        
+        // Agregar versión al historial
+        const newVersion: ActuacionVersion = {
+          id: `v_${Date.now()}`,
+          content,
+          title,
+          timestamp: new Date(),
+          modifiedBy: user?.name || 'Usuario',
+          version: saveData.version
+        };
+        setVersions(prev => [newVersion, ...prev]);
+        
         console.log('[ActuacionEditor.handleSave] Guardado completado');
       } catch (error) {
         console.error('[ActuacionEditor.handleSave] Error en guardado:', error);
       }
+    }
+  };
+
+  // Auto-save functionality
+  const { forceSave } = useAutoSave({
+    data: { title, content, tipo },
+    onSave: handleSave,
+    delay: 3000,
+    enabled: canEdit && !!actuacionId
+  });
+
+  // Load versions from localStorage
+  useEffect(() => {
+    if (actuacionId) {
+      const savedVersions = localStorage.getItem(`actuacion_versions_${actuacionId}`);
+      if (savedVersions) {
+        const parsed = JSON.parse(savedVersions);
+        setVersions(parsed.map((v: any) => ({
+          ...v,
+          timestamp: new Date(v.timestamp)
+        })));
+      }
+    }
+  }, [actuacionId]);
+
+  // Save versions to localStorage
+  useEffect(() => {
+    if (actuacionId && versions.length > 0) {
+      localStorage.setItem(`actuacion_versions_${actuacionId}`, JSON.stringify(versions));
+    }
+  }, [versions, actuacionId]);
+
+  const handleRestoreVersion = (version: ActuacionVersion) => {
+    if (editor) {
+      editor.commands.setContent(version.content);
+      setTitle(version.title);
+      setContent(version.content);
+      toast({
+        title: "Versión restaurada",
+        description: `Se restauró la versión ${version.version} del ${new Date(version.timestamp).toLocaleString('es-ES')}`,
+      });
     }
   };
   
@@ -458,6 +517,12 @@ export function ActuacionEditor({
           </div>
           
           <div className="flex items-center space-x-2">
+            {actuacionId && versions.length > 0 && (
+              <ActuacionVersionHistory
+                versions={versions}
+                onRestore={handleRestoreVersion}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -726,7 +791,10 @@ export function ActuacionEditor({
           <div className="flex items-center justify-between text-sm text-muted-foreground pt-4 border-t">
             <div className="space-y-1">
               <div>Tipo: {getTipoLabel(tipo)}</div>
-              <div>Creado por: {user?.name}</div>
+              <div>Creado por: {propActuacion?.createdBy || user?.name || 'Usuario'}</div>
+              {status === 'firmado' && propActuacion?.signedBy && (
+                <div>Firmado por: {propActuacion.signedBy}</div>
+              )}
             </div>
             <div className="text-right space-y-1">
               <div>Última modificación: {new Date().toLocaleString('es-ES')}</div>
@@ -734,6 +802,11 @@ export function ActuacionEditor({
                 <div>
                   Caracteres: {editor.storage.characterCount.characters()} | 
                   Palabras: {editor.storage.characterCount.words()}
+                </div>
+              )}
+              {canEdit && actuacionId && (
+                <div className="text-xs text-green-600">
+                  ✓ Guardado automático activado
                 </div>
               )}
             </div>
