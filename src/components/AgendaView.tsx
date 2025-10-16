@@ -393,113 +393,105 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
         </Dialog>
       </div>
 
-      <div className="flex gap-6">
-        {/* Calendario */}
-        <div className="flex-shrink-0">
-          <h2 className="text-2xl font-bold tracking-tight mb-4">Calendario</h2>
-          <div className="border rounded-lg bg-card w-fit">
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={(date) => date && setSelectedDate(date)}
-              locale={es}
-              className="pointer-events-auto p-3"
-              modifiers={{
-                hasCita: daysWithCitas
-              }}
-              modifiersClassNames={{
-                hasCita: "relative after:content-[''] after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-[hsl(var(--warning))] after:z-10"
-              }}
-              classNames={{
-                months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
-                month: "space-y-4 w-fit",
-                caption: "flex justify-center pt-1 relative items-center",
-                caption_label: "text-sm font-medium",
-                nav: "space-x-1 flex items-center",
-                table: "w-fit border-collapse space-y-1",
-                head_row: "flex",
-                head_cell: "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
-                row: "flex w-fit mt-2",
-                cell: "h-9 w-9 text-center text-sm p-0 relative"
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Eventos */}
-        <div className="flex-1 min-w-0 space-y-6">
-          {/* Filtros Globales */}
-          <div className="bg-background border rounded-lg shadow-sm px-4 py-3">
-            <div className="flex flex-col gap-3">
-              <div className="relative flex-1">
+      <div className="space-y-6">
+        {/* Filtros Globales Minimalistas */}
+        <Card className="w-full">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="relative flex-1 max-w-xs">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
-                  placeholder="Buscar por título o ubicación..."
+                  placeholder="Buscar..."
                   value={searchProximas}
                   onChange={(e) => setSearchProximas(e.target.value)}
                   className="pl-10 h-9"
                 />
               </div>
-              <div className="flex items-center gap-2">
-                <Label className="text-sm text-muted-foreground whitespace-nowrap">Fecha:</Label>
-                <Input
-                  type="date"
-                  value={fechaProximas}
-                  onChange={(e) => setFechaProximas(e.target.value)}
-                  className="h-9 flex-1"
-                />
-                {fechaProximas && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setFechaProximas('')}
-                    className="h-9"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                <Label className="text-sm text-muted-foreground whitespace-nowrap">Expediente:</Label>
-                <Select value={expedientFilter || "all"} onValueChange={(value) => setExpedientFilter(value === "all" ? "" : value)}>
-                  <SelectTrigger className="h-9 flex-1">
-                    <SelectValue placeholder="Todos los expedientes" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background z-50">
-                    <SelectItem value="all">Todos los expedientes</SelectItem>
-                    {expedients.map(exp => (
-                      <SelectItem key={exp.id} value={exp.id}>
-                        {exp.number} - {exp.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {expedientFilter && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setExpedientFilter('')}
-                    className="h-9"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                )}
-              </div>
+              <Input
+                type="date"
+                value={fechaProximas}
+                onChange={(e) => setFechaProximas(e.target.value)}
+                className="h-9 w-40"
+                placeholder="Fecha"
+              />
+              <Select value={expedientFilter || "all"} onValueChange={(value) => setExpedientFilter(value === "all" ? "" : value)}>
+                <SelectTrigger className="h-9 w-56">
+                  <SelectValue placeholder="Expediente" />
+                </SelectTrigger>
+                <SelectContent className="bg-background z-50">
+                  <SelectItem value="all">Todos</SelectItem>
+                  {expedients.map(exp => (
+                    <SelectItem key={exp.id} value={exp.id}>
+                      {exp.number} - {exp.title.substring(0, 30)}...
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {(fechaProximas || expedientFilter) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setFechaProximas('');
+                    setExpedientFilter('');
+                  }}
+                  className="h-9"
+                >
+                  Limpiar
+                </Button>
+              )}
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Calendario y Programadas lado a lado */}
+        <div className="flex gap-6 items-start">
+          {/* Calendario */}
+          <div className="flex-shrink-0">
+            <h2 className="text-2xl font-bold tracking-tight mb-4">Calendario</h2>
+            <Card className="w-fit">
+              <CardContent className="p-0">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(date) => date && setSelectedDate(date)}
+                  locale={es}
+                  className="pointer-events-auto p-3"
+                  modifiers={{
+                    hasCita: daysWithCitas
+                  }}
+                  modifiersClassNames={{
+                    hasCita: "relative after:content-[''] after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:rounded-full after:bg-[hsl(var(--warning))] after:z-10"
+                  }}
+                  classNames={{
+                    months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+                    month: "space-y-4 w-fit",
+                    caption: "flex justify-center pt-1 relative items-center",
+                    caption_label: "text-sm font-medium",
+                    nav: "space-x-1 flex items-center",
+                    table: "w-fit border-collapse space-y-1",
+                    head_row: "flex",
+                    head_cell: "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
+                    row: "flex w-fit mt-2",
+                    cell: "h-9 w-9 text-center text-sm p-0 relative"
+                  }}
+                />
+              </CardContent>
+            </Card>
           </div>
 
-          {/* PROGRAMADAS (Hoy + Futuras) */}
-          <div>
+          {/* PROGRAMADAS */}
+          <div className="flex-1 min-w-0">
             <h2 className="text-2xl font-bold tracking-tight mb-4">PROGRAMADAS</h2>
             
-            <div className="border rounded-lg bg-card">
-              <div className="p-3 space-y-2 min-h-[200px]">
-                {filteredCitasProgramadas.length === 0 ? (
+            <Card>
+              <CardContent className="p-3">
+                <div className="space-y-2 min-h-[200px]">{filteredCitasProgramadas.length === 0 ? (
                   <div className="text-center py-8 bg-muted/30 rounded-lg">
                     <CalendarIcon className="mx-auto h-12 w-12 text-muted-foreground" />
                     <p className="mt-2 text-sm text-muted-foreground">
                       {searchProximas || fechaProximas || expedientFilter
-                        ? 'No se encontraron eventos que coincidan con los filtros' 
+                        ? 'No se encontraron eventos' 
                         : 'No hay eventos programados'}
                     </p>
                   </div>
@@ -509,7 +501,7 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
                     <div 
                       key={cita.id} 
                       className="flex items-center justify-between p-4 bg-card border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer h-[72px]"
-                      onClick={() => handleViewDetails(cita, false)}
+                      onClick={() => handleViewDetails(cita, true)}
                     >
                       <div className="flex items-center gap-4 flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-shrink-0">
@@ -546,7 +538,7 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
                               onClick={() => onNavigateToExpedient?.(cita.expedientId!)}
                             >
                               <FileText className="h-4 w-4 mr-1" />
-                              Ver Expediente
+                              Ver
                             </Button>
                           </div>
                         )}
@@ -591,21 +583,23 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
                   </>
                 )}
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
 
-          {/* HISTORIAL */}
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight mb-4">HISTORIAL</h2>
-            
-            <div className="border rounded-lg bg-card">
-              <div className="p-3 space-y-2 min-h-[200px]">
-                {filteredCitasHistorial.length === 0 ? (
+      {/* HISTORIAL - Ancho completo */}
+      <div className="w-full">
+        <h2 className="text-2xl font-bold tracking-tight mb-4">HISTORIAL</h2>
+        
+        <Card>
+          <CardContent className="p-3">
+            <div className="space-y-2 min-h-[200px]">{filteredCitasHistorial.length === 0 ? (
                   <div className="text-center py-8 bg-muted/30 rounded-lg">
                     <CalendarIcon className="mx-auto h-12 w-12 text-muted-foreground" />
                     <p className="mt-2 text-sm text-muted-foreground">
                       {searchProximas || fechaProximas || expedientFilter
-                        ? 'No se encontraron eventos que coincidan con los filtros' 
+                        ? 'No se encontraron eventos en el historial' 
                         : 'No hay eventos en el historial'}
                     </p>
                   </div>
@@ -694,8 +688,8 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
                 </>
               )}
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
 
