@@ -30,7 +30,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 
 interface AppSidebarProps {
   currentView: string;
-  onNavigate?: (view: 'dashboard' | 'expedientes' | 'agenda' | 'oficios') => void;
+  onNavigate?: (view: 'dashboard' | 'expedientes' | 'agenda' | 'diligencias') => void;
   onCreateExpedient?: () => void;
   isExpedientView?: boolean;
   isActuacionView?: boolean;
@@ -42,7 +42,7 @@ interface AppSidebarProps {
   onNavegar?: () => void;
   onChangeStatus?: () => void;
   onChangeActuacionStatus?: () => void;
-  onOficio?: () => void;
+  onDiligencia?: () => void;
   showRegresarRadicacionInterna?: boolean;
 }
 
@@ -60,7 +60,7 @@ export function AppSidebar({
   onNavegar,
   onChangeStatus,
   onChangeActuacionStatus,
-  onOficio,
+  onDiligencia,
   showRegresarRadicacionInterna = false
 }: AppSidebarProps) {
   const { user } = useUser();
@@ -101,10 +101,10 @@ export function AppSidebar({
       onClick: () => onNavigate?.('agenda')
     },
     { 
-      id: 'oficios', 
-      title: 'Oficios', 
+      id: 'diligencias', 
+      title: 'Diligencias', 
       icon: FileCheck,
-      onClick: () => onNavigate?.('oficios')
+      onClick: () => onNavigate?.('diligencias')
     }
   ];
 
@@ -265,12 +265,12 @@ export function AppSidebar({
               )}
 
               <button
-                onClick={onOficio}
+                onClick={onDiligencia}
                 className="w-full flex flex-col items-center p-3 rounded-lg transition-all duration-300 hover:bg-purple-600 hover:text-white bg-muted/50 text-foreground"
               >
                 <FileCheck className="w-6 h-6 mb-2" />
                 <span className="text-xs text-center">
-                  Oficios
+                  Diligencias
                 </span>
               </button>
 

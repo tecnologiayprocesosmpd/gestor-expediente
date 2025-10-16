@@ -161,7 +161,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
       setShowDestinatarioForm(false);
       setPdfFile(null);
 
-      toast.success('Oficio creado exitosamente');
+      toast.success('Diligencia creada exitosamente');
     }
   };
 
@@ -190,7 +190,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
     
     // Título
     doc.setFontSize(20);
-    doc.text('OFICIO', 20, 30);
+    doc.text('DILIGENCIA', 20, 30);
     
     // Información del expediente
     doc.setFontSize(14);
@@ -212,8 +212,8 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
     }
     
     // Descargar PDF
-    doc.save(`Oficio_${oficio.expedientNumber}_${format(new Date(), 'dd-MM-yyyy')}.pdf`);
-    toast.success('Oficio exportado como PDF');
+    doc.save(`Diligencia_${oficio.expedientNumber}_${format(new Date(), 'dd-MM-yyyy')}.pdf`);
+    toast.success('Diligencia exportada como PDF');
   };
 
   const handleFinishOficio = () => {
@@ -237,7 +237,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
       setResponsePdfFile(null);
       setResponseDescription('');
       
-      toast.success('Oficio finalizado exitosamente');
+      toast.success('Diligencia finalizada exitosamente');
     }
   };
 
@@ -307,7 +307,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
   const handlePrintOficio = (oficio: OficioItem) => {
     const printContent = `
       <div style="font-family: Arial, sans-serif; padding: 20px;">
-        <h1>OFICIO</h1>
+        <h1>DILIGENCIA</h1>
         <hr>
         <h2>Expediente: ${oficio.expedientNumber}</h2>
         <h3>${oficio.expedientTitle}</h3>
@@ -328,7 +328,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
       printWindow.document.write(`
         <html>
           <head>
-            <title>Oficio - ${oficio.expedientNumber}</title>
+            <title>Diligencia - ${oficio.expedientNumber}</title>
             <style>
               body { margin: 0; padding: 0; }
               @media print {
@@ -357,7 +357,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
           <ArrowLeft className="w-4 h-4 mr-2" />
           Volver
         </Button>
-        <h1 className="text-2xl font-bold">Gestión de Oficios</h1>
+        <h1 className="text-2xl font-bold">Gestión de Diligencias</h1>
       </div>
 
       {/* Botón para crear nuevo oficio */}
@@ -367,7 +367,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
           size="lg"
         >
           <Plus className="w-4 h-4 mr-2" />
-          Crear Oficio
+          Crear Diligencia
         </Button>
       </div>
 
@@ -377,7 +377,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <FileText className="w-5 h-5" />
-              Oficios Activos ({activeOficios.length})
+              Diligencia Pendiente ({activeOficios.length})
             </div>
             <Input
               placeholder="Filtrar por destinatario..."
@@ -391,7 +391,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
           {activeOficios.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <FileText className="w-12 h-12 mx-auto mb-3 opacity-30" />
-              <p>No hay oficios activos</p>
+              <p>No hay diligencias pendientes</p>
             </div>
           ) : (
             <>
@@ -471,7 +471,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
             <CardTitle className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <FileCheck className="w-5 h-5" />
-                Oficios Finalizados ({finishedOficios.length})
+                Diligencias Finalizadas ({finishedOficios.length})
               </div>
               <Input
                 placeholder="Filtrar por destinatario..."
@@ -559,7 +559,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
       <Dialog open={showExpedientSelector} onOpenChange={setShowExpedientSelector}>
         <DialogContent className="max-w-3xl max-h-[80vh] overflow-hidden flex flex-col">
           <DialogHeader>
-            <DialogTitle>Seleccionar Expediente para Oficio</DialogTitle>
+            <DialogTitle>Seleccionar Expediente para Diligencia</DialogTitle>
           </DialogHeader>
           
           {/* Filtros */}
@@ -668,7 +668,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
       <Dialog open={showDestinatarioForm} onOpenChange={setShowDestinatarioForm}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Crear Oficio</DialogTitle>
+            <DialogTitle>Crear Diligencia</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             {/* Expediente seleccionado */}
@@ -691,7 +691,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
               <Input
                 id="destinatario"
                 type="text"
-                placeholder="Ingrese el destinatario del oficio"
+                placeholder="Ingrese el destinatario de la diligencia"
                 value={destinatario}
                 onChange={(e) => setDestinatario(e.target.value)}
                 maxLength={200}
@@ -753,7 +753,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
                 onClick={handleCreateOficio}
                 disabled={!destinatario.trim()}
               >
-                Crear Oficio
+                Crear Diligencia
               </Button>
             </div>
           </div>
@@ -764,7 +764,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
       <Dialog open={showOficioDetails} onOpenChange={setShowOficioDetails}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Gestionar Oficio</DialogTitle>
+            <DialogTitle>Gestionar Diligencia</DialogTitle>
           </DialogHeader>
           {selectedOficio && (
             <div className="space-y-4">
@@ -833,7 +833,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
                   className="bg-green-600 hover:bg-green-700"
                 >
                   <FileCheck className="w-4 h-4 mr-2" />
-                  Finalizar Oficio
+                  Finalizar Diligencia
                 </Button>
               </div>
             </div>

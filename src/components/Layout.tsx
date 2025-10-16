@@ -14,8 +14,8 @@ import { AppSidebar } from "./AppSidebar";
 
 interface LayoutProps {
   children: ReactNode;
-  currentView?: 'dashboard' | 'expedientes' | 'view' | 'editor' | 'agenda' | 'oficios';
-  onNavigate?: (view: 'dashboard' | 'expedientes' | 'agenda' | 'oficios') => void;
+  currentView?: 'dashboard' | 'expedientes' | 'view' | 'editor' | 'agenda' | 'diligencias';
+  onNavigate?: (view: 'dashboard' | 'expedientes' | 'agenda' | 'diligencias') => void;
   onCreateExpedient?: () => void;
   isExpedientView?: boolean;
   isActuacionView?: boolean;
@@ -26,7 +26,7 @@ interface LayoutProps {
   onNuevaActuacion?: () => void;
   onNavegar?: () => void;
   onChangeStatus?: () => void;
-  onOficio?: () => void;
+  onDiligencia?: () => void;
   onChangeActuacionStatus?: () => void;
   showRegresarRadicacionInterna?: boolean;
 }
@@ -45,7 +45,7 @@ export function Layout({
   onNuevaActuacion,
   onNavegar,
   onChangeStatus,
-  onOficio,
+  onDiligencia,
   onChangeActuacionStatus,
   showRegresarRadicacionInterna = false
 }: LayoutProps) {
@@ -128,7 +128,7 @@ export function Layout({
             onNuevaActuacion={onNuevaActuacion}
             onNavegar={onNavegar}
             onChangeStatus={onChangeStatus}
-            onOficio={onOficio}
+            onDiligencia={onDiligencia}
             onChangeActuacionStatus={onChangeActuacionStatus}
             showRegresarRadicacionInterna={showRegresarRadicacionInterna}
           />

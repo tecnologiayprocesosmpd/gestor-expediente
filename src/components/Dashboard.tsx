@@ -35,9 +35,9 @@ interface DashboardProps {
   onNavigateToExpedients?: () => void;
   onCreateActuacion?: () => void;
   onFilterExpedients?: (status: string) => void;
+  onNavigateToDiligencias?: () => void;
   onRecibirExpediente?: (expedientId: string) => void;
   onNavigateToActuacionesParaFirma?: () => void;
-  onNavigateToOficios?: () => void;
 }
 
 export function Dashboard({ 
@@ -50,7 +50,7 @@ export function Dashboard({
   onFilterExpedients,
   onRecibirExpediente,
   onNavigateToActuacionesParaFirma,
-  onNavigateToOficios
+  onNavigateToDiligencias
 }: DashboardProps) {
   const { user } = useUser();
   
@@ -157,14 +157,14 @@ export function Dashboard({
 
         <Card 
           className="hover:shadow-lg transition-shadow cursor-pointer border-2 border-[hsl(var(--card-inicio-border))] bg-gradient-to-br from-[hsl(var(--card-inicio-light))] to-[hsl(var(--card-inicio-light))]"
-          onClick={() => onNavigateToOficios?.()}
+          onClick={() => onNavigateToDiligencias?.()}
         >
           <CardContent className="p-6 text-center">
             <div className="w-12 h-12 bg-[hsl(var(--card-inicio))] rounded-lg flex items-center justify-center mx-auto mb-3">
               <FileText className="w-6 h-6 text-white" />
             </div>
-            <h3 className="font-semibold text-sm text-[hsl(var(--card-inicio))] mb-1">OFICIOS</h3>
-            <p className="text-xs text-[hsl(var(--card-inicio))] opacity-80">Gestión de oficios</p>
+          <h3 className="font-semibold text-sm text-[hsl(var(--card-inicio))] mb-1">DILIGENCIAS</h3>
+            <p className="text-xs text-[hsl(var(--card-inicio))] opacity-80">Gestión de diligencias</p>
             <Badge className="mt-2 bg-[hsl(var(--card-inicio))] text-white text-xs">Disponible</Badge>
           </CardContent>
         </Card>

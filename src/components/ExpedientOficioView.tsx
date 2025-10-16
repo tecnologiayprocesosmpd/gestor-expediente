@@ -131,7 +131,7 @@ export function ExpedientOficioView({
     setShowCreateForm(false);
     setPdfFile(null);
 
-    toast.success('Oficio creado exitosamente');
+    toast.success('Diligencia creada exitosamente');
   };
 
   const handlePdfUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -159,7 +159,7 @@ export function ExpedientOficioView({
     
     // Título
     doc.setFontSize(20);
-    doc.text('OFICIO', 20, 30);
+    doc.text('DILIGENCIA', 20, 30);
     
     // Información del expediente
     doc.setFontSize(14);
@@ -181,8 +181,8 @@ export function ExpedientOficioView({
     }
     
     // Descargar PDF
-    doc.save(`Oficio_${oficio.expedientNumber}_${format(new Date(), 'dd-MM-yyyy')}.pdf`);
-    toast.success('Oficio exportado como PDF');
+    doc.save(`Diligencia_${oficio.expedientNumber}_${format(new Date(), 'dd-MM-yyyy')}.pdf`);
+    toast.success('Diligencia exportada como PDF');
   };
 
   const handleFinishOficio = () => {
@@ -206,7 +206,7 @@ export function ExpedientOficioView({
       setResponsePdfFile(null);
       setResponseDescription('');
       
-      toast.success('Oficio finalizado exitosamente');
+      toast.success('Diligencia finalizada exitosamente');
     }
   };
 
@@ -219,7 +219,7 @@ export function ExpedientOficioView({
   const handlePrintOficio = (oficio: OficioItem) => {
     const printContent = `
       <div style="font-family: Arial, sans-serif; padding: 20px;">
-        <h1>OFICIO</h1>
+        <h1>DILIGENCIA</h1>
         <hr>
         <h2>Expediente: ${oficio.expedientNumber}</h2>
         <h3>${oficio.expedientTitle}</h3>
@@ -240,7 +240,7 @@ export function ExpedientOficioView({
       printWindow.document.write(`
         <html>
           <head>
-            <title>Oficio - ${oficio.expedientNumber}</title>
+            <title>Diligencia - ${oficio.expedientNumber}</title>
             <style>
               body { margin: 0; padding: 0; }
               @media print {
@@ -274,7 +274,7 @@ export function ExpedientOficioView({
           Volver
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">Oficios del Expediente</h1>
+          <h1 className="text-2xl font-bold">Diligencias del Expediente</h1>
           <p className="text-sm text-muted-foreground">{expedientNumber} - {expedientTitle}</p>
         </div>
       </div>
@@ -284,7 +284,7 @@ export function ExpedientOficioView({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Plus className="w-5 h-5" />
-            Crear Nuevo Oficio
+            Crear Nueva Diligencia
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -293,7 +293,7 @@ export function ExpedientOficioView({
             className="w-full"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Nuevo Oficio
+            Nueva Diligencia
           </Button>
         </CardContent>
       </Card>
@@ -303,14 +303,14 @@ export function ExpedientOficioView({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="w-5 h-5" />
-            Oficios Activos ({activeOficios.length})
+            Diligencia Pendiente ({activeOficios.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
           {activeOficios.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <FileText className="w-12 h-12 mx-auto mb-3 opacity-30" />
-              <p>No hay oficios activos</p>
+              <p>No hay diligencias pendientes</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -347,10 +347,10 @@ export function ExpedientOficioView({
       {finishedOficios.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileCheck className="w-5 h-5" />
-              Oficios Finalizados ({finishedOficios.length})
-            </CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <FileCheck className="w-5 h-5" />
+            Diligencias Finalizadas ({finishedOficios.length})
+          </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -402,7 +402,7 @@ export function ExpedientOficioView({
       <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Crear Nuevo Oficio</DialogTitle>
+            <DialogTitle>Crear Nueva Diligencia</DialogTitle>
           </DialogHeader>
           
           <div className="space-y-4">
@@ -413,7 +413,7 @@ export function ExpedientOficioView({
               <Input
                 id="destinatario"
                 type="text"
-                placeholder="Ingrese el destinatario del oficio..."
+                placeholder="Ingrese el destinatario de la diligencia..."
                 value={destinatario}
                 onChange={(e) => setDestinatario(e.target.value)}
                 maxLength={200}
@@ -467,7 +467,7 @@ export function ExpedientOficioView({
                 disabled={!destinatario.trim()}
                 className="flex-1"
               >
-                Crear Oficio
+                Crear Diligencia
               </Button>
             </div>
           </div>
@@ -478,7 +478,7 @@ export function ExpedientOficioView({
       <Dialog open={showOficioDetails} onOpenChange={setShowOficioDetails}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Detalles del Oficio</DialogTitle>
+            <DialogTitle>Detalles de la Diligencia</DialogTitle>
           </DialogHeader>
           
           {selectedOficio && (

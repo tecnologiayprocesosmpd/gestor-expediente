@@ -120,7 +120,7 @@ const mockExpedients: ExpedientSummary[] = [
 function AppContent() {
   const { user } = useUser();
   const { toast } = useToast();
-  const [currentView, setCurrentView] = useState<'dashboard' | 'expedientes' | 'view' | 'editor' | 'agenda' | 'oficios'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'expedientes' | 'view' | 'editor' | 'agenda' | 'diligencias'>('dashboard');
   const [expedients, setExpedients] = useState<ExpedientSummary[]>(mockExpedients);
   const [currentExpedientId, setCurrentExpedientId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('');
@@ -138,7 +138,7 @@ function AppContent() {
     onTramites?: () => void;
     onNavegar?: () => void;
     onChangeStatus?: () => void;
-    onOficio?: () => void;
+    onDiligencia?: () => void;
     onChangeActuacionStatus?: () => void;
     showRegresarRadicacionInterna?: boolean;
     isActuacionView?: boolean;
@@ -347,8 +347,8 @@ function AppContent() {
     setStatusFilter(status);
   };
 
-  const handleNavigateToOficios = () => {
-    setCurrentView('oficios');
+  const handleNavigateToDiligencias = () => {
+    setCurrentView('diligencias');
     // Reset scroll
     window.scrollTo(0, 0);
   };
@@ -372,7 +372,7 @@ function AppContent() {
             onNavigateToExpedients={handleNavigateToExpedients}
             onCreateActuacion={handleCreateActuacion}
             onFilterExpedients={handleFilterExpedients}
-            onNavigateToOficios={handleNavigateToOficios}
+            onNavigateToDiligencias={handleNavigateToDiligencias}
           />
         );
       case 'expedientes':
@@ -424,7 +424,7 @@ function AppContent() {
             }}
           />
         );
-      case 'oficios':
+      case 'diligencias':
         return (
           <OficioManager
             expedients={expedients}
@@ -450,7 +450,7 @@ function AppContent() {
       onNuevaActuacion={expedientViewActions.onNuevaActuacion}
       onNavegar={expedientViewActions.onNavegar}
       onChangeStatus={expedientViewActions.onChangeStatus}
-      onOficio={expedientViewActions.onOficio}
+      onDiligencia={expedientViewActions.onDiligencia}
       onChangeActuacionStatus={expedientViewActions.onChangeActuacionStatus}
       showRegresarRadicacionInterna={expedientViewActions.showRegresarRadicacionInterna}
     >

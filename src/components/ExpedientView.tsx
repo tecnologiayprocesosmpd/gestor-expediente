@@ -41,7 +41,7 @@ interface ExpedientViewProps {
     onNavegar?: () => void;
     onChangeStatus?: () => void;
     onChangeActuacionStatus?: () => void;
-    onOficio?: () => void;
+    onDiligencia?: () => void;
     showRegresarRadicacionInterna?: boolean;
     isActuacionView?: boolean;
   }) => void;
@@ -251,7 +251,7 @@ export function ExpedientView({
         onNavegar: handleNavegar,
         onChangeStatus: () => setShowSelectEstado(true),
         onChangeActuacionStatus: showActuacionStatusButton ? handleChangeActuacionStatus : undefined,
-        onOficio: handleShowOficio,
+        onDiligencia: handleShowOficio,
         showRegresarRadicacionInterna: hayRadicacionInternaPendiente(),
         isActuacionView
       });
