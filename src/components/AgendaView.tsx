@@ -65,28 +65,25 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
   const getFilteredCitas = () => {
     const now = startOfDay(new Date());
     
-    // Separar citas de hoy y próximas
-    const citasHoy = citas.filter(cita => {
+    // Citas programadas (hoy y futuras)
+    const citasProgramadas = citas.filter(cita => {
       const citaDate = startOfDay(new Date(cita.fechaInicio));
-      return isToday(citaDate);
+      return citaDate >= now;
     }).map(cita => ({
       ...cita,
-      estado: 'hoy' as const
+      estado: 'programado' as const
     })).sort((a, b) => new Date(a.fechaInicio).getTime() - new Date(b.fechaInicio).getTime());
 
-    const citasProximas = citas.filter(cita => {
+    // Historial (citas pasadas)
+    const citasHistorial = citas.filter(cita => {
       const citaDate = startOfDay(new Date(cita.fechaInicio));
-      return citaDate > now;
-    }).map(cita => {
-      const citaDate = startOfDay(new Date(cita.fechaInicio));
-      const diasDiferencia = differenceInDays(citaDate, now);
-      
-      let nuevoEstado: CitaAgenda['estado'] = diasDiferencia <= 3 ? 'proximo' : 'programado';
-      
-      return { ...cita, estado: nuevoEstado };
-    }).sort((a, b) => new Date(a.fechaInicio).getTime() - new Date(b.fechaInicio).getTime());
+      return citaDate < now;
+    }).map(cita => ({
+      ...cita,
+      estado: 'completada' as const
+    })).sort((a, b) => new Date(b.fechaInicio).getTime() - new Date(a.fechaInicio).getTime());
 
-    return { citasHoy, citasProximas };
+    return { citasProgramadas, citasHistorial };
   };
 
   const handleCreateCita = () => {
@@ -133,6 +130,13 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
       'completada': 'bg-green-100 text-green-800 border-green-200'
     };
     return colors[estado] || colors.programado;
+  };
+
+  const getEstadoLabel = (cita: CitaAgenda) => {
+    if (isToday(new Date(cita.fechaInicio))) {
+      return 'HOY';
+    }
+    return cita.estado.toUpperCase();
   };
 
   const handleViewDetails = (cita: CitaAgenda, isProxima: boolean = false) => {
@@ -198,20 +202,10 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
 
   const daysWithCitas = getDaysWithCitas();
 
-  const { citasHoy, citasProximas } = getFilteredCitas();
+  const { citasProgramadas, citasHistorial } = getFilteredCitas();
 
-  // Aplicar filtros
-  const filteredCitasHoy = citasHoy.filter(cita => {
-    const matchesSearch = searchProximas === '' || 
-      cita.titulo.toLowerCase().includes(searchProximas.toLowerCase()) ||
-      (cita.ubicacion && cita.ubicacion.toLowerCase().includes(searchProximas.toLowerCase()));
-    
-    const matchesExpedient = expedientFilter === '' || cita.expedientId === expedientFilter;
-    
-    return matchesSearch && matchesExpedient;
-  });
-
-  const filteredCitasProximas = citasProximas.filter(cita => {
+  // Aplicar filtros a citas programadas
+  const filteredCitasProgramadas = citasProgramadas.filter(cita => {
     const matchesSearch = searchProximas === '' || 
       cita.titulo.toLowerCase().includes(searchProximas.toLowerCase()) ||
       (cita.ubicacion && cita.ubicacion.toLowerCase().includes(searchProximas.toLowerCase()));
@@ -224,29 +218,43 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
     return matchesSearch && matchesFecha && matchesExpedient;
   });
 
-  // Pagination for Citas de Hoy
-  const {
-    currentPage: currentPageHoy,
-    totalPages: totalPagesHoy,
-    paginatedItems: paginatedCitasHoy,
-    goToPage: goToPageHoy,
-    nextPage: nextPageHoy,
-    previousPage: previousPageHoy,
-    canGoNext: canGoNextHoy,
-    canGoPrevious: canGoPreviousHoy,
-  } = usePagination({ items: filteredCitasHoy, itemsPerPage: 5 });
+  // Aplicar filtros a historial
+  const filteredCitasHistorial = citasHistorial.filter(cita => {
+    const matchesSearch = searchProximas === '' || 
+      cita.titulo.toLowerCase().includes(searchProximas.toLowerCase()) ||
+      (cita.ubicacion && cita.ubicacion.toLowerCase().includes(searchProximas.toLowerCase()));
+    
+    const matchesFecha = fechaProximas === '' || 
+      format(new Date(cita.fechaInicio), 'yyyy-MM-dd') === fechaProximas;
 
-  // Pagination for Citas Próximas
+    const matchesExpedient = expedientFilter === '' || cita.expedientId === expedientFilter;
+    
+    return matchesSearch && matchesFecha && matchesExpedient;
+  });
+
+  // Pagination for Citas Programadas
   const {
-    currentPage: currentPageProximas,
-    totalPages: totalPagesProximas,
-    paginatedItems: paginatedCitasProximas,
-    goToPage: goToPageProximas,
-    nextPage: nextPageProximas,
-    previousPage: previousPageProximas,
-    canGoNext: canGoNextProximas,
-    canGoPrevious: canGoPreviousProximas,
-  } = usePagination({ items: filteredCitasProximas, itemsPerPage: 5 });
+    currentPage: currentPageProgramadas,
+    totalPages: totalPagesProgramadas,
+    paginatedItems: paginatedCitasProgramadas,
+    goToPage: goToPageProgramadas,
+    nextPage: nextPageProgramadas,
+    previousPage: previousPageProgramadas,
+    canGoNext: canGoNextProgramadas,
+    canGoPrevious: canGoPreviousProgramadas,
+  } = usePagination({ items: filteredCitasProgramadas, itemsPerPage: 5 });
+
+  // Pagination for Historial
+  const {
+    currentPage: currentPageHistorial,
+    totalPages: totalPagesHistorial,
+    paginatedItems: paginatedCitasHistorial,
+    goToPage: goToPageHistorial,
+    nextPage: nextPageHistorial,
+    previousPage: previousPageHistorial,
+    canGoNext: canGoNextHistorial,
+    canGoPrevious: canGoPreviousHistorial,
+  } = usePagination({ items: filteredCitasHistorial, itemsPerPage: 5 });
 
   return (
     <div className="space-y-6">
@@ -480,32 +488,37 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
             </div>
           </div>
 
-          {/* HOY */}
+          {/* PROGRAMADAS (Hoy + Futuras) */}
           <div>
-            <h2 className="text-2xl font-bold tracking-tight mb-4">HOY</h2>
+            <h2 className="text-2xl font-bold tracking-tight mb-4">PROGRAMADAS</h2>
             
             <div className="border rounded-lg bg-card">
               <div className="p-3 space-y-2 min-h-[200px]">
-                {filteredCitasHoy.length === 0 ? (
+                {filteredCitasProgramadas.length === 0 ? (
                   <div className="text-center py-8 bg-muted/30 rounded-lg">
                     <CalendarIcon className="mx-auto h-12 w-12 text-muted-foreground" />
                     <p className="mt-2 text-sm text-muted-foreground">
-                      No hay eventos programados para hoy
+                      {searchProximas || fechaProximas || expedientFilter
+                        ? 'No se encontraron eventos que coincidan con los filtros' 
+                        : 'No hay eventos programados'}
                     </p>
                   </div>
                 ) : (
                   <>
-                    {paginatedCitasHoy.map((cita) => (
+                    {paginatedCitasProgramadas.map((cita) => (
                     <div 
                       key={cita.id} 
                       className="flex items-center justify-between p-4 bg-card border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer h-[72px]"
-                      onClick={() => handleViewDetails(cita, true)}
+                      onClick={() => handleViewDetails(cita, false)}
                     >
                       <div className="flex items-center gap-4 flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-shrink-0">
                           {getTipoIcon(cita.tipo)}
-                          <Badge className="bg-red-100 text-red-800 border-red-200" variant="outline">
-                            HOY
+                          <Badge 
+                            className={isToday(new Date(cita.fechaInicio)) ? 'bg-red-100 text-red-800 border-red-200' : getStatusColor(cita.estado)} 
+                            variant="outline"
+                          >
+                            {getEstadoLabel(cita)}
                           </Badge>
                         </div>
                         
@@ -514,7 +527,7 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
                           <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
                             <div className="flex items-center gap-1 flex-shrink-0">
                               <Clock className="h-3 w-3" />
-                              {format(cita.fechaInicio, 'HH:mm', { locale: es })}
+                              {format(cita.fechaInicio, 'dd/MM/yyyy HH:mm', { locale: es })}
                             </div>
                             {cita.ubicacion && (
                               <div className="flex items-center gap-1 truncate">
@@ -541,23 +554,23 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
                     </div>
                     ))}
 
-                    {/* Pagination for HOY */}
-                    {totalPagesHoy > 1 && (
+                    {/* Pagination for Programadas */}
+                    {totalPagesProgramadas > 1 && (
                       <div className="mt-4 flex justify-center">
                         <Pagination>
                           <PaginationContent>
                             <PaginationItem>
                               <PaginationPrevious 
-                                onClick={previousPageHoy}
-                                className={!canGoPreviousHoy ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                                onClick={previousPageProgramadas}
+                                className={!canGoPreviousProgramadas ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                               />
                             </PaginationItem>
                             
-                            {Array.from({ length: totalPagesHoy }, (_, i) => i + 1).map((page) => (
+                            {Array.from({ length: totalPagesProgramadas }, (_, i) => i + 1).map((page) => (
                               <PaginationItem key={page}>
                                 <PaginationLink
-                                  onClick={() => goToPageHoy(page)}
-                                  isActive={currentPageHoy === page}
+                                  onClick={() => goToPageProgramadas(page)}
+                                  isActive={currentPageProgramadas === page}
                                   className="cursor-pointer"
                                 >
                                   {page}
@@ -567,8 +580,8 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
                             
                             <PaginationItem>
                               <PaginationNext 
-                                onClick={nextPageHoy}
-                                className={!canGoNextHoy ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                                onClick={nextPageProgramadas}
+                                className={!canGoNextProgramadas ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                               />
                             </PaginationItem>
                           </PaginationContent>
@@ -581,34 +594,34 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
             </div>
           </div>
 
-          {/* PRÓXIMAS */}
+          {/* HISTORIAL */}
           <div>
-            <h2 className="text-2xl font-bold tracking-tight mb-4">PRÓXIMAS</h2>
+            <h2 className="text-2xl font-bold tracking-tight mb-4">HISTORIAL</h2>
             
             <div className="border rounded-lg bg-card">
               <div className="p-3 space-y-2 min-h-[200px]">
-                {filteredCitasProximas.length === 0 ? (
+                {filteredCitasHistorial.length === 0 ? (
                   <div className="text-center py-8 bg-muted/30 rounded-lg">
                     <CalendarIcon className="mx-auto h-12 w-12 text-muted-foreground" />
                     <p className="mt-2 text-sm text-muted-foreground">
                       {searchProximas || fechaProximas || expedientFilter
                         ? 'No se encontraron eventos que coincidan con los filtros' 
-                        : 'No hay eventos próximos programados'}
+                        : 'No hay eventos en el historial'}
                     </p>
                   </div>
                 ) : (
                   <>
-                    {paginatedCitasProximas.map((cita) => (
+                    {paginatedCitasHistorial.map((cita) => (
                   <div 
                     key={cita.id} 
                     className="flex items-center justify-between p-4 bg-card border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer h-[72px]"
-                    onClick={() => handleViewDetails(cita, true)}
+                    onClick={() => handleViewDetails(cita, false)}
                   >
                     <div className="flex items-center gap-4 flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-shrink-0">
                         {getTipoIcon(cita.tipo)}
                         <Badge className={getStatusColor(cita.estado)} variant="outline">
-                          {cita.estado === 'proximo' ? 'PRÓXIMO' : 'PROGRAMADO'}
+                          COMPLETADA
                         </Badge>
                       </div>
                       
@@ -644,23 +657,23 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
                   </div>
                   ))}
 
-                  {/* Pagination for Próximas */}
-                  {totalPagesProximas > 1 && (
+                  {/* Pagination for Historial */}
+                  {totalPagesHistorial > 1 && (
                     <div className="mt-4 flex justify-center">
                       <Pagination>
                         <PaginationContent>
                           <PaginationItem>
                             <PaginationPrevious 
-                              onClick={previousPageProximas}
-                              className={!canGoPreviousProximas ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                              onClick={previousPageHistorial}
+                              className={!canGoPreviousHistorial ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                             />
                           </PaginationItem>
                           
-                          {Array.from({ length: totalPagesProximas }, (_, i) => i + 1).map((page) => (
+                          {Array.from({ length: totalPagesHistorial }, (_, i) => i + 1).map((page) => (
                             <PaginationItem key={page}>
                               <PaginationLink
-                                onClick={() => goToPageProximas(page)}
-                                isActive={currentPageProximas === page}
+                                onClick={() => goToPageHistorial(page)}
+                                isActive={currentPageHistorial === page}
                                 className="cursor-pointer"
                               >
                                 {page}
@@ -670,8 +683,8 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
                           
                           <PaginationItem>
                             <PaginationNext 
-                              onClick={nextPageProximas}
-                              className={!canGoNextProximas ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                              onClick={nextPageHistorial}
+                              className={!canGoNextHistorial ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                             />
                           </PaginationItem>
                         </PaginationContent>
