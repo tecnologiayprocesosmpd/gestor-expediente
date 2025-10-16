@@ -303,14 +303,14 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
               <div>
                 <Label htmlFor="expediente">Expediente (opcional)</Label>
                 <Select 
-                  value={newCita.expedientId} 
-                  onValueChange={(value) => setNewCita(prev => ({ ...prev, expedientId: value }))}
+                  value={newCita.expedientId || "none"} 
+                  onValueChange={(value) => setNewCita(prev => ({ ...prev, expedientId: value === "none" ? "" : value }))}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar expediente..." />
                   </SelectTrigger>
                   <SelectContent className="bg-background z-50">
-                    <SelectItem value="">Sin vincular</SelectItem>
+                    <SelectItem value="none">Sin vincular</SelectItem>
                     {expedients.map(exp => (
                       <SelectItem key={exp.id} value={exp.id}>
                         {exp.number} - {exp.title}
@@ -453,12 +453,12 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
               </div>
               <div className="flex items-center gap-2">
                 <Label className="text-sm text-muted-foreground whitespace-nowrap">Expediente:</Label>
-                <Select value={expedientFilter} onValueChange={setExpedientFilter}>
+                <Select value={expedientFilter || "all"} onValueChange={(value) => setExpedientFilter(value === "all" ? "" : value)}>
                   <SelectTrigger className="h-9 flex-1">
                     <SelectValue placeholder="Todos los expedientes" />
                   </SelectTrigger>
                   <SelectContent className="bg-background z-50">
-                    <SelectItem value="">Todos los expedientes</SelectItem>
+                    <SelectItem value="all">Todos los expedientes</SelectItem>
                     {expedients.map(exp => (
                       <SelectItem key={exp.id} value={exp.id}>
                         {exp.number} - {exp.title}
