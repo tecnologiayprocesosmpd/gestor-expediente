@@ -26,7 +26,6 @@ import { useState, useEffect } from "react";
 import { ExpedientesParaRecibir } from "./ExpedientesParaRecibir";
 import { format, isToday, startOfDay } from "date-fns";
 import { es } from "date-fns/locale";
-import { useAutoArchive } from "@/hooks/useAutoArchive";
 import type { CitaAgenda } from "@/types/agenda";
 
 interface DashboardProps {
@@ -57,9 +56,6 @@ export function Dashboard({
   onNavigateToAgenda
 }: DashboardProps) {
   const { user } = useUser();
-  
-  // Activar verificación automática de expedientes inactivos
-  useAutoArchive();
   
   const [citasHoy, setCitasHoy] = useState<CitaAgenda[]>([]);
   const [actuacionesParaFirma, setActuacionesParaFirma] = useState<number>(0);
