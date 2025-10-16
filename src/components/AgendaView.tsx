@@ -339,6 +339,12 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                   placeholder="Detalles adicionales"
                 />
               </div>
+              
+              <div className="pt-2 border-t">
+                <p className="text-xs text-muted-foreground italic">
+                  Los campos marcados con * son obligatorios
+                </p>
+              </div>
 
               <div className="flex justify-end space-x-2">
                 <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
@@ -808,6 +814,12 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                   onChange={(e) => setEditCita(prev => prev ? { ...prev, descripcion: e.target.value } : null)}
                   placeholder="Detalles adicionales"
                 />
+              </div>
+              
+              <div className="pt-2 border-t">
+                <p className="text-xs text-muted-foreground italic">
+                  Los campos marcados con * son obligatorios
+                </p>
               </div>
 
               <div className="flex justify-end space-x-2">

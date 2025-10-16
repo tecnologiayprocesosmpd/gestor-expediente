@@ -103,6 +103,12 @@ export function TramiteEditor({ expedientId, onBack }: TramiteEditorProps) {
               />
             </div>
           </div>
+          
+          <div className="pt-2 border-t">
+            <p className="text-xs text-muted-foreground italic">
+              Los campos marcados con * son obligatorios
+            </p>
+          </div>
         </CardContent>
       </Card>
 

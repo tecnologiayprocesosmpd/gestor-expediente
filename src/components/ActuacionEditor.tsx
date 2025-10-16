@@ -535,7 +535,7 @@ export function ActuacionEditor({
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="title">Título *</Label>
+              <Label htmlFor="title" className="text-sm font-semibold">Título *</Label>
               <Input
                 id="title"
                 value={title}
@@ -561,6 +561,12 @@ export function ActuacionEditor({
                 </SelectContent>
               </Select>
             </div>
+          </div>
+          
+          <div className="pt-2 border-t">
+            <p className="text-xs text-muted-foreground italic">
+              Los campos marcados con * son obligatorios
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -815,15 +821,13 @@ export function ActuacionEditor({
       </Card>
 
       {/* Actions */}
-      <div className="flex items-center justify-between pt-4">
-        <div className="flex items-center space-x-3">
-          {canEdit && (
-            <Button onClick={handleSave} className="bg-primary hover:bg-primary/90">
-              <Save className="w-4 h-4 mr-2" />
-              Guardar Actuación
-            </Button>
-          )}
-        </div>
+      <div className="flex items-center justify-end pt-4">
+        {canEdit && (
+          <Button onClick={handleSave} className="bg-primary hover:bg-primary/90">
+            <Save className="w-4 h-4 mr-2" />
+            Guardar Actuación
+          </Button>
+        )}
       </div>
     </div>
   );

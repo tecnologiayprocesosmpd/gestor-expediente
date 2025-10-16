@@ -231,6 +231,12 @@ export function RadicacionInternaDialog({
               </div>
             </CardContent>
           </Card>
+          
+          <div className="pt-2">
+            <p className="text-xs text-muted-foreground italic">
+              Los campos marcados con * son obligatorios
+            </p>
+          </div>
         </div>
 
         <DialogFooter>
