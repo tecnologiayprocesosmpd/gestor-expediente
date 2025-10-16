@@ -26,6 +26,7 @@ import { useUser } from "@/contexts/UserContext";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import { ActuacionVersionHistory, ActuacionVersion } from "@/components/ActuacionVersionHistory";
 import { useToast } from "@/hooks/use-toast";
+import type { Expedient } from "@/types/expedient";
 
 
 import { Button } from "@/components/ui/button";
@@ -105,10 +106,27 @@ export function ActuacionEditor({
   const [headerText, setHeaderText] = useState('');
   const [footerText, setFooterText] = useState('');
   const [versions, setVersions] = useState<ActuacionVersion[]>([]);
+  const [expedient, setExpedient] = useState<Expedient | null>(null);
   
   const { user } = useUser();
   const { toast } = useToast();
   const canEdit = status !== 'firmado';
+  
+  // Cargar expediente desde localStorage
+  useEffect(() => {
+    try {
+      const storedExpedients = localStorage.getItem('expedients');
+      if (storedExpedients) {
+        const expedients = JSON.parse(storedExpedients);
+        const foundExpedient = expedients.find((exp: any) => exp.id === expedientId);
+        if (foundExpedient) {
+          setExpedient(foundExpedient);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading expedient:', error);
+    }
+  }, [expedientId]);
   
   // Scroll to top on component mount
   useEffect(() => {
@@ -794,6 +812,17 @@ export function ActuacionEditor({
                 padding: `${margins.top}mm ${margins.right}mm ${margins.bottom}mm ${margins.left}mm`
               }}
             >
+              {/* Encabezado con información del expediente */}
+              {expedient && (
+                <div className="mb-6 pb-4 border-b-2 border-border">
+                  <div className="text-center">
+                    <p className="text-base font-bold uppercase">
+                      {expedient.title.toUpperCase()} S/ {expedient.tipoProceso.toUpperCase()}
+                    </p>
+                  </div>
+                </div>
+              )}
+              
               <EditorContent 
                 editor={editor} 
                 className={canEdit ? '' : 'pointer-events-none opacity-75'}

@@ -72,12 +72,12 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
   const confirmDerivation = () => {
     const derivationData = {
       id: expedientId || `exp-${Date.now()}`,
-      title,
+      title: title.toUpperCase(), // Guardar en mayúsculas
       number: expedientNumber,
       status: 'en_tramite' as const,
-      oficina: assignedOffice,
-      referencia,
-      tipoProceso,
+      oficina: assignedOffice.toUpperCase(), // Guardar en mayúsculas
+      referencia: referencia.toUpperCase(), // Guardar en mayúsculas
+      tipoProceso: tipoProceso,
       createdAt: new Date(),
       updatedAt: new Date(),
       fechaDerivacion: new Date(),
