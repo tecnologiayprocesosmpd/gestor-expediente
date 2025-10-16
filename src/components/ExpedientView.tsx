@@ -834,10 +834,6 @@ export function ExpedientView({
           
           {/* Tercera fila: Información adicional */}
           <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-            {expedient.oficina && <span className="flex items-center space-x-1">
-                <Building2 className="w-4 h-4" />
-                <span>Oficina: {expedient.oficina}</span>
-              </span>}
             {(expedient.derivadoPor || expedient.recibidoPor) && <span className="flex items-center space-x-1">
                 <User className="w-4 h-4" />
               <span>
