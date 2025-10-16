@@ -193,7 +193,7 @@ export function TramiteList({ tramites, onCreateTramite, onBack, onTramiteUpdate
                       </td>
                       <td className="p-4">
                         {tramite.finalizado ? (
-                          <Badge variant="default" className="bg-green-500">
+                          <Badge variant="default" className="bg-green-500 hover:bg-green-500 h-9 px-4 text-xs">
                             <CheckCircle2 className="w-3 h-3 mr-1" />
                             Finalizado
                           </Badge>
