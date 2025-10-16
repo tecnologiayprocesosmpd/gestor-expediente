@@ -818,7 +818,7 @@ export function ActuacionEditor({
                 <div className="mb-8 pb-4 border-b-2 border-gray-800">
                   <div className="text-center">
                     <p className="text-lg font-bold uppercase tracking-wide">
-                      {expedient.title} S/ {expedient.tipoProceso}
+                      ACTUACIONES: "{expedient.title.toUpperCase()} S/ {getTipoLabel(tipo).toUpperCase()}" EXPTE. NRO: {expedient.number}
                     </p>
                   </div>
                 </div>
