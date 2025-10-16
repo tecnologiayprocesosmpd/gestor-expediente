@@ -311,6 +311,8 @@ export function ExpedientView({
       } else {
         // Para otras actuaciones, mostrar vista de solo lectura
         setSelectedActuacion(actuacion);
+        // Scroll al inicio de la página
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
   };
@@ -700,6 +702,37 @@ export function ExpedientView({
   if (showEditor) {
     return <ExpedientEditor expedientId={expedientId} onBack={() => setShowEditor(false)} onSave={handleSaveActuacion} />;
   }
+  // Scroll to top when selectedActuacion changes
+  useEffect(() => {
+    if (selectedActuacion) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [selectedActuacion]);
+
+  const getTipoLabel = (tipo: Actuacion['tipo']): string => {
+    const labels = {
+      'resolucion': 'Resolución',
+      'providencia': 'Providencia',
+      'nota': 'Nota',
+      'dictamen': 'Dictamen',
+      'decreto': 'Decreto',
+      'auto': 'Auto'
+    };
+    return labels[tipo] || tipo;
+  };
+
+  const getSubtipoLabel = (subtipo: Actuacion['subtipo']): string => {
+    const labels = {
+      'simple': 'Simple',
+      'compleja': 'Compleja',
+      'urgente': 'Urgente',
+      'ordinaria': 'Ordinaria',
+      'extraordinaria': 'Extraordinaria',
+      'especial': 'Especial'
+    };
+    return labels[subtipo] || subtipo;
+  };
+
   if (selectedActuacion) {
     return <div className="min-h-screen p-6 space-y-6">
         {/* Header */}
@@ -711,10 +744,10 @@ export function ExpedientView({
             </Button>
             <div>
               <h1 className="text-3xl font-bold text-foreground">
-                {selectedActuacion.title}
+                {getTipoLabel(selectedActuacion.tipo)} - {getSubtipoLabel(selectedActuacion.subtipo)}
               </h1>
               <p className="text-lg text-muted-foreground">
-                Actuación #{selectedActuacion.number} - {selectedActuacion.createdBy}
+                Actuación #{selectedActuacion.number} - Creado por {selectedActuacion.createdBy}
               </p>
             </div>
           </div>
@@ -763,6 +796,15 @@ export function ExpedientView({
                     </p>
                   </div>
                 </div>
+                {selectedActuacion.signedAt && selectedActuacion.signedBy && <div className="flex items-center space-x-3">
+                    <CheckCircle className="w-5 h-5 text-muted-foreground" />
+                    <div>
+                      <p className="font-medium text-sm">Firmado por</p>
+                      <p className="text-sm text-muted-foreground">
+                        {selectedActuacion.signedBy}
+                      </p>
+                    </div>
+                  </div>}
                 {selectedActuacion.signedAt && <div className="flex items-center space-x-3">
                     <Clock className="w-5 h-5 text-muted-foreground" />
                     <div>

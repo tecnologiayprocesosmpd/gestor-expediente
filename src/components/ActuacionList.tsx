@@ -166,6 +166,30 @@ export function ActuacionList({
     }
   };
 
+  const getTipoLabel = (tipo: Actuacion['tipo']): string => {
+    const labels = {
+      'resolucion': 'Resolución',
+      'providencia': 'Providencia',
+      'nota': 'Nota',
+      'dictamen': 'Dictamen',
+      'decreto': 'Decreto',
+      'auto': 'Auto'
+    };
+    return labels[tipo] || tipo;
+  };
+
+  const getSubtipoLabel = (subtipo: Actuacion['subtipo']): string => {
+    const labels = {
+      'simple': 'Simple',
+      'compleja': 'Compleja',
+      'urgente': 'Urgente',
+      'ordinaria': 'Ordinaria',
+      'extraordinaria': 'Extraordinaria',
+      'especial': 'Especial'
+    };
+    return labels[subtipo] || subtipo;
+  };
+
   const getStatusButton = (actuacion: Actuacion) => {
     const { status, id } = actuacion;
     
@@ -373,8 +397,8 @@ export function ActuacionList({
                     </span>
                     {getStatusBadge(actuacion.status)}
                   </div>
-                  <h4 className="font-medium text-foreground mb-1">
-                    {actuacion.title}
+                  <h4 className="font-medium text-foreground mb-1 truncate">
+                    {getTipoLabel(actuacion.tipo)} - {getSubtipoLabel(actuacion.subtipo)}
                   </h4>
                   <div className="text-sm text-muted-foreground space-y-1">
                     <p>Creado el {actuacion.createdAt.toLocaleDateString('es-ES')} por {actuacion.createdBy}</p>
