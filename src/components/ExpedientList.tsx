@@ -152,7 +152,7 @@ export function ExpedientList({
         <div>
           <h1 className="text-3xl font-bold text-foreground">Expedientes</h1>
           <p className="text-muted-foreground">
-            Gestión y consulta de expedientes del sistema
+            Gestión y Consulta
           </p>
         </div>
         {canEdit && (

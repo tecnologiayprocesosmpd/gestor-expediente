@@ -203,7 +203,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
               placeholder="Ingrese el título del expediente..."
               required
               disabled={!canEditBasicInfo || status !== 'draft'}
-              className={`${(!canEditBasicInfo || status !== 'draft') ? 'bg-muted cursor-not-allowed' : ''}`}
+              className={`uppercase ${(!canEditBasicInfo || status !== 'draft') ? 'bg-muted cursor-not-allowed' : ''}`}
             />
           </div>
 
@@ -217,7 +217,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
                 onChange={(e) => setAssignedOffice(e.target.value)}
                 required
                 disabled={!canEditBasicInfo || status !== 'draft'}
-                className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${(!canEditBasicInfo || status !== 'draft') ? 'bg-muted cursor-not-allowed' : ''}`}
+                className={`uppercase flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${(!canEditBasicInfo || status !== 'draft') ? 'bg-muted cursor-not-allowed' : ''}`}
               >
                 <option value="">Seleccionar oficina...</option>
                 <option value="defensoria-1">Defensoría Civil Nº 1</option>
@@ -236,7 +236,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
                 onChange={(e) => setTipoProceso(e.target.value as 'administrativo' | 'compra')}
                 required
                 disabled={!canEditBasicInfo || status !== 'draft'}
-                className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${(!canEditBasicInfo || status !== 'draft') ? 'bg-muted cursor-not-allowed' : ''}`}
+                className={`uppercase flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${(!canEditBasicInfo || status !== 'draft') ? 'bg-muted cursor-not-allowed' : ''}`}
               >
                 <option value="administrativo">Administrativo</option>
                 <option value="compra">Compra</option>
@@ -254,7 +254,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
               disabled={!canEditBasicInfo || status !== 'draft'}
               placeholder="Describa la referencia del expediente..."
               rows={3}
-              className={`flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${(!canEditBasicInfo || status !== 'draft') ? 'bg-muted cursor-not-allowed' : ''}`}
+              className={`uppercase flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${(!canEditBasicInfo || status !== 'draft') ? 'bg-muted cursor-not-allowed' : ''}`}
             />
           </div>
 
@@ -302,7 +302,7 @@ export function ExpedientEditor({ expedientId, expedient: propExpedient, onBack,
       </Card>
 
       {/* Actions */}
-      <div className="flex items-center justify-between pt-4">        
+      <div className="flex items-center justify-end pt-4">        
         <div className="flex items-center space-x-3">
           {status === 'draft' && canEditBasicInfo && (
             <Button 
