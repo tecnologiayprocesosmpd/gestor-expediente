@@ -174,6 +174,7 @@ export function ActuacionList({
         <StatusChangeConfirmDialog
           onConfirm={() => handleStatusButtonClick(id, status)}
           message="¿Está seguro de enviar la actuación para firma?"
+          requireMotivo={false}
         >
           <Button
             variant="outline"
@@ -206,6 +207,7 @@ export function ActuacionList({
           onConfirm={() => handleRevertFromFirmado(id)}
           title="Revertir firma"
           message="¿Está seguro de revertir esta actuación a 'Para Firma'? Esta acción se puede realizar solo dentro de las 24 horas posteriores a la firma."
+          requireMotivo={false}
         >
           <Button
             variant="outline"
