@@ -21,11 +21,13 @@ import {
 import { useUser } from "@/contexts/UserContext";
 import { ExpedientSummary } from "@/types/expedient";
 import { actuacionStorage } from "@/utils/actuacionStorage";
+import { agendaStorage } from "@/utils/agendaStorage";
 import { useState, useEffect } from "react";
 import { ExpedientesParaRecibir } from "./ExpedientesParaRecibir";
-import { format } from "date-fns";
+import { format, isToday, startOfDay } from "date-fns";
 import { es } from "date-fns/locale";
 import { useAutoArchive } from "@/hooks/useAutoArchive";
+import type { CitaAgenda } from "@/types/agenda";
 
 interface DashboardProps {
   expedients: ExpedientSummary[];
@@ -38,6 +40,7 @@ interface DashboardProps {
   onNavigateToDiligencias?: () => void;
   onRecibirExpediente?: (expedientId: string) => void;
   onNavigateToActuacionesParaFirma?: () => void;
+  onNavigateToAgenda?: () => void;
 }
 
 export function Dashboard({ 
@@ -50,16 +53,26 @@ export function Dashboard({
   onFilterExpedients,
   onRecibirExpediente,
   onNavigateToActuacionesParaFirma,
-  onNavigateToDiligencias
+  onNavigateToDiligencias,
+  onNavigateToAgenda
 }: DashboardProps) {
   const { user } = useUser();
   
   // Activar verificación automática de expedientes inactivos
   useAutoArchive();
   
-  const [novedades] = useState<any[]>([]); // Funcionalidad desactivada temporalmente
+  const [citasHoy, setCitasHoy] = useState<CitaAgenda[]>([]);
   const [actuacionesParaFirma, setActuacionesParaFirma] = useState<number>(0);
   const [showExpedientSelector, setShowExpedientSelector] = useState(false);
+  
+  // Cargar citas de hoy
+  const loadCitasHoy = () => {
+    const todasCitas = agendaStorage.getCitas();
+    const citasDeHoy = todasCitas.filter(cita => 
+      isToday(new Date(cita.fechaInicio))
+    );
+    setCitasHoy(citasDeHoy);
+  };
   const [showActuacionesParaFirma, setShowActuacionesParaFirma] = useState(false);
   const [actuacionesParaFirmaList, setActuacionesParaFirmaList] = useState<any[]>([]);
   const [expedientesExpanded, setExpedientesExpanded] = useState(false);
@@ -68,7 +81,7 @@ export function Dashboard({
 
   if (!user) return null;
 
-  // Cargar actuaciones para firma
+  // Cargar actuaciones para firma y citas de hoy
   useEffect(() => {
     const cargarActuacionesParaFirma = () => {
       const paraFirma = actuacionStorage.getActuacionesParaFirma();
@@ -77,6 +90,7 @@ export function Dashboard({
     };
 
     cargarActuacionesParaFirma();
+    loadCitasHoy();
 
     const handleActuacionChange = () => {
       cargarActuacionesParaFirma();
@@ -84,7 +98,10 @@ export function Dashboard({
 
     window.addEventListener('actuacionStatusChanged', handleActuacionChange);
     
-    const interval = setInterval(cargarActuacionesParaFirma, 30000);
+    const interval = setInterval(() => {
+      cargarActuacionesParaFirma();
+      loadCitasHoy();
+    }, 30000);
     
     return () => {
       window.removeEventListener('actuacionStatusChanged', handleActuacionChange);
@@ -257,18 +274,57 @@ export function Dashboard({
       )}
 
       {/* NOVEDADES - Funcionalidad desactivada temporalmente */}
-      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+      <Card 
+        className="hover:shadow-lg transition-shadow cursor-pointer bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200"
+        onClick={() => onNavigateToAgenda?.()}
+      >
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-blue-600" />
-            NOVEDADES
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-blue-600" />
+              <span className="text-blue-600">NOVEDADES</span>
+            </div>
+            {citasHoy.length > 0 && (
+              <Badge className="bg-blue-600 text-white">{citasHoy.length}</Badge>
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8">
-            <Calendar className="w-12 h-12 mx-auto mb-3 text-muted-foreground/30" />
-            <p className="text-muted-foreground">Funcionalidad en desarrollo</p>
-          </div>
+          {citasHoy.length === 0 ? (
+            <div className="text-center py-8">
+              <Calendar className="w-12 h-12 mx-auto mb-3 text-muted-foreground/30" />
+              <p className="text-muted-foreground">No hay citas programadas para hoy</p>
+            </div>
+          ) : (
+            <div className="space-y-2 max-h-[200px] overflow-y-auto">
+              {citasHoy.map((cita) => (
+                <div 
+                  key={cita.id} 
+                  className="p-3 bg-white border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold text-sm text-blue-900 truncate">{cita.titulo}</h4>
+                      <p className="text-xs text-blue-700 mt-1">
+                        {format(new Date(cita.fechaInicio), "HH:mm 'hs'", { locale: es })}
+                      </p>
+                      {cita.ubicacion && (
+                        <p className="text-xs text-muted-foreground mt-1 truncate">{cita.ubicacion}</p>
+                      )}
+                    </div>
+                    <Badge variant="outline" className="text-xs bg-red-100 text-red-800 border-red-200 flex-shrink-0">
+                      Hoy
+                    </Badge>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          {citasHoy.length > 0 && (
+            <p className="text-xs text-center text-muted-foreground mt-3">
+              Click para ver todas las citas en Agenda
+            </p>
+          )}
         </CardContent>
       </Card>
 

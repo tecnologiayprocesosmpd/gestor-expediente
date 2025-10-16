@@ -9,6 +9,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useEffect } from "react";
 import { tramiteStorage } from "@/utils/tramiteStorage";
+import { initializeMockAgendaData } from "@/utils/mockAgendaData";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
@@ -18,6 +19,7 @@ const App = () => {
   // Initialize mock data on first load
   useEffect(() => {
     tramiteStorage.initializeMockData();
+    initializeMockAgendaData();
   }, []);
 
   return (

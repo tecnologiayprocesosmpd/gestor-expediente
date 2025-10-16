@@ -373,6 +373,7 @@ function AppContent() {
             onCreateActuacion={handleCreateActuacion}
             onFilterExpedients={handleFilterExpedients}
             onNavigateToDiligencias={handleNavigateToDiligencias}
+            onNavigateToAgenda={() => setCurrentView('agenda')}
           />
         );
       case 'expedientes':
