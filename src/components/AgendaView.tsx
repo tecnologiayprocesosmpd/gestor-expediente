@@ -21,9 +21,10 @@ import { Pagination, PaginationContent, PaginationItem, PaginationLink, Paginati
 
 interface AgendaViewProps {
   onNavigateToExpedient?: (expedientId: string) => void;
+  expedients?: Array<{ id: string; number: string; title: string; status: string }>;
 }
 
-export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
+export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaViewProps) {
   const { user } = useUser();
   const { toast } = useToast();
   const [citas, setCitas] = useState<CitaAgenda[]>([]);
@@ -37,7 +38,8 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
     tipo: 'reunion' as const,
     estado: 'programado' as const,
     ubicacion: '',
-    participantes: ''
+    participantes: '',
+    expedientId: ''
   });
   const [selectedCita, setSelectedCita] = useState<CitaAgenda | null>(null);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
@@ -46,13 +48,10 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
   const [editCita, setEditCita] = useState<CitaAgenda | null>(null);
   const [isCitaProxima, setIsCitaProxima] = useState(false);
   
-  // Filtros para Citas Próximas
+  // Filtros
   const [searchProximas, setSearchProximas] = useState('');
   const [fechaProximas, setFechaProximas] = useState('');
-  
-  // Filtros para Historial
-  const [searchHistorial, setSearchHistorial] = useState('');
-  const [fechaHistorial, setFechaHistorial] = useState('');
+  const [expedientFilter, setExpedientFilter] = useState('');
 
   useEffect(() => {
     loadCitas();
@@ -66,36 +65,28 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
   const getFilteredCitas = () => {
     const now = startOfDay(new Date());
     
-    // Separar citas próximas y pasadas
+    // Separar citas de hoy y próximas
+    const citasHoy = citas.filter(cita => {
+      const citaDate = startOfDay(new Date(cita.fechaInicio));
+      return isToday(citaDate);
+    }).map(cita => ({
+      ...cita,
+      estado: 'hoy' as const
+    })).sort((a, b) => new Date(a.fechaInicio).getTime() - new Date(b.fechaInicio).getTime());
+
     const citasProximas = citas.filter(cita => {
       const citaDate = startOfDay(new Date(cita.fechaInicio));
-      return citaDate >= now;
+      return citaDate > now;
     }).map(cita => {
-      // Actualizar el estado según la fecha
       const citaDate = startOfDay(new Date(cita.fechaInicio));
       const diasDiferencia = differenceInDays(citaDate, now);
       
-      let nuevoEstado: CitaAgenda['estado'] = cita.estado;
-      if (isToday(citaDate)) {
-        nuevoEstado = 'hoy';
-      } else if (diasDiferencia <= 3 && diasDiferencia > 0) {
-        nuevoEstado = 'proximo';
-      } else if (diasDiferencia > 3) {
-        nuevoEstado = 'programado';
-      }
+      let nuevoEstado: CitaAgenda['estado'] = diasDiferencia <= 3 ? 'proximo' : 'programado';
       
       return { ...cita, estado: nuevoEstado };
     }).sort((a, b) => new Date(a.fechaInicio).getTime() - new Date(b.fechaInicio).getTime());
 
-    const citasPasadas = citas.filter(cita => {
-      const citaDate = startOfDay(new Date(cita.fechaInicio));
-      return citaDate < now;
-    }).map(cita => ({
-      ...cita,
-      estado: 'completada' as const
-    })).sort((a, b) => new Date(b.fechaInicio).getTime() - new Date(a.fechaInicio).getTime());
-
-    return { citasProximas, citasPasadas };
+    return { citasHoy, citasProximas };
   };
 
   const handleCreateCita = () => {
@@ -111,6 +102,7 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
     const cita = agendaStorage.saveCita({
       ...newCita,
       participantes: newCita.participantes ? newCita.participantes.split(',').map(p => p.trim()) : [],
+      expedientId: newCita.expedientId || undefined,
       createdBy: user?.name || 'Usuario'
     });
 
@@ -123,12 +115,13 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
       tipo: 'reunion',
       estado: 'programado',
       ubicacion: '',
-      participantes: ''
+      participantes: '',
+      expedientId: ''
     });
 
     toast({
-      title: "Cita creada",
-      description: "La cita se ha agregado a la agenda"
+      title: "Evento creado",
+      description: "El evento se ha agregado a la agenda"
     });
   };
 
@@ -163,7 +156,7 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
     setEditCita(null);
     
     toast({
-      title: "Cita actualizada",
+      title: "Evento actualizado",
       description: "Los cambios se han guardado correctamente"
     });
   };
@@ -182,8 +175,8 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
     setSelectedCita(null);
     
     toast({
-      title: "Cita cancelada",
-      description: "La cita ha sido eliminada de la agenda"
+      title: "Evento cancelado",
+      description: "El evento ha sido eliminado de la agenda"
     });
   };
 
@@ -205,9 +198,19 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
 
   const daysWithCitas = getDaysWithCitas();
 
-  const { citasProximas, citasPasadas } = getFilteredCitas();
+  const { citasHoy, citasProximas } = getFilteredCitas();
 
-  // Aplicar filtros a Citas Próximas
+  // Aplicar filtros
+  const filteredCitasHoy = citasHoy.filter(cita => {
+    const matchesSearch = searchProximas === '' || 
+      cita.titulo.toLowerCase().includes(searchProximas.toLowerCase()) ||
+      (cita.ubicacion && cita.ubicacion.toLowerCase().includes(searchProximas.toLowerCase()));
+    
+    const matchesExpedient = expedientFilter === '' || cita.expedientId === expedientFilter;
+    
+    return matchesSearch && matchesExpedient;
+  });
+
   const filteredCitasProximas = citasProximas.filter(cita => {
     const matchesSearch = searchProximas === '' || 
       cita.titulo.toLowerCase().includes(searchProximas.toLowerCase()) ||
@@ -215,21 +218,23 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
     
     const matchesFecha = fechaProximas === '' || 
       format(new Date(cita.fechaInicio), 'yyyy-MM-dd') === fechaProximas;
+
+    const matchesExpedient = expedientFilter === '' || cita.expedientId === expedientFilter;
     
-    return matchesSearch && matchesFecha;
+    return matchesSearch && matchesFecha && matchesExpedient;
   });
 
-  // Aplicar filtros a Historial
-  const filteredCitasPasadas = citasPasadas.filter(cita => {
-    const matchesSearch = searchHistorial === '' || 
-      cita.titulo.toLowerCase().includes(searchHistorial.toLowerCase()) ||
-      (cita.ubicacion && cita.ubicacion.toLowerCase().includes(searchHistorial.toLowerCase()));
-    
-    const matchesFecha = fechaHistorial === '' || 
-      format(new Date(cita.fechaInicio), 'yyyy-MM-dd') === fechaHistorial;
-    
-    return matchesSearch && matchesFecha;
-  });
+  // Pagination for Citas de Hoy
+  const {
+    currentPage: currentPageHoy,
+    totalPages: totalPagesHoy,
+    paginatedItems: paginatedCitasHoy,
+    goToPage: goToPageHoy,
+    nextPage: nextPageHoy,
+    previousPage: previousPageHoy,
+    canGoNext: canGoNextHoy,
+    canGoPrevious: canGoPreviousHoy,
+  } = usePagination({ items: filteredCitasHoy, itemsPerPage: 5 });
 
   // Pagination for Citas Próximas
   const {
@@ -243,18 +248,6 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
     canGoPrevious: canGoPreviousProximas,
   } = usePagination({ items: filteredCitasProximas, itemsPerPage: 5 });
 
-  // Pagination for Historial
-  const {
-    currentPage: currentPageHistorial,
-    totalPages: totalPagesHistorial,
-    paginatedItems: paginatedCitasPasadas,
-    goToPage: goToPageHistorial,
-    nextPage: nextPageHistorial,
-    previousPage: previousPageHistorial,
-    canGoNext: canGoNextHistorial,
-    canGoPrevious: canGoPreviousHistorial,
-  } = usePagination({ items: filteredCitasPasadas, itemsPerPage: 5 });
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -262,7 +255,7 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Agenda</h1>
           <p className="text-muted-foreground">
-            Gestiona tus citas y fechas importantes
+            Gestiona tus eventos y fechas importantes
           </p>
         </div>
         
@@ -270,12 +263,12 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
-              Nueva Cita
+              Nuevo Evento
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Nueva Cita</DialogTitle>
+              <DialogTitle>Nuevo Evento</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
@@ -284,7 +277,7 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                   id="titulo"
                   value={newCita.titulo}
                   onChange={(e) => setNewCita(prev => ({ ...prev, titulo: e.target.value }))}
-                  placeholder="Título de la cita"
+                  placeholder="Título del evento"
                 />
               </div>
               
@@ -308,6 +301,26 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
               </div>
 
               <div>
+                <Label htmlFor="expediente">Expediente (opcional)</Label>
+                <Select 
+                  value={newCita.expedientId} 
+                  onValueChange={(value) => setNewCita(prev => ({ ...prev, expedientId: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar expediente..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background z-50">
+                    <SelectItem value="">Sin vincular</SelectItem>
+                    {expedients.map(exp => (
+                      <SelectItem key={exp.id} value={exp.id}>
+                        {exp.number} - {exp.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
                 <Label htmlFor="fecha">Fecha y Hora</Label>
                 <Input
                   id="fecha"
@@ -326,8 +339,21 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                   id="ubicacion"
                   value={newCita.ubicacion}
                   onChange={(e) => setNewCita(prev => ({ ...prev, ubicacion: e.target.value }))}
-                  placeholder="Lugar de la cita"
+                  placeholder="Lugar del evento"
                 />
+              </div>
+
+              <div>
+                <Label htmlFor="participantes">Participantes (opcional)</Label>
+                <Input
+                  id="participantes"
+                  value={newCita.participantes}
+                  onChange={(e) => setNewCita(prev => ({ ...prev, participantes: e.target.value }))}
+                  placeholder="Separar con comas: Juan Pérez, María García..."
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Ingrese los nombres separados por comas
+                </p>
               </div>
 
               <div>
@@ -351,7 +377,7 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                   Cancelar
                 </Button>
                 <Button onClick={handleCreateCita}>
-                  Crear Cita
+                  Crear Evento
                 </Button>
               </div>
             </div>
@@ -392,12 +418,10 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
           </div>
         </div>
 
-        {/* Citas Próximas */}
-        <div className="flex-1 min-w-0">
-          <h2 className="text-2xl font-bold tracking-tight mb-4">Citas Próximas</h2>
-          
-          {/* Filtros para Citas Próximas */}
-          <div className="bg-background border rounded-lg shadow-sm mb-3 px-4 py-3">
+        {/* Eventos */}
+        <div className="flex-1 min-w-0 space-y-6">
+          {/* Filtros Globales */}
+          <div className="bg-background border rounded-lg shadow-sm px-4 py-3">
             <div className="flex flex-col gap-3">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -427,23 +451,154 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                   </Button>
                 )}
               </div>
+              <div className="flex items-center gap-2">
+                <Label className="text-sm text-muted-foreground whitespace-nowrap">Expediente:</Label>
+                <Select value={expedientFilter} onValueChange={setExpedientFilter}>
+                  <SelectTrigger className="h-9 flex-1">
+                    <SelectValue placeholder="Todos los expedientes" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background z-50">
+                    <SelectItem value="">Todos los expedientes</SelectItem>
+                    {expedients.map(exp => (
+                      <SelectItem key={exp.id} value={exp.id}>
+                        {exp.number} - {exp.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {expedientFilter && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setExpedientFilter('')}
+                    className="h-9"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
-          
-          <div className="border rounded-lg bg-card h-[400px] overflow-y-auto overflow-x-hidden">
-            <div className="p-3 space-y-2">
-              {filteredCitasProximas.length === 0 ? (
-                <div className="text-center py-8 bg-muted/30 rounded-lg">
-                  <CalendarIcon className="mx-auto h-12 w-12 text-muted-foreground" />
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    {searchProximas || fechaProximas 
-                      ? 'No se encontraron citas que coincidan con los filtros' 
-                      : 'No hay citas programadas'}
-                  </p>
-                </div>
-              ) : (
-                <>
-                  {paginatedCitasProximas.map((cita) => (
+
+          {/* HOY */}
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight mb-4">HOY</h2>
+            
+            <div className="border rounded-lg bg-card">
+              <div className="p-3 space-y-2 min-h-[200px]">
+                {filteredCitasHoy.length === 0 ? (
+                  <div className="text-center py-8 bg-muted/30 rounded-lg">
+                    <CalendarIcon className="mx-auto h-12 w-12 text-muted-foreground" />
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      No hay eventos programados para hoy
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    {paginatedCitasHoy.map((cita) => (
+                    <div 
+                      key={cita.id} 
+                      className="flex items-center justify-between p-4 bg-card border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer h-[72px]"
+                      onClick={() => handleViewDetails(cita, true)}
+                    >
+                      <div className="flex items-center gap-4 flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          {getTipoIcon(cita.tipo)}
+                          <Badge className="bg-red-100 text-red-800 border-red-200" variant="outline">
+                            HOY
+                          </Badge>
+                        </div>
+                        
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-medium truncate">{cita.titulo}</h3>
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                            <div className="flex items-center gap-1 flex-shrink-0">
+                              <Clock className="h-3 w-3" />
+                              {format(cita.fechaInicio, 'HH:mm', { locale: es })}
+                            </div>
+                            {cita.ubicacion && (
+                              <div className="flex items-center gap-1 truncate">
+                                <MapPin className="h-3 w-3 flex-shrink-0" />
+                                <span className="truncate">{cita.ubicacion}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        
+                        {cita.expedientId && (
+                          <div onClick={(e) => e.stopPropagation()} className="flex-shrink-0">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => onNavigateToExpedient?.(cita.expedientId!)}
+                            >
+                              <FileText className="h-4 w-4 mr-1" />
+                              Ver Expediente
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    ))}
+
+                    {/* Pagination for HOY */}
+                    {totalPagesHoy > 1 && (
+                      <div className="mt-4 flex justify-center">
+                        <Pagination>
+                          <PaginationContent>
+                            <PaginationItem>
+                              <PaginationPrevious 
+                                onClick={previousPageHoy}
+                                className={!canGoPreviousHoy ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                              />
+                            </PaginationItem>
+                            
+                            {Array.from({ length: totalPagesHoy }, (_, i) => i + 1).map((page) => (
+                              <PaginationItem key={page}>
+                                <PaginationLink
+                                  onClick={() => goToPageHoy(page)}
+                                  isActive={currentPageHoy === page}
+                                  className="cursor-pointer"
+                                >
+                                  {page}
+                                </PaginationLink>
+                              </PaginationItem>
+                            ))}
+                            
+                            <PaginationItem>
+                              <PaginationNext 
+                                onClick={nextPageHoy}
+                                className={!canGoNextHoy ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                              />
+                            </PaginationItem>
+                          </PaginationContent>
+                        </Pagination>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* PRÓXIMAS */}
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight mb-4">PRÓXIMAS</h2>
+            
+            <div className="border rounded-lg bg-card">
+              <div className="p-3 space-y-2 min-h-[200px]">
+                {filteredCitasProximas.length === 0 ? (
+                  <div className="text-center py-8 bg-muted/30 rounded-lg">
+                    <CalendarIcon className="mx-auto h-12 w-12 text-muted-foreground" />
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      {searchProximas || fechaProximas || expedientFilter
+                        ? 'No se encontraron eventos que coincidan con los filtros' 
+                        : 'No hay eventos próximos programados'}
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    {paginatedCitasProximas.map((cita) => (
                   <div 
                     key={cita.id} 
                     className="flex items-center justify-between p-4 bg-card border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer h-[72px]"
@@ -453,7 +608,7 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                       <div className="flex items-center gap-2 flex-shrink-0">
                         {getTipoIcon(cita.tipo)}
                         <Badge className={getStatusColor(cita.estado)} variant="outline">
-                          {cita.estado}
+                          {cita.estado === 'proximo' ? 'PRÓXIMO' : 'PROGRAMADO'}
                         </Badge>
                       </div>
                       
@@ -489,7 +644,7 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                   </div>
                   ))}
 
-                  {/* Pagination for Citas Próximas */}
+                  {/* Pagination for Próximas */}
                   {totalPagesProximas > 1 && (
                     <div className="mt-4 flex justify-center">
                       <Pagination>
@@ -529,140 +684,13 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
           </div>
         </div>
       </div>
+    </div>
 
-      {/* Historial de Citas Pasadas */}
-      <div className="mt-6">
-        <h2 className="text-2xl font-bold tracking-tight mb-4">Historial</h2>
-        
-        {/* Filtros para Historial */}
-        <div className="bg-background border rounded-lg shadow-sm mb-3 px-4 py-3">
-          <div className="flex flex-col gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar por título o ubicación..."
-                value={searchHistorial}
-                onChange={(e) => setSearchHistorial(e.target.value)}
-                className="pl-10 h-9"
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <Label className="text-sm text-muted-foreground whitespace-nowrap">Fecha:</Label>
-              <Input
-                type="date"
-                value={fechaHistorial}
-                onChange={(e) => setFechaHistorial(e.target.value)}
-                className="h-9 flex-1"
-              />
-              {fechaHistorial && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setFechaHistorial('')}
-                  className="h-9"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-        
-        <div className="border rounded-lg overflow-hidden overflow-x-auto">
-          <div className="bg-muted/50 px-4 py-2 grid grid-cols-12 gap-4 text-sm font-medium min-w-[900px]">
-            <div className="col-span-1">Tipo</div>
-            <div className="col-span-3">Título</div>
-            <div className="col-span-2">Fecha</div>
-            <div className="col-span-2">Ubicación</div>
-            <div className="col-span-2">Estado</div>
-            <div className="col-span-2">Descripción</div>
-          </div>
-          {filteredCitasPasadas.length === 0 ? (
-            <div className="text-center py-8 bg-muted/30">
-              <CalendarIcon className="mx-auto h-12 w-12 text-muted-foreground" />
-              <p className="mt-2 text-sm text-muted-foreground">
-                {searchHistorial || fechaHistorial 
-                  ? 'No se encontraron citas que coincidan con los filtros' 
-                  : 'No hay citas completadas'}
-              </p>
-            </div>
-          ) : (
-            <>
-              <div className="divide-y">
-                {paginatedCitasPasadas.map((cita) => (
-                <div 
-                  key={cita.id} 
-                  className="px-4 py-3 grid grid-cols-12 gap-4 items-center hover:bg-muted/30 transition-colors cursor-pointer h-[52px] min-w-[900px]"
-                  onClick={() => handleViewDetails(cita, false)}
-                >
-                  <div className="col-span-1 flex items-center flex-shrink-0">
-                    {getTipoIcon(cita.tipo)}
-                  </div>
-                  <div className="col-span-3 min-w-0 overflow-hidden">
-                    <p className="font-medium text-muted-foreground truncate">{cita.titulo}</p>
-                  </div>
-                  <div className="col-span-2 text-sm text-muted-foreground flex-shrink-0">
-                    {format(cita.fechaInicio, 'dd/MM/yyyy HH:mm', { locale: es })}
-                  </div>
-                  <div className="col-span-2 text-sm text-muted-foreground min-w-0 overflow-hidden">
-                    <span className="truncate block">{cita.ubicacion || '-'}</span>
-                  </div>
-                  <div className="col-span-2 flex-shrink-0">
-                    <Badge className={getStatusColor(cita.estado)} variant="outline">
-                      {cita.estado}
-                    </Badge>
-                  </div>
-                  <div className="col-span-2 text-sm text-muted-foreground min-w-0 overflow-hidden">
-                    <span className="truncate block">{cita.descripcion || '-'}</span>
-                  </div>
-                </div>
-                ))}
-              </div>
-
-              {/* Pagination for Historial */}
-              {totalPagesHistorial > 1 && (
-                <div className="mt-4 flex justify-center py-3">
-                  <Pagination>
-                    <PaginationContent>
-                      <PaginationItem>
-                        <PaginationPrevious 
-                          onClick={previousPageHistorial}
-                          className={!canGoPreviousHistorial ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
-                        />
-                      </PaginationItem>
-                      
-                      {Array.from({ length: totalPagesHistorial }, (_, i) => i + 1).map((page) => (
-                        <PaginationItem key={page}>
-                          <PaginationLink
-                            onClick={() => goToPageHistorial(page)}
-                            isActive={currentPageHistorial === page}
-                            className="cursor-pointer"
-                          >
-                            {page}
-                          </PaginationLink>
-                        </PaginationItem>
-                      ))}
-                      
-                      <PaginationItem>
-                        <PaginationNext 
-                          onClick={nextPageHistorial}
-                          className={!canGoNextHistorial ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
-                        />
-                      </PaginationItem>
-                    </PaginationContent>
-                  </Pagination>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Diálogo de detalles de cita */}
+    {/* Diálogo de detalles del evento */}
       <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Detalles de la Cita</DialogTitle>
+            <DialogTitle>Detalles del Evento</DialogTitle>
           </DialogHeader>
           {selectedCita && (
             <div className="space-y-4">
@@ -727,7 +755,7 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                   <>
                     <Button variant="outline" onClick={handleCancelCita}>
                       <X className="h-4 w-4 mr-2" />
-                      Cancelar Cita
+                      Cancelar Evento
                     </Button>
                     <Button onClick={handleEditCita}>
                       <Pencil className="h-4 w-4 mr-2" />
@@ -750,7 +778,7 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Editar Cita</DialogTitle>
+            <DialogTitle>Editar Evento</DialogTitle>
           </DialogHeader>
           {editCita && (
             <div className="space-y-4">
@@ -802,7 +830,7 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
                   id="edit-ubicacion"
                   value={editCita.ubicacion || ''}
                   onChange={(e) => setEditCita(prev => prev ? { ...prev, ubicacion: e.target.value } : null)}
-                  placeholder="Lugar de la cita"
+                  placeholder="Lugar del evento"
                 />
               </div>
 
@@ -839,15 +867,15 @@ export function AgendaView({ onNavigateToExpedient }: AgendaViewProps) {
       <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>¿Cancelar esta cita?</AlertDialogTitle>
+            <AlertDialogTitle>¿Cancelar este evento?</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción eliminará la cita de forma permanente. No se puede deshacer.
+              Esta acción eliminará el evento de forma permanente. No se puede deshacer.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>No, mantener cita</AlertDialogCancel>
+            <AlertDialogCancel>No, mantener evento</AlertDialogCancel>
             <AlertDialogAction onClick={confirmCancelCita}>
-              Sí, cancelar cita
+              Sí, cancelar evento
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

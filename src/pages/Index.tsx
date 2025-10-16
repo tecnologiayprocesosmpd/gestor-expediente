@@ -423,6 +423,7 @@ function AppContent() {
               setCurrentExpedientId(expedientId);
               setCurrentView('view');
             }}
+            expedients={expedients}
           />
         );
       case 'diligencias':
