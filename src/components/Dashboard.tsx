@@ -477,11 +477,13 @@ export function Dashboard({
                     updatedAt: new Date()
                   };
                   
+                  // Guardar la actuación actualizada
                   actuacionStorage.saveActuacion(updatedActuacion);
                   
-                  const newList = actuacionesParaFirmaList.filter(a => a.id !== selectedActuacion.id);
-                  setActuacionesParaFirmaList(newList);
-                  setActuacionesParaFirma(newList.length);
+                  // Recargar la lista completa desde el storage
+                  const paraFirma = actuacionStorage.getActuacionesParaFirma();
+                  setActuacionesParaFirmaList(paraFirma);
+                  setActuacionesParaFirma(paraFirma.length);
                   
                   setSelectedActuacion(null);
                   setShowConfirmFirma(false);
