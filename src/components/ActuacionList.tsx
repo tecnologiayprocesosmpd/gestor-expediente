@@ -106,9 +106,9 @@ export function ActuacionList({
 
   const canRevertFromFirmado = (actuacion: Actuacion): boolean => {
     if (actuacion.status !== 'firmado' || !actuacion.signedAt) return false;
-    const twentyFourHours = 24 * 60 * 60 * 1000;
+    const ninetySixHours = 96 * 60 * 60 * 1000;
     const timeSinceSigned = Date.now() - actuacion.signedAt.getTime();
-    return timeSinceSigned < twentyFourHours;
+    return timeSinceSigned < ninetySixHours;
   };
 
   const handleStatusButtonClick = (actuacionId: string, currentStatus: Actuacion['status']) => {
@@ -230,7 +230,7 @@ export function ActuacionList({
         <StatusChangeConfirmDialog
           onConfirm={() => handleRevertFromFirmado(id)}
           title="Revertir firma"
-          message="¿Está seguro de revertir esta actuación a 'Para Firma'? Esta acción se puede realizar solo dentro de las 24 horas posteriores a la firma."
+          message="¿Está seguro de revertir esta actuación a 'Para Firma'? Esta acción se puede realizar solo dentro de las 96 horas posteriores a la firma."
           requireMotivo={false}
         >
           <Button
