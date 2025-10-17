@@ -533,7 +533,7 @@ export function ActuacionEditor({
                   {actuacionId ? 'Editar Actuación' : 'Nueva Actuación'}
                 </h1>
                 <p className="text-muted-foreground">
-                  Expediente: {expedientId}
+                  Expediente: {expedient?.number || expedientId}
                 </p>
               </div>
               
