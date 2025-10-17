@@ -781,7 +781,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
                   )}
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">
-                  Creado: {format(selectedOficio.createdAt, "dd/MM/yyyy HH:mm", { locale: es })}
+                  Emitido: {format(selectedOficio.createdAt, "dd/MM/yyyy HH:mm", { locale: es })}
                 </p>
               </div>
 
