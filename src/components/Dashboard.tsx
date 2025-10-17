@@ -73,7 +73,6 @@ export function Dashboard({
   const [actuacionesParaFirmaList, setActuacionesParaFirmaList] = useState<any[]>([]);
   const [expedientesExpanded, setExpedientesExpanded] = useState(false);
   const [selectedActuacion, setSelectedActuacion] = useState<any | null>(null);
-  const [showConfirmFirma, setShowConfirmFirma] = useState(false);
 
   if (!user) return null;
 
@@ -423,7 +422,6 @@ export function Dashboard({
       <Dialog open={!!selectedActuacion} onOpenChange={(open) => {
         if (!open) {
           setSelectedActuacion(null);
-          setShowConfirmFirma(false);
         }
       }}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
@@ -465,8 +463,6 @@ export function Dashboard({
               Volver a Lista
             </Button>
             <StatusChangeConfirmDialog
-              open={showConfirmFirma}
-              onOpenChange={setShowConfirmFirma}
               onConfirm={() => {
                 if (selectedActuacion) {
                   const updatedActuacion = {
@@ -486,7 +482,6 @@ export function Dashboard({
                   setActuacionesParaFirma(paraFirma.length);
                   
                   setSelectedActuacion(null);
-                  setShowConfirmFirma(false);
                 }
               }}
               title="Confirmar firma"
