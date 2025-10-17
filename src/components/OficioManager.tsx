@@ -198,7 +198,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
     doc.setFontSize(12);
     doc.text(oficio.expedientTitle, 20, 65);
     doc.text(`Destinatario: ${oficio.destinatario}`, 20, 80);
-    doc.text(`Fecha de creación: ${format(oficio.createdAt, "dd 'de' MMMM 'de' yyyy, HH:mm 'hs'", { locale: es })}`, 20, 95);
+    doc.text(`Fecha de emisión: ${format(oficio.createdAt, "dd 'de' MMMM 'de' yyyy, HH:mm 'hs'", { locale: es })}`, 20, 95);
     
     if (oficio.pdfAttached) {
       doc.text(`PDF adjunto: ${oficio.pdfFileName}`, 20, 110);
@@ -312,7 +312,7 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
         <h2>Expediente: ${oficio.expedientNumber}</h2>
         <h3>${oficio.expedientTitle}</h3>
         <p><strong>Destinatario:</strong> ${oficio.destinatario}</p>
-        <p><strong>Fecha de creación:</strong> ${format(oficio.createdAt, "dd 'de' MMMM 'de' yyyy, HH:mm 'hs'", { locale: es })}</p>
+        <p><strong>Fecha de emisión:</strong> ${format(oficio.createdAt, "dd 'de' MMMM 'de' yyyy, HH:mm 'hs'", { locale: es })}</p>
         ${oficio.pdfAttached ? `<p><strong>PDF adjunto:</strong> ${oficio.pdfFileName}</p>` : ''}
         ${oficio.finished && oficio.finishedAt ? `
           <hr>
@@ -702,9 +702,9 @@ export function OficioManager({ expedients, onBack }: OficioManagerProps) {
               </p>
             </div>
 
-            {/* Fecha de creación (solo informativa) */}
+            {/* Fecha de emisión (solo informativa) */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Fecha de Creación</Label>
+              <Label className="text-sm font-medium">Fecha de Emisión</Label>
               <Input
                 type="text"
                 value={format(new Date(), "dd/MM/yyyy HH:mm", { locale: es })}
