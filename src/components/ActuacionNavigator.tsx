@@ -58,9 +58,17 @@ export function ActuacionNavigator({ actuaciones, expedientNumber, expedientTitl
     const textContent = tempDiv.textContent || tempDiv.innerText || '';
 
     return (
-      <div className="flex flex-col h-full">
-        {/* Contenido de la hoja */}
-        <div className="flex-1 bg-white text-black p-12" style={{ fontFamily: 'Times New Roman, serif' }}>
+      <div className="flex flex-col items-center">
+        {/* Hoja en tamaño legal (216mm x 330mm) - ratio 8.5:13 */}
+        <div 
+          className="bg-white text-black shadow-lg border border-gray-300"
+          style={{ 
+            width: '216mm',
+            minHeight: '330mm',
+            fontFamily: 'Times New Roman, serif',
+            padding: '20mm 20mm 20mm 40mm' // Márgenes: 2cm arriba/derecha/abajo, 4cm izquierda
+          }}
+        >
           {/* Encabezado con información del expediente */}
           <div className="mb-8 pb-4 border-b-2 border-gray-800">
             <div className="text-center">
@@ -91,37 +99,39 @@ export function ActuacionNavigator({ actuaciones, expedientNumber, expedientTitl
         </div>
 
         {/* Información de auditoría debajo de la hoja */}
-        <div className="bg-muted/30 border-t-2 border-border px-12 py-4">
-          <h4 className="text-sm font-semibold text-muted-foreground mb-3">Información de Auditoría</h4>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <span className="text-muted-foreground">Actuación:</span>
-              <p className="font-medium">#{actuacion.number} - {actuacion.title}</p>
+        <div className="bg-muted/30 border border-border mt-6 shadow-md" style={{ width: '216mm' }}>
+          <div className="px-8 py-4">
+            <h4 className="text-sm font-semibold text-muted-foreground mb-3">Información de Auditoría</h4>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="text-muted-foreground">Actuación:</span>
+                <p className="font-medium">#{actuacion.number} - {actuacion.title}</p>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Tipo:</span>
+                <p className="font-medium">{getTipoLabel(actuacion.tipo)}</p>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Creado por:</span>
+                <p className="font-medium">{actuacion.createdBy}</p>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Fecha:</span>
+                <p className="font-medium">{new Date(actuacion.createdAt).toLocaleDateString('es-ES')}</p>
+              </div>
+              {actuacion.status === 'firmado' && actuacion.signedBy && (
+                <>
+                  <div>
+                    <span className="text-muted-foreground">Firmado por:</span>
+                    <p className="font-medium">{actuacion.signedBy}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Fecha de firma:</span>
+                    <p className="font-medium">{new Date(actuacion.signedAt!).toLocaleDateString('es-ES')}</p>
+                  </div>
+                </>
+              )}
             </div>
-            <div>
-              <span className="text-muted-foreground">Tipo:</span>
-              <p className="font-medium">{getTipoLabel(actuacion.tipo)}</p>
-            </div>
-            <div>
-              <span className="text-muted-foreground">Creado por:</span>
-              <p className="font-medium">{actuacion.createdBy}</p>
-            </div>
-            <div>
-              <span className="text-muted-foreground">Fecha:</span>
-              <p className="font-medium">{new Date(actuacion.createdAt).toLocaleDateString('es-ES')}</p>
-            </div>
-            {actuacion.status === 'firmado' && actuacion.signedBy && (
-              <>
-                <div>
-                  <span className="text-muted-foreground">Firmado por:</span>
-                  <p className="font-medium">{actuacion.signedBy}</p>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Fecha de firma:</span>
-                  <p className="font-medium">{new Date(actuacion.signedAt!).toLocaleDateString('es-ES')}</p>
-                </div>
-              </>
-            )}
           </div>
         </div>
       </div>
@@ -194,7 +204,9 @@ export function ActuacionNavigator({ actuaciones, expedientNumber, expedientTitl
         <CardContent className="p-0 h-full">
           {selectedActuacion ? (
             <ScrollArea className="h-[calc(100vh-10rem)]">
-              {renderPDFPreview(selectedActuacion)}
+              <div className="p-8 bg-gray-50">
+                {renderPDFPreview(selectedActuacion)}
+              </div>
             </ScrollArea>
           ) : (
             <div className="flex items-center justify-center h-full text-muted-foreground">
