@@ -58,43 +58,72 @@ export function ActuacionNavigator({ actuaciones, expedientNumber, expedientTitl
     const textContent = tempDiv.textContent || tempDiv.innerText || '';
 
     return (
-      <div className="bg-white text-black p-12 min-h-full" style={{ fontFamily: 'Times New Roman, serif' }}>
-        {/* Encabezado con información del expediente - MISMO FORMATO QUE EDITOR */}
-        <div className="mb-8 pb-4 border-b-2 border-gray-800">
-          <div className="text-center">
-            <p className="text-lg font-bold uppercase tracking-wide mb-6">
-              {expedientTitle} S/ {expedientTipoProceso}
-            </p>
-          </div>
-          <div className="text-sm space-y-1">
-            <p><strong>Actuación #{actuacion.number}:</strong> {actuacion.title}</p>
-            <p><strong>Tipo:</strong> {getTipoLabel(actuacion.tipo)}</p>
-            <p><strong>Creado por:</strong> {actuacion.createdBy}</p>
-            <p><strong>Fecha:</strong> {new Date(actuacion.createdAt).toLocaleDateString('es-ES')}</p>
-            {actuacion.status === 'firmado' && actuacion.signedBy && (
-              <p><strong>Firmado por:</strong> {actuacion.signedBy}</p>
-            )}
-          </div>
-        </div>
-
-        {/* Contenido de la actuación */}
-        <div className="text-justify leading-relaxed whitespace-pre-wrap">
-          {textContent}
-        </div>
-
-        {/* Pie de página con firma (si está firmado) */}
-        {actuacion.status === 'firmado' && (
-          <div className="mt-12 pt-8 border-t border-black">
-            <div className="text-right">
-              <p className="mb-1">_____________________________</p>
-              <p className="font-bold">{actuacion.signedBy}</p>
-              <p className="text-sm">Firma Digital</p>
-              <p className="text-xs text-gray-600 mt-2">
-                Firmado el {new Date(actuacion.signedAt!).toLocaleString('es-ES')}
+      <div className="flex flex-col h-full">
+        {/* Contenido de la hoja */}
+        <div className="flex-1 bg-white text-black p-12" style={{ fontFamily: 'Times New Roman, serif' }}>
+          {/* Encabezado con información del expediente */}
+          <div className="mb-8 pb-4 border-b-2 border-gray-800">
+            <div className="text-center">
+              <p className="text-lg font-bold uppercase tracking-wide mb-6">
+                {expedientTitle} S/ {expedientTipoProceso}
               </p>
             </div>
           </div>
-        )}
+
+          {/* Contenido de la actuación */}
+          <div className="text-justify leading-relaxed whitespace-pre-wrap">
+            {textContent}
+          </div>
+
+          {/* Pie de página con firma (si está firmado) */}
+          {actuacion.status === 'firmado' && (
+            <div className="mt-12 pt-8 border-t border-black">
+              <div className="text-right">
+                <p className="mb-1">_____________________________</p>
+                <p className="font-bold">{actuacion.signedBy}</p>
+                <p className="text-sm">Firma Digital</p>
+                <p className="text-xs text-gray-600 mt-2">
+                  Firmado el {new Date(actuacion.signedAt!).toLocaleString('es-ES')}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Información de auditoría debajo de la hoja */}
+        <div className="bg-muted/30 border-t-2 border-border px-12 py-4">
+          <h4 className="text-sm font-semibold text-muted-foreground mb-3">Información de Auditoría</h4>
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span className="text-muted-foreground">Actuación:</span>
+              <p className="font-medium">#{actuacion.number} - {actuacion.title}</p>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Tipo:</span>
+              <p className="font-medium">{getTipoLabel(actuacion.tipo)}</p>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Creado por:</span>
+              <p className="font-medium">{actuacion.createdBy}</p>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Fecha:</span>
+              <p className="font-medium">{new Date(actuacion.createdAt).toLocaleDateString('es-ES')}</p>
+            </div>
+            {actuacion.status === 'firmado' && actuacion.signedBy && (
+              <>
+                <div>
+                  <span className="text-muted-foreground">Firmado por:</span>
+                  <p className="font-medium">{actuacion.signedBy}</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Fecha de firma:</span>
+                  <p className="font-medium">{new Date(actuacion.signedAt!).toLocaleDateString('es-ES')}</p>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       </div>
     );
   };
