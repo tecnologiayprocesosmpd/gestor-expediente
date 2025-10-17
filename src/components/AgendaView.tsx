@@ -278,104 +278,106 @@ export function AgendaView({ onNavigateToExpedient, expedients = [] }: AgendaVie
               Nuevo Evento
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-3xl">
             <DialogHeader>
               <DialogTitle>Nuevo Evento</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
-              <div>
-                <Label htmlFor="titulo">Título *</Label>
-                <Input
-                  id="titulo"
-                  value={newCita.titulo}
-                  onChange={(e) => setNewCita(prev => ({ ...prev, titulo: e.target.value }))}
-                  placeholder="Título del evento"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="tipo">Tipo</Label>
-                <Select 
-                  value={newCita.tipo} 
-                  onValueChange={(value) => setNewCita(prev => ({ ...prev, tipo: value as any }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="audiencia">Audiencia</SelectItem>
-                    <SelectItem value="citacion">Citación</SelectItem>
-                    <SelectItem value="reunion">Reunión</SelectItem>
-                    <SelectItem value="vencimiento">Vencimiento</SelectItem>
-                    <SelectItem value="otro">Otro</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="titulo">Título *</Label>
+                  <Input
+                    id="titulo"
+                    value={newCita.titulo}
+                    onChange={(e) => setNewCita(prev => ({ ...prev, titulo: e.target.value }))}
+                    placeholder="Título del evento"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="tipo">Tipo</Label>
+                  <Select 
+                    value={newCita.tipo} 
+                    onValueChange={(value) => setNewCita(prev => ({ ...prev, tipo: value as any }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="audiencia">Audiencia</SelectItem>
+                      <SelectItem value="citacion">Citación</SelectItem>
+                      <SelectItem value="reunion">Reunión</SelectItem>
+                      <SelectItem value="vencimiento">Vencimiento</SelectItem>
+                      <SelectItem value="otro">Otro</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <div>
-                <Label htmlFor="expediente">Expediente (opcional)</Label>
-                <Select 
-                  value={newCita.expedientId || "none"} 
-                  onValueChange={(value) => setNewCita(prev => ({ ...prev, expedientId: value === "none" ? "" : value }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar expediente..." />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background z-50">
-                    <SelectItem value="none">Sin vincular</SelectItem>
-                    {expedients.map(exp => (
-                      <SelectItem key={exp.id} value={exp.id}>
-                        {exp.number} - {exp.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                <div>
+                  <Label htmlFor="expediente">Expediente (opcional)</Label>
+                  <Select 
+                    value={newCita.expedientId || "none"} 
+                    onValueChange={(value) => setNewCita(prev => ({ ...prev, expedientId: value === "none" ? "" : value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sin vincular" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background z-50">
+                      <SelectItem value="none">Sin vincular</SelectItem>
+                      {expedients.map(exp => (
+                        <SelectItem key={exp.id} value={exp.id}>
+                          {exp.number} - {exp.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <div>
-                <Label htmlFor="fecha">Fecha y Hora</Label>
-                <Input
-                  id="fecha"
-                  type="datetime-local"
-                  value={format(newCita.fechaInicio, "yyyy-MM-dd'T'HH:mm")}
-                  onChange={(e) => setNewCita(prev => ({ 
-                    ...prev, 
-                    fechaInicio: new Date(e.target.value) 
-                  }))}
-                />
-              </div>
+                <div>
+                  <Label htmlFor="fecha">Fecha y Hora</Label>
+                  <Input
+                    id="fecha"
+                    type="datetime-local"
+                    value={format(newCita.fechaInicio, "yyyy-MM-dd'T'HH:mm")}
+                    onChange={(e) => setNewCita(prev => ({ 
+                      ...prev, 
+                      fechaInicio: new Date(e.target.value) 
+                    }))}
+                  />
+                </div>
 
-              <div>
-                <Label htmlFor="ubicacion">Ubicación</Label>
-                <Input
-                  id="ubicacion"
-                  value={newCita.ubicacion}
-                  onChange={(e) => setNewCita(prev => ({ ...prev, ubicacion: e.target.value }))}
-                  placeholder="Lugar del evento"
-                />
-              </div>
+                <div>
+                  <Label htmlFor="ubicacion">Ubicación</Label>
+                  <Input
+                    id="ubicacion"
+                    value={newCita.ubicacion}
+                    onChange={(e) => setNewCita(prev => ({ ...prev, ubicacion: e.target.value }))}
+                    placeholder="Lugar del evento"
+                  />
+                </div>
 
-              <div>
-                <Label htmlFor="participantes">Participantes (opcional)</Label>
-                <Input
-                  id="participantes"
-                  value={newCita.participantes}
-                  onChange={(e) => setNewCita(prev => ({ ...prev, participantes: e.target.value }))}
-                  placeholder="Separar con comas: Juan Pérez, María García..."
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Ingrese los nombres separados por comas
-                </p>
-              </div>
+                <div>
+                  <Label htmlFor="participantes">Participantes (opcional)</Label>
+                  <Input
+                    id="participantes"
+                    value={newCita.participantes}
+                    onChange={(e) => setNewCita(prev => ({ ...prev, participantes: e.target.value }))}
+                    placeholder="Separar con comas: Juan Pérez, María García..."
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Ingrese los nombres separados por comas
+                  </p>
+                </div>
 
-              <div>
-                <Label htmlFor="descripcion">Descripción</Label>
-                <Textarea
-                  id="descripcion"
-                  value={newCita.descripcion}
-                  onChange={(e) => setNewCita(prev => ({ ...prev, descripcion: e.target.value }))}
-                  placeholder="Detalles adicionales"
-                />
+                <div className="col-span-2">
+                  <Label htmlFor="descripcion">Descripción</Label>
+                  <Textarea
+                    id="descripcion"
+                    value={newCita.descripcion}
+                    onChange={(e) => setNewCita(prev => ({ ...prev, descripcion: e.target.value }))}
+                    placeholder="Detalles adicionales"
+                  />
+                </div>
               </div>
               
               <div className="pt-2 border-t">
