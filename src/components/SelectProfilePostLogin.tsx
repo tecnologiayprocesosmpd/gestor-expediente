@@ -49,10 +49,10 @@ export default function SelectProfilePostLogin() {
   return <div className="min-h-[60vh] flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-medium">
         <CardHeader className="space-y-1 text-center">
-          <div className="w-40 h-40 mx-auto mb-2">
-            <img src="/assets/logo-mpd.png" alt="Logo MPD" className="w-full h-full object-contain mt-[-40px]" />
+          <div className="w-40 h-40 mx-auto mb-0">
+            <img src="/assets/logo-mpd.png" alt="Logo MPD" className="w-full h-full object-contain" />
           </div>
-          <CardTitle className="text-2xl mt-[-75px]">Seleccionar Perfil</CardTitle>
+          <CardTitle className="text-2xl mt-2">Seleccionar Perfil</CardTitle>
           <p className="text-sm text-muted-foreground">
             Paso 2 de 2: Sus credenciales fueron validadas. Elija cómo desea ingresar al sistema.
           </p>
